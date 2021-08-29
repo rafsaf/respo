@@ -1,0 +1,54 @@
+metadata:
+  apiVersion: v1
+  name: Resource Policy for my app
+
+permissions:
+  - metadata:
+      name: User permissions
+      label: user
+      description: Every permission related to Users
+
+    resources:
+      - name: Allows to read user basic informations
+        label: user.read_basic
+
+      - name: Allows to read all informations about users
+        label: user.read_all
+
+      - name: Allows to edit user
+        label: user.update
+
+      - name: Allows to delete user
+        label: user.delete
+
+    rules:
+      - name: Read all gives read basic
+        when: user.read_all
+        then:
+          - user.read_basic
+
+organizations:
+  - metadata:
+      name: Default organization
+      label: default
+      description: Some very long text here
+    permissions:
+      - type: Allow
+        label: default.user.read_all
+      - type: Allow
+        label: all.user.read_all
+      - type: Deny
+        label: all.user.all
+
+roles:
+  - metadata:
+      name: Admin User
+      label: superuser
+      organization: default
+      description: Some very long text here
+
+    permissions:
+      - type: Allow
+        label: all.user.all # that will overwrite organizations rule
+      - type: Deny
+        label: default.user.delete
