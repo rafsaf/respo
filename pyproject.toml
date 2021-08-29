@@ -8,7 +8,6 @@ authors = ["rafsaf <rafal.safin@rafsaf.pl>"]
 python = "^3.9"
 pydantic = "^1.8.2"
 PyYAML = "^5.4.1"
-typer = "^0.3.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

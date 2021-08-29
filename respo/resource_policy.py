@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from respo.resource_model import ResourceModel, Client
 from respo.helpers import ResourcePolicyException, logger
 from typing import Dict, List, Optional, Union
