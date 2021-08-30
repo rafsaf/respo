@@ -10,10 +10,10 @@ import atexit
 def _save_to_file_on_exit(path: str, resource_policy: ResourceModel):
     if not os.path.exists(path):
         logger.warning(f"{path} does not exist, it will be created")
-    with open(path, "w") as stream:
+    with open(path, "wb") as stream:
         try:
             file = yaml.dump(resource_policy.dict())
-            stream.write(file)
+            stream.write(str(file).encode())
         except Exception as e:
             raise ResourcePolicyException(str(e) + f"\nCould not write to file {path}")
 
@@ -28,7 +28,7 @@ def get_respo_model(
     if read_only or os.path.exists(_PATH):
         path_to_yml = _PATH
     if path_to_yml:
-        with open(path_to_yml, "r") as stream:
+        with open(path_to_yml, "rb") as stream:
             try:
                 data = yaml.safe_load(stream)
             except yaml.YAMLError as exc:
