@@ -7,7 +7,7 @@ logging.basicConfig(format="%(levelname)s - %(message)s")
 logger = getLogger()
 
 
-class ResourcePolicyException(Exception):
+class RespoException(Exception):
     pass
 
 
@@ -34,22 +34,22 @@ def named_min_label(label: str):
     split = label.split(".")
     for s in split:
         if not is_label_valid(s):
-            raise ResourcePolicyException(f"Label {label} is not valid")
+            raise RespoException(f"Label {label} is not valid")
     if len(split) == 2:
         return _named_min_label(split[0], split[1])
     else:
-        raise ResourcePolicyException(f"Label {label} is not valid")
+        raise RespoException(f"Label {label} is not valid")
 
 
 def named_full_label(label: str):
     split = label.split(".")
     for s in split:
         if not is_label_valid(s):
-            raise ResourcePolicyException(f"Label {label} is not valid")
+            raise RespoException(f"Label {label} is not valid")
     if len(split) == 3:
         return _named_full_label(split[0], split[1], split[2])
     else:
-        raise ResourcePolicyException(
+        raise RespoException(
             f"Label '{label}' is not valid\n"
             f"Hint: use syntax 'organization.meta_label.permission', eg. 'foo.user.delete'\n"
             f"For permission scoped globally use 'all.user.delete'"

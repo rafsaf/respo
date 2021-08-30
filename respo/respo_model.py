@@ -1,7 +1,7 @@
 from pydantic import BaseModel, validator, root_validator
 from typing import Dict, Literal, Optional, List, Set, Union
 from respo.helpers import (
-    ResourcePolicyException,
+    RespoException,
     is_label_valid,
     logger,
     named_full_label,
@@ -256,7 +256,15 @@ class Client(BaseModel):
         return v
 
 
-class ResourceModel(BaseModel):
+def create_respo_client(
+    pk: Optional[Union[List[str], str]] = None,
+    organization: Optional[Union[List[str], str]] = None,
+    role: Optional[Union[List[str], str]] = None,
+):
+    return Client(pk=pk, organization=organization, role=role)
+
+
+class RespoModel(BaseModel):
     metadata: MetadataSection
     permissions: List[Permission]
     organizations: List[Organization]
@@ -269,9 +277,7 @@ class ResourceModel(BaseModel):
                 for resource in permission.resources:
                     if resource.label == f"{lt.metadata_label}.{lt.label}":
                         return True
-        raise ResourcePolicyException(
-            f"Permissions resource label {label} is not defined"
-        )
+        raise RespoException(f"Permissions resource label {label} is not defined")
 
     def check(self, label: str, client: Client) -> bool:
         self._label_resource_exists(label)
