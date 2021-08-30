@@ -1,35 +1,7 @@
-# resource_dict = {
+permission with label `xxx` - only `xxx.something`
 
-# "kind": "Item",
+organization with label `yyy` - only `yyy.permission.something`
 
-# "metadata": {
+root role in every organization
 
-# "created_at": "2021-09-21T13:35:53:1000",
-
-# "last_modified": "2021-09-21T13:35:53:1000",
-
-# "name": "Item book policy",
-
-# "selector": "Book Policy",
-
-# },
-
-# "permissions": {"read.basic", "read.all", "write", "delete", "all"},
-
-# "rules": {
-
-# {
-
-# "type": "Allow",
-
-# "permissions": {"read.all", "delete"},
-
-# "roles": {"administrator"},
-
-# },
-
-# {},
-
-# },
-
-# }
+root organization with access to every organization

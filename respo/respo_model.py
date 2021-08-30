@@ -1,3 +1,4 @@
+from functools import cache, cached_property
 from pydantic import BaseModel, validator, root_validator
 from typing import Dict, Literal, Optional, List, Set, Union
 from respo.helpers import (
@@ -214,6 +215,16 @@ class OrganizationMetadata(BaseModel):
     label: str
     description: str
 
+    @validator("label")
+    def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
+        if not is_label_valid(label):
+            raise ValueError(
+                f"\nError in organizations section\n"
+                f"Organization '{values['name']}' metadata is invalid.\n"
+                f"Label '{label}' must be lowercase and must not contain any whitespace\n"
+            )
+        return label
+
 
 class OrganizationPermissionGrant(BaseModel):
     type: Literal["Allow", "Deny"]
@@ -270,6 +281,98 @@ class RespoModel(BaseModel):
     organizations: List[Organization]
     roles: List[Role]
 
+    class Config:
+        arbitrary_types_allowed = True
+
+    @classmethod
+    def dict_label_to_resources(
+        cls, permissions: List[Permission]
+    ) -> Dict[str, List[PermissionResource]]:
+        result_dict = {}
+        for permission in permissions:
+            result_dict[permission.metadata.label] = permission.resources
+        return result_dict
+
+    @classmethod
+    def dict_label_to_rules(
+        cls, permissions: List[Permission]
+    ) -> Dict[str, List[PermissionRule]]:
+        result_dict = {}
+        for permission in permissions:
+            result_dict[permission.metadata.label] = permission.rules
+        return result_dict
+
+    @root_validator
+    def organization_every_permission_exists_and_can_be_applied(cls, values: Dict):
+        organizations: List[Organization] = values["organizations"]
+        permissions: List[Permission] = values["permissions"]
+        label_to_resources = cls.dict_label_to_resources(permissions)
+        for organization in organizations:
+            metadata: OrganizationMetadata = organization.metadata
+            organization_permissions: List[
+                OrganizationPermissionGrant
+            ] = organization.permissions
+            BASE_ERR = (
+                f"\nError in organizations section\n"
+                f"Organization '{metadata.name}' permissions are invalid.\n"
+            )
+            for organization_permission in organization_permissions:
+                PERM_ERR = f"Permission with label '{organization_permission.label}' is invalid\n"
+                split = named_full_label(organization_permission.label)
+                if not metadata.label == "all":
+                    if split.organization != metadata.label:
+                        raise RespoException(
+                            BASE_ERR
+                            + PERM_ERR
+                            + f"'{split.organization}' must be equal to '{metadata.label}'"
+                        )
+                exists = False
+                if split.metadata_label in label_to_resources:
+                    for resource in label_to_resources[split.metadata_label]:
+                        if resource.label == f"{split.metadata_label}.{split.label}":
+                            exists = True
+                            break
+                if not exists:
+                    raise RespoException(
+                        BASE_ERR
+                        + PERM_ERR
+                        + f"Permission '{split.metadata_label}.{split.label}' not found"
+                    )
+        return values
+
+    @root_validator
+    def organization_parse_allow_rules(cls, values: Dict):
+        organizations: List[Organization] = values["organizations"]
+        permissions: List[Permission] = values["permissions"]
+        label_to_resources = cls.dict_label_to_resources(permissions)
+        label_to_rules = cls.dict_label_to_rules(permissions)
+
+        organizations_after: List[Organization] = []
+        for organization in organizations:
+            metadata: OrganizationMetadata = organization.metadata
+            organization_permissions: List[
+                OrganizationPermissionGrant
+            ] = organization.permissions
+            organization_labels_set = set([o.label for o in organization_permissions])
+            for organization_permission in organization_permissions:
+                if organization_permission.type == "Deny":
+                    continue
+                split = named_full_label(organization_permission.label)
+                for rule in label_to_rules[split.metadata_label]:
+                    if rule.when == f"{split.metadata_label}.{split.label}":
+                        for rule_then in rule.then:
+                            new_label = f"{metadata.label}.{rule_then}"
+                            if new_label not in organization_labels_set:
+                                organization.permissions.append(
+                                    OrganizationPermissionGrant(
+                                        type="Allow", label=new_label
+                                    )
+                                )
+                                organization_labels_set.add(new_label)
+            organizations_after.append(organization)
+        values["organizations"] = organizations_after
+        return values
+
     def _label_resource_exists(self, label: str) -> bool:
         lt = named_full_label(label)
         for permission in self.permissions:
@@ -288,8 +391,6 @@ class RespoModel(BaseModel):
                 else:
                     for permission in role.permissions:
                         if permission.label == label:
-                            logger.warning("success")
-
                             return True
-        logger.warning("fail")
+
         return False

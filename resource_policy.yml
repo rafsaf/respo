@@ -9,9 +9,9 @@ organizations:
     permissions:
       - label: default.user.read_all
         type: Allow
-      - label: all.user.read_all
+      - label: default.user.read_all
         type: Allow
-      - label: all.user.all
+      - label: default.user.all
         type: Deny
 permissions:
   - metadata:

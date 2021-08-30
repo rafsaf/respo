@@ -44,7 +44,11 @@ def create(
             typer.echo(f"Unknown path")
             raise typer.Abort()
 
+        from time import time
+
+        t1 = time()
         respo_model = RespoModel(**data)
+        print(time() - t1)
         _save_respo_model(respo_model)
 
     elif json_file is not None:
