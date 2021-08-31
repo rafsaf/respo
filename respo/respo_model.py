@@ -1,4 +1,3 @@
-from functools import cache, cached_property
 from pydantic import BaseModel, validator, root_validator
 from typing import Dict, Literal, Optional, List, Set, Union
 from respo.helpers import (
@@ -242,6 +241,16 @@ class RoleMetadata(BaseModel):
     description: str
     organization: str
 
+    @validator("label")
+    def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
+        if not is_label_valid(label):
+            raise ValueError(
+                f"\nError in roles section\n"
+                f"Role '{values['name']}' metadata is invalid.\n"
+                f"Label '{label}' must be lowercase and must not contain any whitespace\n"
+            )
+        return label
+
 
 class RolePermissionGrant(BaseModel):
     type: Literal["Allow", "Deny"]
@@ -312,6 +321,7 @@ class RespoModel(BaseModel):
                     f"Found two organizations with the same label {metadata.label}"
                 )
             organization_names.add(metadata.label)
+        return values
 
     @root_validator
     def organization_every_permission_exists_and_can_be_applied(cls, values: Dict):
@@ -401,6 +411,69 @@ class RespoModel(BaseModel):
             organization.permissions = result_permissions
             new_organizations.append(organization)
         values["organizations"] = new_organizations
+        return values
+
+    @root_validator
+    def roles_every_metadata_is_unique_and_valid(cls, values: Dict):
+        organizations: List[Organization] = values["organizations"]
+        roles: List[Role] = values["roles"]
+        roles_names: Dict[str, Set[str]] = {}
+
+        for organization in organizations:
+            roles_names[organization.metadata.label] = set()
+
+        for role in roles:
+            BASE_ERR = (
+                f"\nError in roles section\n"
+                f"Role '{role.metadata.name}' metadata is invalid.\n"
+            )
+            if role.metadata.organization not in roles_names:
+                raise RespoException(
+                    BASE_ERR
+                    + f"Role's declared organization "
+                    + f"'{role.metadata.organization}' not found\n"
+                )
+            if role.metadata.label in roles_names[role.metadata.organization]:
+                raise RespoException(
+                    BASE_ERR
+                    + f"Found two roles with the same label '{role.metadata.label}' "
+                    + f"in organization '{role.metadata.organization}'\n"
+                )
+        return values
+
+    @root_validator
+    def roles_every_permission_exists_and_can_be_applied(cls, values: Dict):
+        roles: List[Role] = values["roles"]
+        permissions: List[Permission] = values["permissions"]
+        label_to_resources = cls.dict_label_to_resources(permissions)
+        for role in roles:
+            BASE_ERR = (
+                f"\nError in roles section\n"
+                f"Role '{role.metadata.name}' permissions are invalid.\n"
+            )
+            for role_permission in role.permissions:
+                PERM_ERR = (
+                    f"Permission with label '{role_permission.label}' is invalid\n"
+                )
+                split = named_full_label(role_permission.label)
+                if split.organization != role.metadata.organization:
+                    raise RespoException(
+                        BASE_ERR
+                        + PERM_ERR
+                        + f"'{split.organization}' must be equal to '{role.metadata.organization}'"
+                    )
+                exists = False
+                if split.metadata_label in label_to_resources:
+                    for resource in label_to_resources[split.metadata_label]:
+                        if resource.label == f"{split.metadata_label}.{split.label}":
+                            exists = True
+                            break
+                if not exists:
+                    raise RespoException(
+                        BASE_ERR
+                        + PERM_ERR
+                        + f"Permission '{split.metadata_label}.{split.label}' not found"
+                    )
         return values
 
     def _label_resource_exists(self, label: str) -> bool:
