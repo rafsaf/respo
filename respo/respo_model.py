@@ -300,6 +300,20 @@ class RespoModel(BaseModel):
         return result_dict
 
     @root_validator
+    def organization_every_metadata_is_unique_and_valid(cls, values: Dict):
+        organizations: List[Organization] = values["organizations"]
+        organization_names: Set[str] = set()
+        for organization in organizations:
+            metadata: OrganizationMetadata = organization.metadata
+            if metadata.label in organization_names:
+                raise RespoException(
+                    f"\nError in organizations section\n"
+                    f"Organization '{metadata.name}' metadata is invalid.\n"
+                    f"Found two organizations with the same label {metadata.label}"
+                )
+            organization_names.add(metadata.label)
+
+    @root_validator
     def organization_every_permission_exists_and_can_be_applied(cls, values: Dict):
         organizations: List[Organization] = values["organizations"]
         permissions: List[Permission] = values["permissions"]
