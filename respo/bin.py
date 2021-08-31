@@ -1,7 +1,8 @@
 import pickle
 from pathlib import Path
-from respo.respo_model import RespoModel
+
 from respo.helpers import RespoException
+from respo.respo_model import RespoModel
 
 BINARY_FILE_NAME = "__auto__respo_model.bin"
 binary_file_path = Path(BINARY_FILE_NAME)

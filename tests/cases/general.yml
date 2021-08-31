@@ -19,6 +19,7 @@ organizations:
       - label: book123.book.list
         type: Allow
       - label: book123.book.buy_all
+        type: Allow
 
 permissions:
   - metadata:
@@ -83,7 +84,7 @@ roles:
         type: Deny
   - metadata:
       description: D2
-      label: superuser
+      label: superuser_book
       name: superuser in book123
       organization: book123
     permissions:
@@ -102,6 +103,6 @@ roles:
       organization: book123
     permissions:
       - label: book123.user.read_all
-        name: Allow
-      - label: book123.user.sell
-        name: Allow
+        type: Allow
+      - label: book123.book.sell
+        type: Allow

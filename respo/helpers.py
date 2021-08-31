@@ -1,13 +1,13 @@
 import logging
 import string
-from logging import getLogger
 from collections import namedtuple
+from logging import getLogger
 
 logging.basicConfig(format="%(levelname)s - %(message)s")
 logger = getLogger()
 
 
-class RespoException(Exception):
+class RespoException(ValueError):
     pass
 
 

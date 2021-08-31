@@ -1,6 +1,7 @@
-from logging import log
-from pydantic import BaseModel, validator, root_validator
-from typing import Dict, Literal, Optional, List, Set, Union
+from datetime import datetime
+from typing import Dict, List, Literal, Optional, Set, Union
+
+from pydantic import BaseModel, validator
 from respo.helpers import (
     RespoException,
     is_label_valid,
@@ -8,7 +9,6 @@ from respo.helpers import (
     named_full_label,
     named_min_label,
 )
-from datetime import datetime
 
 
 class MetadataSection(BaseModel):
@@ -20,14 +20,14 @@ class MetadataSection(BaseModel):
     @validator("apiVersion")
     def apiVersion_must_be_v1(cls, apiVersion: str) -> str:
         if not apiVersion == "v1":
-            raise ValueError(
-                "Error in metadata section\n"
-                "Currently supported apiVersion is only 'v1'"
+            raise RespoException(
+                "Error in metadata section\n  "
+                "Currently supported apiVersion is only 'v1'\n  "
             )
         return apiVersion
 
     @validator("created_at")
-    def check_created_at(cls, created_at: str, values: Dict) -> str:
+    def check_created_at(cls, created_at: str) -> str:
         if created_at is None:
             now = datetime.utcnow()
             logger.warning(f"'metadata.created_at' is null, {now} will be placed")
@@ -37,9 +37,9 @@ class MetadataSection(BaseModel):
                 datetime.fromisoformat(created_at)
             except Exception as data_error:
                 logger.error(data_error)
-                raise ValueError(
+                raise RespoException(
                     "'metadata.created_at' is invalid, place valid ISO format or "
-                    "leave this field empty so it will be filled"
+                    "leave this field empty so it will be filled\n  "
                 )
         return created_at
 
@@ -55,11 +55,14 @@ class PermissionMetadata(BaseModel):
 
     @validator("label")
     def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
+        name: Optional[str] = values.get("name")
+        assert name is not None, "General error message due to another exception"
+
         if not is_label_valid(label):
-            raise ValueError(
-                f"\nError in permissions section\n"
-                f"Permission '{values['name']}' metadata is invalid.\n"
-                f"Label '{label}' must be lowercase and must not contain any whitespace\n"
+            raise RespoException(
+                f"Error in permissions section\n  "
+                f"Permission '{name}' metadata is invalid.\n  "
+                f"Label '{label}' must be lowercase and must not contain any whitespace\n  "
             )
         return label
 
@@ -80,91 +83,107 @@ class PermissionRule(BaseModel):
 
 class Permission(BaseModel):
     metadata: PermissionMetadata
-    resources: List[PermissionResource]
+    resources: List[PermissionResource] = []
     rules: List[PermissionRule]
 
-    @root_validator
-    def resources_are_valid_and_unique(cls, values: Dict):
+    class Config:
+        validate_all = True
+
+    @validator("resources")
+    def resources_are_valid_and_unique(
+        cls, resources: List[PermissionResource], values: Dict
+    ):
         resources_set: Set[str] = set()
-        metadata: PermissionMetadata = values["metadata"]
+        metadata: Optional[PermissionMetadata] = values.get("metadata")
+        assert metadata is not None, "General error message due to another exceptione"
+
         BASE_ERR = (
-            f"\nError in permissions section\n"
-            f"Permission '{metadata.name}' resources are invalid.\n"
+            f"Error in permissions section\n  "
+            f"Permission '{metadata.name}' resources are invalid.\n  "
         )
 
         resource: PermissionResource
-        for resource in values["resources"]:
-            RESOURCE_ERR = f"Resource with name '{resource.name}' is invalid\n"
+        for resource in resources:
+            RESOURCE_ERR = f"Resource with name '{resource.name}' is invalid\n  "
             parsed_resource = resource.label.split(".")
             if not len(parsed_resource) == 2:
-                raise ValueError(
+                raise RespoException(
                     BASE_ERR
                     + RESOURCE_ERR
-                    + f"Label '{resource.label}' must be in format 'meta_label.string'\n"
-                    + f"For example 'user.read'\n"
+                    + f"Label '{resource.label}' must be in format 'meta_label.string'\n  "
+                    + f"For example 'user.read'\n  "
                 )
+
             if not (
                 is_label_valid(parsed_resource[0])
                 and is_label_valid(parsed_resource[1])
             ):
-                raise ValueError(
+                raise RespoException(
                     BASE_ERR
                     + RESOURCE_ERR
-                    + f"Label '{resource.label}' must be lowercase and must not contain any whitespace\n"
+                    + f"Label '{resource.label}' must be lowercase and must not contain any whitespace\n  "
                 )
+
             if parsed_resource[0] != metadata.label:
-                raise ValueError(
+                raise RespoException(
                     BASE_ERR
                     + RESOURCE_ERR
-                    + f"Label '{resource.label}' must start with metadata label '{metadata.label}'\n"
-                    + f"Change '{parsed_resource[0]}' to '{metadata.label}'\n"
+                    + f"Label '{resource.label}' must start with metadata label '{metadata.label}'\n  "
+                    + f"Eg. change '{parsed_resource[0]}' to '{metadata.label}'\n  "
                 )
+
             if parsed_resource[1] in resources_set:
-                raise ValueError(
+                raise RespoException(
                     BASE_ERR
                     + RESOURCE_ERR
-                    + f"Found two resources with the same label '{parsed_resource[1]}'\n"
+                    + f"Found two resources with the same label '{parsed_resource[1]}'\n  "
                 )
             resources_set.add(parsed_resource[1])
-        return values
+        return resources
 
-    @root_validator
-    def rules_are_valid(cls, values: Dict):
-        resources_list: List[PermissionResource] = values["resources"]
+    @validator("rules")
+    def rules_are_valid(cls, rules: List[PermissionRule], values: Dict):
+        resources_list: Optional[List[PermissionResource]] = values.get("resources")
+        assert (
+            resources_list is not None
+        ), "General error message due to another exception"
+
         resources_labels: Set[str] = set(
             [resource.label for resource in resources_list]
         )
-        metadata: PermissionMetadata = values["metadata"]
+        metadata: Optional[PermissionMetadata] = values.get("metadata")
+        assert metadata is not None, "General error message due to another exception"
+
         BASE_ERR = (
-            f"\nError in permissions section\n"
-            f"Permission '{metadata.name}' resources are invalid.\n"
+            f"Error in permissions section\n  "
+            f"Permission '{metadata.name}' resources are invalid.\n  "
         )
 
         rule: PermissionRule
-        for rule in values["rules"]:
+        for rule in rules:
             labels_then_set = set()
-            RULE_ERR = f"Rule with name '{rule.name}' is invalid\n"
+            RULE_ERR = f"Rule with name '{rule.name}' is invalid\n  "
 
             if rule.when not in resources_labels:
-                raise ValueError(
+                raise RespoException(
                     BASE_ERR
                     + RULE_ERR
-                    + f"Rule 'when' condition '{rule.when}' not found in resources labels\n"
+                    + f"Rule 'when' condition '{rule.when}' not found in resources labels\n  "
                 )
             for label in rule.then:
                 if rule.then == rule.when:
-                    raise ValueError(
+                    raise RespoException(
                         BASE_ERR
                         + RULE_ERR
-                        + f"Rule 'then' condition '{rule.then}' can't be equal to when condition\n"
+                        + f"Rule 'then' condition '{rule.then}' can't be equal to when condition\n  "
                     )
                 if label in labels_then_set:
-                    raise ValueError(
+                    raise RespoException(
                         BASE_ERR
                         + RULE_ERR
-                        + f"Found two 'then' conditions with the same label '{rule.then}'\n"
+                        + f"Found two 'then' conditions with the same label '{rule.then}'\n  "
                     )
-        return values
+        return rules
 
     @validator("resources")
     def add_all_resource_if_not_exist(
@@ -186,7 +205,9 @@ class Permission(BaseModel):
     def add_all_rule_if_not_exist(
         cls, rules: List[PermissionRule], values: Dict
     ) -> List[PermissionRule]:
-        resources: List[PermissionResource] = values["resources"]
+        resources: Optional[List[PermissionResource]] = values.get("resources")
+        assert resources is not None, "General error message due to another exception"
+
         if len(resources) >= 2:
             metadata_label = resources[0].get_label().metadata_label
             for rule in rules:
@@ -212,13 +233,16 @@ class OrganizationMetadata(BaseModel):
     label: str
     description: str
 
-    @validator("label")
+    @validator("label", pre=True)
     def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
+        name: Optional[str] = values.get("name")
+        assert name is not None, "General error message due to another exception"
+
         if not is_label_valid(label):
-            raise ValueError(
-                f"\nError in organizations section\n"
-                f"Organization '{values['name']}' metadata is invalid.\n"
-                f"Label '{label}' must be lowercase and must not contain any whitespace\n"
+            raise RespoException(
+                f"Error in organizations section\n  "
+                f"Organization '{name}' metadata is invalid.\n  "
+                f"Label '{label}' must be lowercase and must not contain any whitespace\n  "
             )
         return label
 
@@ -241,11 +265,14 @@ class RoleMetadata(BaseModel):
 
     @validator("label")
     def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
+        name: Optional[str] = values.get("name")
+        assert name is not None, "General error message due to another exception"
+
         if not is_label_valid(label):
-            raise ValueError(
-                f"\nError in roles section\n"
-                f"Role '{values['name']}' metadata is invalid.\n"
-                f"Label '{label}' must be lowercase and must not contain any whitespace\n"
+            raise RespoException(
+                f"Error in roles section\n  "
+                f"Role '{name}' metadata is invalid.\n  "
+                f"Label '{label}' must be lowercase and must not contain any whitespace\n  "
             )
         return label
 
@@ -306,42 +333,44 @@ class RespoModel(BaseModel):
             result_dict[permission.metadata.label] = permission.rules
         return result_dict
 
-    @root_validator
-    def organization_every_metadata_is_unique_and_valid(cls, values: Dict):
-        logger.warning(values)
-        organizations: List[Organization] = values["organizations"]
+    @validator("organizations")
+    def organization_every_metadata_is_unique_and_valid(
+        cls, organizations: List[Organization]
+    ):
+
         organization_names: Set[str] = set()
         for organization in organizations:
-            metadata: OrganizationMetadata = organization.metadata
-            if metadata.label in organization_names:
+            if organization.metadata.label in organization_names:
                 raise RespoException(
-                    f"\nError in organizations section\n"
-                    f"Organization '{metadata.name}' metadata is invalid.\n"
-                    f"Found two organizations with the same label {metadata.label}"
+                    f"Error in organizations section\n  "
+                    f"Organization '{organization.metadata.name}' metadata is invalid.\n  "
+                    f"Found two organizations with the same label {organization.metadata.label}\n  "
                 )
-            organization_names.add(metadata.label)
-        return values
+            organization_names.add(organization.metadata.label)
+        return organizations
 
-    @root_validator
-    def organization_every_permission_exists_and_can_be_applied(cls, values: Dict):
-        print("hyp")
-        organizations: List[Organization] = values["organizations"]
-        permissions: List[Permission] = values["permissions"]
+    @validator("organizations")
+    def organization_every_permission_exists_and_can_be_applied(
+        cls, organizations: List[Organization], values: Dict
+    ):
+
+        permissions: Optional[List[Permission]] = values.get("permissions")
+        assert permissions is not None, "General error message due to another exception"
+
         label_to_resources = cls.dict_label_to_resources(permissions)
         for organization in organizations:
-            metadata: OrganizationMetadata = organization.metadata
             BASE_ERR = (
-                f"\nError in organizations section\n"
-                f"Organization '{metadata.name}' permissions are invalid.\n"
+                f"Error in organizations section\n  "
+                f"Organization '{organization.metadata.name}' permissions are invalid.\n  "
             )
             for organization_permission in organization.permissions:
-                PERM_ERR = f"Permission with label '{organization_permission.label}' is invalid\n"
+                PERM_ERR = f"Permission with label '{organization_permission.label}' is invalid\n  "
                 split = named_full_label(organization_permission.label)
-                if split.organization != metadata.label:
+                if split.organization != organization.metadata.label:
                     raise RespoException(
                         BASE_ERR
                         + PERM_ERR
-                        + f"'{split.organization}' must be equal to '{metadata.label}'"
+                        + f"'{split.organization}' must be equal to '{organization.metadata.label}'\n  "
                     )
                 exists = False
                 if split.metadata_label in label_to_resources:
@@ -353,15 +382,18 @@ class RespoModel(BaseModel):
                     raise RespoException(
                         BASE_ERR
                         + PERM_ERR
-                        + f"Permission '{split.metadata_label}.{split.label}' not found"
+                        + f"Permission '{split.metadata_label}.{split.label}' not found\n  "
                     )
-        return values
+        return organizations
 
-    @root_validator
-    def organization_resolve_complex_allow_deny_rules(cls, values: Dict):
-        organizations: List[Organization] = values["organizations"]
-        permissions: List[Permission] = values["permissions"]
+    @validator("organizations")
+    def organization_resolve_complex_allow_deny_rules(
+        cls, organizations: List[Organization], values: Dict
+    ):
+        permissions: Optional[List[Permission]] = values.get("permissions")
+        assert permissions is not None, "General error message due to another exception"
         label_to_rules = cls.dict_label_to_rules(permissions)
+
         while True:
             organizations_after_resolving: List[Organization] = []
             for organization in organizations:
@@ -387,12 +419,10 @@ class RespoModel(BaseModel):
                 # will look up again for nested rules
                 organizations = organizations_after_resolving
 
-        values["organizations"] = organizations
-        return values
+        return organizations
 
-    @root_validator
-    def organization_remove_all_deny_rules(cls, values: Dict):
-        organizations: List[Organization] = values["organizations"]
+    @validator("organizations")
+    def organization_remove_all_deny_rules(cls, organizations: List[Organization]):
         new_organizations: List[Organization] = []
         for organization in organizations:
             result_permissions: List[OrganizationPermissionGrant] = []
@@ -410,57 +440,62 @@ class RespoModel(BaseModel):
                 )
             organization.permissions = result_permissions
             new_organizations.append(organization)
-        values["organizations"] = new_organizations
-        return values
+        return organizations
 
-    @root_validator
-    def roles_every_metadata_is_unique_and_valid(cls, values: Dict):
-        organizations: List[Organization] = values["organizations"]
-        roles: List[Role] = values["roles"]
-        roles_names: Dict[str, Set[str]] = {}
+    @validator("roles")
+    def roles_every_metadata_is_unique_and_valid(cls, roles: List[Role], values: Dict):
+        organizations: Optional[List[Organization]] = values.get("organizations")
+        assert (
+            organizations is not None
+        ), "General error message due to another exception"
+
+        roles_names: Set[str] = set()
+        organization_names: Set[str] = set()
 
         for organization in organizations:
-            roles_names[organization.metadata.label] = set()
+            organization_names.add(organization.metadata.label)
 
         for role in roles:
             BASE_ERR = (
-                f"\nError in roles section\n"
-                f"Role '{role.metadata.name}' metadata is invalid.\n"
+                f"Error in roles section\n  "
+                f"Role '{role.metadata.name}' metadata is invalid.\n  "
             )
-            if role.metadata.organization not in roles_names:
+            if role.metadata.organization not in organization_names:
                 raise RespoException(
                     BASE_ERR
                     + f"Role's declared organization "
-                    + f"'{role.metadata.organization}' not found\n"
+                    + f"'{role.metadata.organization}' not found\n  "
                 )
-            if role.metadata.label in roles_names[role.metadata.organization]:
+            if role.metadata.label in roles_names:
                 raise RespoException(
                     BASE_ERR
-                    + f"Found two roles with the same label '{role.metadata.label}' "
-                    + f"in organization '{role.metadata.organization}'\n"
+                    + f"Found two roles with the same label '{role.metadata.label}'\n  "
                 )
-        return values
+            roles_names.add(role.metadata.label)
+        return roles
 
-    @root_validator
-    def roles_every_permission_exists_and_can_be_applied(cls, values: Dict):
-        roles: List[Role] = values["roles"]
-        permissions: List[Permission] = values["permissions"]
+    @validator("roles")
+    def roles_every_permission_exists_and_can_be_applied(
+        cls, roles: List[Role], values: Dict
+    ):
+        permissions: Optional[List[Permission]] = values.get("permissions")
+        assert permissions is not None, "General error message due to another exception"
         label_to_resources = cls.dict_label_to_resources(permissions)
         for role in roles:
             BASE_ERR = (
-                f"\nError in roles section\n"
-                f"Role '{role.metadata.name}' permissions are invalid.\n"
+                f"Error in roles section\n  "
+                f"Role '{role.metadata.name}' permissions are invalid.\n  "
             )
             for role_permission in role.permissions:
                 PERM_ERR = (
-                    f"Permission with label '{role_permission.label}' is invalid\n"
+                    f"Permission with label '{role_permission.label}' is invalid\n  "
                 )
                 split = named_full_label(role_permission.label)
                 if split.organization != role.metadata.organization:
                     raise RespoException(
                         BASE_ERR
                         + PERM_ERR
-                        + f"'{split.organization}' must be equal to '{role.metadata.organization}'"
+                        + f"'{split.organization}' must be equal to '{role.metadata.organization}'\n  "
                     )
                 exists = False
                 if split.metadata_label in label_to_resources:
@@ -472,14 +507,14 @@ class RespoModel(BaseModel):
                     raise RespoException(
                         BASE_ERR
                         + PERM_ERR
-                        + f"Permission '{split.metadata_label}.{split.label}' not found"
+                        + f"Permission '{split.metadata_label}.{split.label}' not found\n  "
                     )
-        return values
+        return roles
 
-    @root_validator
-    def roles_resolve_complex_allow_deny_rules(cls, values: Dict):
-        roles: List[Role] = values["roles"]
-        permissions: List[Permission] = values["permissions"]
+    @validator("roles")
+    def roles_resolve_complex_allow_deny_rules(cls, roles: List[Role], values: Dict):
+        permissions: Optional[List[Permission]] = values.get("permissions")
+        assert permissions is not None, "General error message due to another exception"
         label_to_rules = cls.dict_label_to_rules(permissions)
         while True:
             roles_after_resolving: List[Role] = []
@@ -504,13 +539,10 @@ class RespoModel(BaseModel):
             else:
                 # will look up again for nested rules
                 roles = roles_after_resolving
+        return roles
 
-        values["roles"] = roles
-        return values
-
-    @root_validator
-    def roles_remove_all_deny_rules(cls, values: Dict):
-        roles: List[Role] = values["roles"]
+    @validator("roles")
+    def roles_remove_all_deny_rules(cls, roles: List[Role]):
         new_roles: List[Role] = []
         for role in roles:
             result_permissions: List[RolePermissionGrant] = []
@@ -528,21 +560,18 @@ class RespoModel(BaseModel):
                 )
             role.permissions = result_permissions
             new_roles.append(role)
-        values["roles"] = new_roles
-        return values
+        return roles
 
     def _label_resource_exists(self, label: str) -> bool:
-        logger.warning("_label")
         lt = named_full_label(label)
         for permission in self.permissions:
             if permission.metadata.label == lt.metadata_label:
                 for resource in permission.resources:
                     if resource.label == f"{lt.metadata_label}.{lt.label}":
                         return True
-        raise RespoException(f"Permissions resource label {label} not found")
+        raise RespoException(f"Permissions resource label {label} not found\n  ")
 
     def _check_organization(self, label: str, organization_name: str) -> bool:
-        logger.warning("_check")
         for organization in self.organizations:
             if organization.metadata.label != organization_name:
                 continue
@@ -552,7 +581,6 @@ class RespoModel(BaseModel):
         return False
 
     def check(self, label: str, client: Client, force: bool = False) -> bool:
-        logger.warning("check")
         if not force:
             self._label_resource_exists(label)
         checked_organizations: Set[str] = set()

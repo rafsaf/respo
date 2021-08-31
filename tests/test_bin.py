@@ -1,7 +1,9 @@
+import os
+
 from respo import get_respo_model
 from respo.bin import _save_respo_model
+
 from tests.utils import get_model
-import os
 
 
 def test_model_is_equal_after_dumping():

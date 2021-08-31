@@ -1,12 +1,26 @@
-from respo.respo_model import RespoModel
-from respo.bin import _save_respo_model, get_respo_model
-from typing import Optional
+import json
 from pathlib import Path
+from typing import Optional
+
 import typer
 import yaml
-import json
+from pydantic import ValidationError
+from respo.bin import _save_respo_model, get_respo_model
+from respo.respo_model import RespoModel
 
 app = typer.Typer()
+
+
+def good(s: str) -> str:
+    return typer.style(s, fg=typer.colors.GREEN, bold=True)
+
+
+def info(s: str) -> str:
+    return typer.style(s, fg=typer.colors.YELLOW, bold=True)
+
+
+def bad(s: str) -> str:
+    return typer.style(s, fg=typer.colors.WHITE, bg=typer.colors.RED)
 
 
 @app.command()
@@ -26,7 +40,7 @@ def create(
         )
 
     elif yml_file is not None:
-        typer.echo(f"Processing {yml_file}")
+        typer.echo(info(f"Processing {yml_file}"))
         if yml_file.is_file():
             try:
                 data = yaml.safe_load(yml_file.read_text())
@@ -44,11 +58,12 @@ def create(
             typer.echo(f"Unknown path")
             raise typer.Abort()
 
-        from time import time
-
-        t1 = time()
-        respo_model = RespoModel(**data)
-        print(time() - t1)
+        try:
+            respo_model = RespoModel.parse_obj(data)
+        except ValidationError as exc:
+            typer.echo(info("Could not validate data"))
+            print(exc)
+            raise typer.Abort()
         _save_respo_model(respo_model)
 
     elif json_file is not None:
@@ -72,6 +87,7 @@ def create(
 
         respo_model = RespoModel(**data)
         _save_respo_model(respo_model)
+    typer.echo(good("Success!"))
 
 
 @app.command()

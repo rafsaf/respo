@@ -1,16 +1,156 @@
-import os
-from respo import get_respo_model, create_respo_client
-from respo.bin import _save_respo_model
-from tests.utils import get_model
+from respo import RespoModel, create_respo_client
 
 
-def test_general_yml():
-    model1 = get_model("tests/cases/general.yml")
+def test_general_yml_organization_book123(get_general_model: RespoModel):
+    respo = get_general_model
+    client = create_respo_client(organization="book123")
 
-    _save_respo_model(model1, "test_respo1.bin")
-    respo = get_respo_model("test_respo1.bin")
+    assert respo.check("book123.user.read_basic", client)
+    assert not respo.check("book123.user.all", client)
+    assert not respo.check("book123.user.read_all", client)
+    assert not respo.check("book123.user.read_all_better", client)
+    assert not respo.check("book123.user.update", client)
+    assert not respo.check("book123.user.delete", client)
 
-    client = create_respo_client(organization="book123", role="client")
-    assert respo.check("book123.user.all", client) is False
+    assert respo.check("book123.book.list", client)
+    assert respo.check("book123.book.read", client)
+    assert respo.check("book123.book.buy_all", client)
+    assert respo.check("book123.book.buy", client)
+    assert not respo.check("book123.book.sell", client)
 
-    os.remove("test_respo.bin")
+    assert not respo.check("default.user.read_basic", client)
+    assert not respo.check("default.user.all", client)
+    assert not respo.check("default.user.read_all", client)
+    assert not respo.check("default.user.read_all_better", client)
+    assert not respo.check("default.user.update", client)
+    assert not respo.check("default.user.delete", client)
+
+    assert not respo.check("default.book.list", client)
+    assert not respo.check("default.book.read", client)
+    assert not respo.check("default.book.buy_all", client)
+    assert not respo.check("default.book.buy", client)
+    assert not respo.check("default.book.sell", client)
+
+
+def test_general_yml_organization_default(get_general_model: RespoModel):
+    respo = get_general_model
+    client = create_respo_client(organization="default")
+
+    assert not respo.check("book123.user.read_basic", client)
+    assert not respo.check("book123.user.all", client)
+    assert not respo.check("book123.user.read_all", client)
+    assert not respo.check("book123.user.read_all_better", client)
+    assert not respo.check("book123.user.update", client)
+    assert not respo.check("book123.user.delete", client)
+
+    assert not respo.check("book123.book.list", client)
+    assert not respo.check("book123.book.read", client)
+    assert not respo.check("book123.book.buy_all", client)
+    assert not respo.check("book123.book.buy", client)
+    assert not respo.check("book123.book.sell", client)
+
+    assert respo.check("default.user.read_basic", client)
+    assert not respo.check("default.user.all", client)
+    assert respo.check("default.user.read_all", client)
+    assert respo.check("default.user.read_all_better", client)
+    assert not respo.check("default.user.update", client)
+    assert not respo.check("default.user.delete", client)
+
+    assert not respo.check("default.book.list", client)
+    assert not respo.check("default.book.read", client)
+    assert not respo.check("default.book.buy_all", client)
+    assert not respo.check("default.book.buy", client)
+    assert not respo.check("default.book.sell", client)
+
+
+def test_general_yml_role_client(get_general_model: RespoModel):
+    respo = get_general_model
+    client = create_respo_client(role="client")
+
+    assert respo.check("book123.user.read_basic", client)
+    assert not respo.check("book123.user.all", client)
+    assert not respo.check("book123.user.read_all", client)
+    assert not respo.check("book123.user.read_all_better", client)
+    assert not respo.check("book123.user.update", client)
+    assert not respo.check("book123.user.delete", client)
+
+    assert respo.check("book123.book.list", client)
+    assert respo.check("book123.book.read", client)
+    assert respo.check("book123.book.buy_all", client)
+    assert respo.check("book123.book.buy", client)
+    assert not respo.check("book123.book.sell", client)
+
+    assert not respo.check("default.user.read_basic", client)
+    assert not respo.check("default.user.all", client)
+    assert not respo.check("default.user.read_all", client)
+    assert not respo.check("default.user.read_all_better", client)
+    assert not respo.check("default.user.update", client)
+    assert not respo.check("default.user.delete", client)
+
+    assert not respo.check("default.book.list", client)
+    assert not respo.check("default.book.read", client)
+    assert not respo.check("default.book.buy_all", client)
+    assert not respo.check("default.book.buy", client)
+    assert not respo.check("default.book.sell", client)
+
+
+def test_general_yml_role_superuser_book(get_general_model: RespoModel):
+    respo = get_general_model
+    client = create_respo_client(role="superuser_book")
+
+    assert respo.check("book123.user.read_basic", client)
+    assert respo.check("book123.user.all", client)
+    assert respo.check("book123.user.read_all", client)
+    assert respo.check("book123.user.read_all_better", client)
+    assert respo.check("book123.user.update", client)
+    assert respo.check("book123.user.delete", client)
+
+    assert respo.check("book123.book.list", client)
+    assert respo.check("book123.book.read", client)
+    assert respo.check("book123.book.buy_all", client)
+    assert respo.check("book123.book.buy", client)
+    assert not respo.check("book123.book.sell", client)
+
+    assert not respo.check("default.user.read_basic", client)
+    assert not respo.check("default.user.all", client)
+    assert not respo.check("default.user.read_all", client)
+    assert not respo.check("default.user.read_all_better", client)
+    assert not respo.check("default.user.update", client)
+    assert not respo.check("default.user.delete", client)
+
+    assert not respo.check("default.book.list", client)
+    assert not respo.check("default.book.read", client)
+    assert not respo.check("default.book.buy_all", client)
+    assert not respo.check("default.book.buy", client)
+    assert not respo.check("default.book.sell", client)
+
+
+def test_general_yml_role_admin_role(get_general_model: RespoModel):
+    respo = get_general_model
+    client = create_respo_client(role="admin_role")
+
+    assert respo.check("book123.user.read_basic", client)
+    assert not respo.check("book123.user.all", client)
+    assert respo.check("book123.user.read_all", client)
+    assert not respo.check("book123.user.read_all_better", client)
+    assert not respo.check("book123.user.update", client)
+    assert not respo.check("book123.user.delete", client)
+
+    assert respo.check("book123.book.list", client)
+    assert respo.check("book123.book.read", client)
+    assert respo.check("book123.book.buy_all", client)
+    assert respo.check("book123.book.buy", client)
+    assert respo.check("book123.book.sell", client)
+
+    assert not respo.check("default.user.read_basic", client)
+    assert not respo.check("default.user.all", client)
+    assert not respo.check("default.user.read_all", client)
+    assert not respo.check("default.user.read_all_better", client)
+    assert not respo.check("default.user.update", client)
+    assert not respo.check("default.user.delete", client)
+
+    assert not respo.check("default.book.list", client)
+    assert not respo.check("default.book.read", client)
+    assert not respo.check("default.book.buy_all", client)
+    assert not respo.check("default.book.buy", client)
+    assert not respo.check("default.book.sell", client)
