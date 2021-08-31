@@ -355,19 +355,19 @@ class RespoModel(BaseModel):
         while True:
             organizations_after: List[Organization] = []
             for organization in organizations:
-                metadata: OrganizationMetadata = organization.metadata
                 for organization_permission in organization.permissions:
                     split = named_full_label(organization_permission.label)
                     for rule in label_to_rules[split.metadata_label]:
-                        if rule.when == f"{split.metadata_label}.{split.label}":
-                            for rule_then in rule.then:
-                                new_label = f"{metadata.label}.{rule_then}"
-                                grant = OrganizationPermissionGrant(
-                                    type=organization_permission.type,
-                                    label=new_label,
-                                )
-                                if grant not in organization.permissions:
-                                    organization.permissions.append(grant)
+                        if rule.when != f"{split.metadata_label}.{split.label}":
+                            continue
+                        for rule_then in rule.then:
+                            new_label = f"{organization.metadata.label}.{rule_then}"
+                            grant = OrganizationPermissionGrant(
+                                type=organization_permission.type,
+                                label=new_label,
+                            )
+                            if grant not in organization.permissions:
+                                organization.permissions.append(grant)
                 organizations_after.append(organization)
             if organizations == organizations_after:
                 break
