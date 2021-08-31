@@ -10,3 +10,4 @@ permissions:
 metadata:
   apiVersion: v1
   name: some_name
+  created_at: "2020-01-01"
