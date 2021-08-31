@@ -1,3 +1,4 @@
+from os import terminal_size
 from pydantic import BaseModel, validator, root_validator
 from typing import Dict, Literal, Optional, List, Set, Union
 from respo.helpers import (
@@ -483,10 +484,21 @@ class RespoModel(BaseModel):
                 for resource in permission.resources:
                     if resource.label == f"{lt.metadata_label}.{lt.label}":
                         return True
-        raise RespoException(f"Permissions resource label {label} is not defined")
+        raise RespoException(f"Permissions resource label {label} not found")
 
-    def check(self, label: str, client: Client) -> bool:
-        self._label_resource_exists(label)
+    def _check_organization(self, label: str, organization_name: str) -> bool:
+        for organization in self.organizations:
+            if organization.metadata.label != organization_name:
+                continue
+            for permission in organization.permissions:
+                if permission.label == label:
+                    return True
+        return False
+
+    def check(self, label: str, client: Client, force: bool = False) -> bool:
+        if not force:
+            self._label_resource_exists(label)
+        checked_organizations: Set[str] = set()
         for client_role in client.role:
             for role in self.roles:
                 if not role.metadata.label == client_role:
@@ -495,5 +507,13 @@ class RespoModel(BaseModel):
                     for permission in role.permissions:
                         if permission.label == label:
                             return True
+                    if self._check_organization(label, role.metadata.organization):
+                        return True
+                    checked_organizations.add(role.metadata.organization)
+        for organization in [
+            org for org in client.organization if org not in checked_organizations
+        ]:
+            if self._check_organization(label, organization):
+                return True
 
         return False
