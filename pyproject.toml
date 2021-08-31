@@ -11,17 +11,13 @@ authors = ["rafsaf <rafal.safin@rafsaf.pl>"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "Intended Audience :: System Administrators",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
-    "Topic :: Security",
-    "Topic :: Internet",
     "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
-    "Topic :: Internet :: WWW/HTTP",
     "Typing :: Typed",
 ]
 [tool.poetry.dependencies]
@@ -36,6 +32,9 @@ pytest = "^6.2.4"
 coverage = {extras = ["toml"], version = "^5.5"}
 isort = "^5.9.3"
 black = "^20.7b0"
+mkdocs-material = "^7.2.5"
+pymdown-extensions = "^8.2"
+markdown-include = "^0.6.0"
 
 [tool.coverage.run]
 source = [

@@ -1,0 +1,18 @@
+site_name: respo
+theme:
+  favicon: images/favicon.png
+  icon:
+    logo: material/list-status
+  name: material
+  palette:
+    primary: blue grey
+
+repo_name: rafsaf/respo
+repo_url: https://github.com/rafsaf/respo
+
+markdown_extensions:
+  - markdown_include.include:
+      base_path: docs
+  - pymdownx.highlight:
+      linenums: true
+  - pymdownx.superfences
