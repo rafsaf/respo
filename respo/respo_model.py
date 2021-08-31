@@ -353,7 +353,7 @@ class RespoModel(BaseModel):
         permissions: List[Permission] = values["permissions"]
         label_to_rules = cls.dict_label_to_rules(permissions)
         while True:
-            organizations_after: List[Organization] = []
+            organizations_after_resolving: List[Organization] = []
             for organization in organizations:
                 for organization_permission in organization.permissions:
                     split = named_full_label(organization_permission.label)
@@ -368,11 +368,14 @@ class RespoModel(BaseModel):
                             )
                             if grant not in organization.permissions:
                                 organization.permissions.append(grant)
-                organizations_after.append(organization)
-            if organizations == organizations_after:
+                organizations_after_resolving.append(organization)
+
+            if organizations == organizations_after_resolving:
+                # no more nested rules will be found
                 break
             else:
-                organizations = organizations_after
+                # will look up again for nested rules
+                organizations = organizations_after_resolving
 
         values["organizations"] = organizations
         return values
