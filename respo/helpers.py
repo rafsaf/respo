@@ -38,7 +38,10 @@ def named_min_label(label: str):
     if len(split) == 2:
         return _named_min_label(split[0], split[1])
     else:
-        raise RespoException(f"Label {label} is not valid")
+        raise RespoException(
+            f"Label {label} is not valid"
+            f"Hint: use syntax 'label.permission', eg. 'user.delete'\n"
+        )
 
 
 def named_full_label(label: str):
@@ -52,5 +55,4 @@ def named_full_label(label: str):
         raise RespoException(
             f"Label '{label}' is not valid\n"
             f"Hint: use syntax 'organization.meta_label.permission', eg. 'foo.user.delete'\n"
-            f"For permission scoped globally use 'all.user.delete'"
         )

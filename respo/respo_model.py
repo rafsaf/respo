@@ -263,7 +263,7 @@ class Client(BaseModel):
         if v is None:
             return []
         if isinstance(v, str):
-            return [v]
+            return v.split()
         return v
 
 
@@ -280,9 +280,6 @@ class RespoModel(BaseModel):
     permissions: List[Permission]
     organizations: List[Organization]
     roles: List[Role]
-
-    class Config:
-        arbitrary_types_allowed = True
 
     @classmethod
     def dict_label_to_resources(
@@ -309,23 +306,19 @@ class RespoModel(BaseModel):
         label_to_resources = cls.dict_label_to_resources(permissions)
         for organization in organizations:
             metadata: OrganizationMetadata = organization.metadata
-            organization_permissions: List[
-                OrganizationPermissionGrant
-            ] = organization.permissions
             BASE_ERR = (
                 f"\nError in organizations section\n"
                 f"Organization '{metadata.name}' permissions are invalid.\n"
             )
-            for organization_permission in organization_permissions:
+            for organization_permission in organization.permissions:
                 PERM_ERR = f"Permission with label '{organization_permission.label}' is invalid\n"
                 split = named_full_label(organization_permission.label)
-                if not metadata.label == "all":
-                    if split.organization != metadata.label:
-                        raise RespoException(
-                            BASE_ERR
-                            + PERM_ERR
-                            + f"'{split.organization}' must be equal to '{metadata.label}'"
-                        )
+                if split.organization != metadata.label:
+                    raise RespoException(
+                        BASE_ERR
+                        + PERM_ERR
+                        + f"'{split.organization}' must be equal to '{metadata.label}'"
+                    )
                 exists = False
                 if split.metadata_label in label_to_resources:
                     for resource in label_to_resources[split.metadata_label]:
@@ -341,36 +334,56 @@ class RespoModel(BaseModel):
         return values
 
     @root_validator
-    def organization_parse_allow_rules(cls, values: Dict):
+    def organization_resolve_complex_allow_deny_rules(cls, values: Dict):
         organizations: List[Organization] = values["organizations"]
         permissions: List[Permission] = values["permissions"]
-        label_to_resources = cls.dict_label_to_resources(permissions)
         label_to_rules = cls.dict_label_to_rules(permissions)
-
-        organizations_after: List[Organization] = []
-        for organization in organizations:
-            metadata: OrganizationMetadata = organization.metadata
-            organization_permissions: List[
-                OrganizationPermissionGrant
-            ] = organization.permissions
-            organization_labels_set = set([o.label for o in organization_permissions])
-            for organization_permission in organization_permissions:
-                if organization_permission.type == "Deny":
-                    continue
-                split = named_full_label(organization_permission.label)
-                for rule in label_to_rules[split.metadata_label]:
-                    if rule.when == f"{split.metadata_label}.{split.label}":
-                        for rule_then in rule.then:
-                            new_label = f"{metadata.label}.{rule_then}"
-                            if new_label not in organization_labels_set:
-                                organization.permissions.append(
-                                    OrganizationPermissionGrant(
-                                        type="Allow", label=new_label
-                                    )
+        while True:
+            organizations_after: List[Organization] = []
+            for organization in organizations:
+                metadata: OrganizationMetadata = organization.metadata
+                for organization_permission in organization.permissions:
+                    split = named_full_label(organization_permission.label)
+                    for rule in label_to_rules[split.metadata_label]:
+                        if rule.when == f"{split.metadata_label}.{split.label}":
+                            for rule_then in rule.then:
+                                new_label = f"{metadata.label}.{rule_then}"
+                                grant = OrganizationPermissionGrant(
+                                    type=organization_permission.type,
+                                    label=new_label,
                                 )
-                                organization_labels_set.add(new_label)
-            organizations_after.append(organization)
-        values["organizations"] = organizations_after
+                                if grant not in organization.permissions:
+                                    organization.permissions.append(grant)
+                organizations_after.append(organization)
+            if organizations == organizations_after:
+                break
+            else:
+                organizations = organizations_after
+
+        values["organizations"] = organizations
+        return values
+
+    @root_validator
+    def organization_remove_all_deny_rules(cls, values: Dict):
+        organizations: List[Organization] = values["organizations"]
+        new_organizations: List[Organization] = []
+        for organization in organizations:
+            result_permissions: List[OrganizationPermissionGrant] = []
+            allow_set: Set[str] = set()
+            deny_set: Set[str] = set()
+            for organization_permission in organization.permissions:
+                if organization_permission.type == "Allow":
+                    allow_set.add(organization_permission.label)
+                else:
+                    deny_set.add(organization_permission.label)
+            new_allow_set = allow_set - deny_set
+            for label in new_allow_set:
+                result_permissions.append(
+                    OrganizationPermissionGrant(type="Allow", label=label)
+                )
+            organization.permissions = result_permissions
+            new_organizations.append(organization)
+        values["organizations"] = new_organizations
         return values
 
     def _label_resource_exists(self, label: str) -> bool:

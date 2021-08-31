@@ -7,12 +7,9 @@ organizations:
       label: default
       name: Default organization
     permissions:
-      - label: default.user.read_all
+      - label: default.user.read_all_better
         type: Allow
-      - label: default.user.read_all
-        type: Allow
-      - label: default.user.all
-        type: Deny
+
 permissions:
   - metadata:
       description: Every permission related to Users
@@ -23,6 +20,8 @@ permissions:
         name: Allows to read user basic informations
       - label: user.read_all
         name: Allows to read all informations about users
+      - label: user.read_all_better
+        name: Allows to read all informations about users
       - label: user.update
         name: Allows to edit user
       - label: user.delete
@@ -32,6 +31,10 @@ permissions:
         then:
           - user.read_basic
         when: user.read_all
+      - name: user.read_all_better
+        when: user.read_all_better
+        then:
+          - user.read_all
 roles:
   - metadata:
       description: Some very long text here
