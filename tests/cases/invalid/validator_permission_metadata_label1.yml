@@ -1,0 +1,12 @@
+roles: []
+organizations: []
+permissions:
+  - metadata:
+      name: name
+      label: NotAllowed
+      description: desc
+    resources: []
+    rules: []
+metadata:
+  apiVersion: v1
+  name: some_name
