@@ -40,9 +40,9 @@ roles:
       description: Some very long text here
       label: superuser
       name: Admin User
-      organization: defaul
+      organization: default
     permissions:
-      - label: default.user.all
+      - label: default.user.read_all
         type: Allow
       - label: default.user.delete
         type: Deny

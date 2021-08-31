@@ -1,4 +1,4 @@
-from os import terminal_size
+from logging import log
 from pydantic import BaseModel, validator, root_validator
 from typing import Dict, Literal, Optional, List, Set, Union
 from respo.helpers import (
@@ -46,9 +46,6 @@ class MetadataSection(BaseModel):
     @validator("last_modified")
     def update_last_modified(cls, _) -> str:
         return datetime.utcnow().isoformat()
-
-    class Config:
-        validate_all = True
 
 
 class PermissionMetadata(BaseModel):
@@ -311,6 +308,7 @@ class RespoModel(BaseModel):
 
     @root_validator
     def organization_every_metadata_is_unique_and_valid(cls, values: Dict):
+        logger.warning(values)
         organizations: List[Organization] = values["organizations"]
         organization_names: Set[str] = set()
         for organization in organizations:
@@ -326,6 +324,7 @@ class RespoModel(BaseModel):
 
     @root_validator
     def organization_every_permission_exists_and_can_be_applied(cls, values: Dict):
+        print("hyp")
         organizations: List[Organization] = values["organizations"]
         permissions: List[Permission] = values["permissions"]
         label_to_resources = cls.dict_label_to_resources(permissions)
@@ -477,7 +476,63 @@ class RespoModel(BaseModel):
                     )
         return values
 
+    @root_validator
+    def roles_resolve_complex_allow_deny_rules(cls, values: Dict):
+        roles: List[Role] = values["roles"]
+        permissions: List[Permission] = values["permissions"]
+        label_to_rules = cls.dict_label_to_rules(permissions)
+        while True:
+            roles_after_resolving: List[Role] = []
+            for role in roles:
+                for role_permission in role.permissions:
+                    split = named_full_label(role_permission.label)
+                    for rule in label_to_rules[split.metadata_label]:
+                        if rule.when != f"{split.metadata_label}.{split.label}":
+                            continue
+                        for rule_then in rule.then:
+                            new_label = f"{role.metadata.organization}.{rule_then}"
+                            grant = RolePermissionGrant(
+                                type=role_permission.type,
+                                label=new_label,
+                            )
+                            if grant not in role.permissions:
+                                role.permissions.append(grant)
+                roles_after_resolving.append(role)
+            if roles == roles_after_resolving:
+                # no more nested rules will be found
+                break
+            else:
+                # will look up again for nested rules
+                roles = roles_after_resolving
+
+        values["roles"] = roles
+        return values
+
+    @root_validator
+    def roles_remove_all_deny_rules(cls, values: Dict):
+        roles: List[Role] = values["roles"]
+        new_roles: List[Role] = []
+        for role in roles:
+            result_permissions: List[RolePermissionGrant] = []
+            allow_set: Set[str] = set()
+            deny_set: Set[str] = set()
+            for role_permission in role.permissions:
+                if role_permission.type == "Allow":
+                    allow_set.add(role_permission.label)
+                else:
+                    deny_set.add(role_permission.label)
+            new_allow_set = allow_set - deny_set
+            for label in new_allow_set:
+                result_permissions.append(
+                    RolePermissionGrant(type="Allow", label=label)
+                )
+            role.permissions = result_permissions
+            new_roles.append(role)
+        values["roles"] = new_roles
+        return values
+
     def _label_resource_exists(self, label: str) -> bool:
+        logger.warning("_label")
         lt = named_full_label(label)
         for permission in self.permissions:
             if permission.metadata.label == lt.metadata_label:
@@ -487,6 +542,7 @@ class RespoModel(BaseModel):
         raise RespoException(f"Permissions resource label {label} not found")
 
     def _check_organization(self, label: str, organization_name: str) -> bool:
+        logger.warning("_check")
         for organization in self.organizations:
             if organization.metadata.label != organization_name:
                 continue
@@ -496,6 +552,7 @@ class RespoModel(BaseModel):
         return False
 
     def check(self, label: str, client: Client, force: bool = False) -> bool:
+        logger.warning("check")
         if not force:
             self._label_resource_exists(label)
         checked_organizations: Set[str] = set()
