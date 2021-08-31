@@ -1,9 +1,16 @@
 import os
+from pathlib import Path
 
 import pytest
-from respo.bin import _save_respo_model, get_respo_model
+import yaml
+from respo import RespoModel, get_respo_model
+from respo.bin import _save_respo_model
 
-from tests.utils import get_model
+
+def get_model(name: str) -> RespoModel:
+    yml_file = Path(name)
+    data = yaml.safe_load(yml_file.read_text())
+    return RespoModel.parse_obj(data)
 
 
 @pytest.fixture(scope="session")
