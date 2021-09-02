@@ -9,9 +9,9 @@ binary_file_path = Path(BINARY_FILE_NAME)
 
 
 def get_respo_model(_Path: str = BINARY_FILE_NAME) -> RespoModel:
-    if not binary_file_path.exists():
+    if not Path(_Path).exists():
         raise RespoException(
-            f"{BINARY_FILE_NAME} file does not exist. Did you forget to create it?"
+            f"{_Path} file does not exist. Did you forget to create it?"
         )
     with open(_Path, "rb") as file:
         model = pickle.load(file)
