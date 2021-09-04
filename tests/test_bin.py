@@ -1,5 +1,6 @@
 import os
-
+from respo.helpers import RespoException
+import pytest
 from respo import get_respo_model
 from respo.bin import _save_respo_model
 from pathlib import Path
@@ -15,3 +16,9 @@ def test_model_is_equal_after_dumping():
 
     assert model1 == model2
     Path(config.RESPO_BINARY_FILE_NAME).unlink()
+
+
+def test_exception_when_path_does_not_exist():
+    config.RESPO_BINARY_FILE_NAME = "asdasdasd"
+    with pytest.raises(RespoException):
+        get_respo_model()

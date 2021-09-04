@@ -4,11 +4,12 @@ from typing import Dict, List, Literal, Optional, Set, Union
 from pydantic import BaseModel, validator
 from respo.helpers import (
     RespoException,
-    is_label_valid,
+    is_valid_lowercase,
     logger,
-    named_full_label,
-    named_min_label,
+    DobuelLabel,
+    TripleLabel,
 )
+from respo.client import Client
 
 
 class MetadataSection(BaseModel):
@@ -58,7 +59,7 @@ class PermissionMetadata(BaseModel):
         name: Optional[str] = values.get("name")
         assert name is not None, "General error message due to another exception"
 
-        if not is_label_valid(label):
+        if not is_valid_lowercase(label):
             raise RespoException(
                 f"Error in permissions section\n  "
                 f"Permission '{name}' metadata is invalid.\n  "
@@ -72,7 +73,7 @@ class PermissionResource(BaseModel):
     label: str
 
     def get_label(self):
-        return named_min_label(self.label)
+        return DobuelLabel(full_label=self.label)
 
 
 class PermissionRule(BaseModel):
@@ -115,8 +116,8 @@ class Permission(BaseModel):
                 )
 
             if not (
-                is_label_valid(parsed_resource[0])
-                and is_label_valid(parsed_resource[1])
+                is_valid_lowercase(parsed_resource[0])
+                and is_valid_lowercase(parsed_resource[1])
             ):
                 raise RespoException(
                     BASE_ERR
@@ -193,7 +194,7 @@ class Permission(BaseModel):
             for resource in resources:
                 if resource.get_label().label == "all":
                     return resources
-            metadata_label = resources[0].get_label().metadata_label
+            metadata_label = resources[0].get_label().metalabel
             resources.append(
                 PermissionResource(
                     name=f"{metadata_label}.all", label=f"{metadata_label}.all"
@@ -209,7 +210,7 @@ class Permission(BaseModel):
         assert resources is not None, "General error message due to another exception"
 
         if len(resources) >= 2:
-            metadata_label = resources[0].get_label().metadata_label
+            metadata_label = resources[0].get_label().metalabel
             for rule in rules:
                 if rule.when == f"{metadata_label}.all":
                     return rules
@@ -238,7 +239,7 @@ class OrganizationMetadata(BaseModel):
         name: Optional[str] = values.get("name")
         assert name is not None, "General error message due to another exception"
 
-        if not is_label_valid(label):
+        if not is_valid_lowercase(label):
             raise RespoException(
                 f"Error in organizations section\n  "
                 f"Organization '{name}' metadata is invalid.\n  "
@@ -268,7 +269,7 @@ class RoleMetadata(BaseModel):
         name: Optional[str] = values.get("name")
         assert name is not None, "General error message due to another exception"
 
-        if not is_label_valid(label):
+        if not is_valid_lowercase(label):
             raise RespoException(
                 f"Error in roles section\n  "
                 f"Role '{name}' metadata is invalid.\n  "
@@ -285,28 +286,6 @@ class RolePermissionGrant(BaseModel):
 class Role(BaseModel):
     metadata: RoleMetadata
     permissions: List[RolePermissionGrant]
-
-
-class Client(BaseModel):
-    pk: List[str]
-    organization: List[str]
-    role: List[str]
-
-    @validator("*", pre=True)
-    def validate_pk(cls, v):
-        if v is None:
-            return []
-        if isinstance(v, str):
-            return v.split()
-        return v
-
-
-def create_respo_client(
-    pk: Optional[Union[List[str], str]] = None,
-    organization: Optional[Union[List[str], str]] = None,
-    role: Optional[Union[List[str], str]] = None,
-):
-    return Client(pk=pk, organization=organization, role=role)
 
 
 class RespoModel(BaseModel):
@@ -365,24 +344,27 @@ class RespoModel(BaseModel):
             )
             for organization_permission in organization.permissions:
                 PERM_ERR = f"Permission with label '{organization_permission.label}' is invalid\n  "
-                split = named_full_label(organization_permission.label)
-                if split.organization != organization.metadata.label:
+                triple_label = TripleLabel(full_label=organization_permission.label)
+                if triple_label.organization != organization.metadata.label:
                     raise RespoException(
                         BASE_ERR
                         + PERM_ERR
-                        + f"'{split.organization}' must be equal to '{organization.metadata.label}'\n  "
+                        + f"'{triple_label.organization}' must be equal to '{organization.metadata.label}'\n  "
                     )
                 exists = False
-                if split.metadata_label in label_to_resources:
-                    for resource in label_to_resources[split.metadata_label]:
-                        if resource.label == f"{split.metadata_label}.{split.label}":
+                if triple_label.metalabel in label_to_resources:
+                    for resource in label_to_resources[triple_label.metalabel]:
+                        if (
+                            resource.label
+                            == f"{triple_label.metalabel}.{triple_label.label}"
+                        ):
                             exists = True
                             break
                 if not exists:
                     raise RespoException(
                         BASE_ERR
                         + PERM_ERR
-                        + f"Permission '{split.metadata_label}.{split.label}' not found\n  "
+                        + f"Permission '{triple_label.metalabel}.{triple_label.label}' not found\n  "
                     )
         return organizations
 
@@ -398,9 +380,9 @@ class RespoModel(BaseModel):
             organizations_after_resolving: List[Organization] = []
             for organization in organizations:
                 for organization_permission in organization.permissions:
-                    split = named_full_label(organization_permission.label)
-                    for rule in label_to_rules[split.metadata_label]:
-                        if rule.when != f"{split.metadata_label}.{split.label}":
+                    triple_label = TripleLabel(full_label=organization_permission.label)
+                    for rule in label_to_rules[triple_label.metalabel]:
+                        if rule.when != triple_label.to_double_label():
                             continue
                         for rule_then in rule.then:
                             new_label = f"{organization.metadata.label}.{rule_then}"
@@ -490,24 +472,24 @@ class RespoModel(BaseModel):
                 PERM_ERR = (
                     f"Permission with label '{role_permission.label}' is invalid\n  "
                 )
-                split = named_full_label(role_permission.label)
-                if split.organization != role.metadata.organization:
+                triple_label = TripleLabel(full_label=role_permission.label)
+                if triple_label.organization != role.metadata.organization:
                     raise RespoException(
                         BASE_ERR
                         + PERM_ERR
-                        + f"'{split.organization}' must be equal to '{role.metadata.organization}'\n  "
+                        + f"'{triple_label.organization}' must be equal to '{role.metadata.organization}'\n  "
                     )
                 exists = False
-                if split.metadata_label in label_to_resources:
-                    for resource in label_to_resources[split.metadata_label]:
-                        if resource.label == f"{split.metadata_label}.{split.label}":
+                if triple_label.metalabel in label_to_resources:
+                    for resource in label_to_resources[triple_label.metalabel]:
+                        if resource.label == triple_label.to_double_label():
                             exists = True
                             break
                 if not exists:
                     raise RespoException(
                         BASE_ERR
                         + PERM_ERR
-                        + f"Permission '{split.metadata_label}.{split.label}' not found\n  "
+                        + f"Permission '{triple_label.to_double_label()}' not found\n  "
                     )
         return roles
 
@@ -520,9 +502,12 @@ class RespoModel(BaseModel):
             roles_after_resolving: List[Role] = []
             for role in roles:
                 for role_permission in role.permissions:
-                    split = named_full_label(role_permission.label)
-                    for rule in label_to_rules[split.metadata_label]:
-                        if rule.when != f"{split.metadata_label}.{split.label}":
+                    triple_label = TripleLabel(full_label=role_permission.label)
+                    for rule in label_to_rules[triple_label.metalabel]:
+                        if (
+                            rule.when
+                            != f"{triple_label.metalabel}.{triple_label.label}"
+                        ):
                             continue
                         for rule_then in rule.then:
                             new_label = f"{role.metadata.organization}.{rule_then}"
@@ -563,11 +548,14 @@ class RespoModel(BaseModel):
         return roles
 
     def _label_resource_exists(self, label: str) -> bool:
-        lt = named_full_label(label)
+        triple_label = TripleLabel(full_label=label)
         for permission in self.permissions:
-            if permission.metadata.label == lt.metadata_label:
+            if permission.metadata.label == triple_label.metalabel:
                 for resource in permission.resources:
-                    if resource.label == f"{lt.metadata_label}.{lt.label}":
+                    if (
+                        resource.label
+                        == f"{triple_label.metalabel}.{triple_label.label}"
+                    ):
                         return True
         raise RespoException(f"Permissions resource label {label} not found\n  ")
 
