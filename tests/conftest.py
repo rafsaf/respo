@@ -5,6 +5,7 @@ import pytest
 import yaml
 from respo import RespoModel, get_respo_model
 from respo.bin import _save_respo_model
+from respo.config import config
 
 
 def get_model(name: str) -> RespoModel:
@@ -13,11 +14,15 @@ def get_model(name: str) -> RespoModel:
     return RespoModel.parse_obj(data)
 
 
-@pytest.fixture(scope="session")
+os.environ["RESPO_BINARY_FILE_NAME"] = "test_respo.general.yml.bin"
+
+
+@pytest.fixture
 def get_general_model():
+
     model1 = get_model("tests/cases/general.yml")
 
-    _save_respo_model(model1, "test_respo.general.yml.bin")
-    respo = get_respo_model("test_respo.general.yml.bin")
+    _save_respo_model(model1)
+    respo = get_respo_model()
     yield respo
-    os.remove("test_respo.general.yml.bin")
+    Path(config.RESPO_BINARY_FILE_NAME).unlink()
