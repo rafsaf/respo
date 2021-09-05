@@ -94,7 +94,7 @@ def test_respo_export_fail_when_dir(runner: CliRunner):
 def test_respo_export_fail_respo_error(runner: CliRunner):
     result = runner.invoke(
         app,
-        ["export", "tests/cases/invalid/validator_metadata_section_api_version.yml"],
+        ["export", "tests/cases/invalid/metadata_api_version.yml"],
     )
     assert result.exit_code == 1
     assert "file does not exist. Did you forget to create it?" in result.stdout
