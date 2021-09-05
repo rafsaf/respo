@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import respo
 
 import typer
 import yaml
@@ -8,6 +9,7 @@ from respo.bin import _save_respo_model, get_respo_model
 from respo.config import config
 from respo.respo_model import RespoModel
 from respo.typer_utils import FileFormat, bad, good
+from respo.helpers import RespoException
 
 app = typer.Typer()
 
@@ -26,7 +28,7 @@ def create(
     elif file.is_dir():
         typer.echo(bad(f"The file '{file}' is not a file but a directory"))
         raise typer.Abort()
-    elif file.is_file():
+    else:
         typer.echo(good("Validating the content..."))
         if format.value == "yml":
             try:
@@ -39,7 +41,7 @@ def create(
         else:
             try:
                 data = json.loads(file.read_text())
-            except yaml.YAMLError as json_eror:
+            except json.JSONDecodeError as json_eror:
                 typer.echo(bad("Could not process file"))
                 typer.echo(json_eror)
                 raise typer.Abort()
@@ -54,9 +56,6 @@ def create(
         _save_respo_model(respo_model)
         typer.echo(good(f"Saving as binary file to {config.RESPO_BINARY_FILE_NAME}"))
         typer.echo(good("Success!"))
-    else:
-        typer.echo(bad(f"File '{file}' is not the text file"))
-        typer.Abort()
 
 
 @app.command()
@@ -76,20 +75,24 @@ def export(
             path += ".json"
         file = Path(path)
 
-    if file.is_file():
-        model = get_respo_model()
-        model_dict = model.dict()
-        with open(file, "w") as export_file:
-            yaml.dump(model_dict, export_file)
+    typer.echo(good(f"Start exporting to file '{file}'"))
+    if file.exists():
+        if file.is_dir():
+            typer.echo(bad(f"The file '{file}' is not a file but a directory"))
+            raise typer.Abort()
+        else:
+            typer.echo(good(f"The file '{file}' exists, it will be overwritten"))
 
-    elif file.is_dir():
-        typer.echo("file is a directory")
-        raise typer.Abort()
-    elif not file.exists():
+    try:
         model = get_respo_model()
-        model_dict = model.dict()
-        with open(file, "w") as export_file:
-            yaml.dump(model_dict, export_file)
-    else:
-        typer.echo(f"Unknown path")
+    except RespoException as respo_err:
+        typer.echo(respo_err)
         raise typer.Abort()
+
+    with open(file, "w") as export_file:
+        if format == "yml":
+            yaml.dump(model.dict(), export_file)
+        else:
+            json.dump(model.dict(), export_file)
+    typer.echo(good(f"Saving as {format} file to {config.RESPO_DEFAULT_EXPORT_FILE}"))
+    typer.echo(good("Success!"))

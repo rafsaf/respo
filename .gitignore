@@ -2,6 +2,7 @@
 *__pycache__*
 .pytest_cache
 __auto__respo_model.bin
+__auto__respo_model.yml
 dist
 htmlcov
 .coverage

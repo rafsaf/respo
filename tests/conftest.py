@@ -5,15 +5,20 @@ import yaml
 from respo import RespoModel, get_respo_model
 from respo.bin import _save_respo_model
 from respo.config import config
+from typer.testing import CliRunner
 
 
 @pytest.fixture(autouse=True)
 def mock_env_variables_and_cleanup():
     config.RESPO_BINARY_FILE_NAME = "test_bin_respo.yml.bin"
-    config.RESPO_DEFAULT_EXPORT_FILE = "test_export_respo.yml"
+    config.RESPO_DEFAULT_EXPORT_FILE = "test_export_respo"
     yield
     if Path(config.RESPO_BINARY_FILE_NAME).exists():
         Path(config.RESPO_BINARY_FILE_NAME).unlink()
+    if Path(config.RESPO_DEFAULT_EXPORT_FILE + ".yml").exists():
+        Path(config.RESPO_DEFAULT_EXPORT_FILE + ".yml").unlink()
+    if Path(config.RESPO_DEFAULT_EXPORT_FILE + ".json").exists():
+        Path(config.RESPO_DEFAULT_EXPORT_FILE + ".json").unlink()
 
 
 def get_model(name: str) -> RespoModel:
@@ -29,3 +34,9 @@ def get_general_model():
     _save_respo_model(model1)
     respo = get_respo_model()
     yield respo
+
+
+@pytest.fixture()
+def runner():
+    runner = CliRunner()
+    return runner
