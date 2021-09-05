@@ -1,7 +1,4 @@
 from respo import RespoModel, create_respo_client
-import os
-
-os.environ["RESPO_BINARY_FILE_NAME"] = "test_respo.general.yml.bin"
 
 
 def test_general_yml_organization_book123(get_general_model: RespoModel):

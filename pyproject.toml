@@ -48,6 +48,7 @@ skip_glob = [
     "respo/__init__.py",
     ]
 
+
 [tool.poetry.scripts]
 respo = "respo.typer:app"
 

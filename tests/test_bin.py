@@ -10,15 +10,11 @@ from respo.config import config
 
 def test_model_is_equal_after_dumping():
     model1 = get_model("tests/cases/general.yml")
-
     _save_respo_model(model1)
     model2 = get_respo_model()
-
     assert model1 == model2
-    Path(config.RESPO_BINARY_FILE_NAME).unlink()
 
 
 def test_exception_when_path_does_not_exist():
-    config.RESPO_BINARY_FILE_NAME = "asdasdasd"
     with pytest.raises(RespoException):
         get_respo_model()
