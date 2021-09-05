@@ -1,5 +1,6 @@
-from pydantic import BaseModel, validator
 from typing import List, Optional, Union
+
+from pydantic import BaseModel, validator
 
 
 class Client(BaseModel):

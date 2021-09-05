@@ -1,9 +1,9 @@
 import pickle
 from pathlib import Path
 
+from respo.config import config
 from respo.helpers import RespoException
 from respo.respo_model import RespoModel
-from respo.config import config
 
 
 def get_respo_model() -> RespoModel:

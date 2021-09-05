@@ -1,6 +1,7 @@
 import logging
 import string
 from logging import getLogger
+
 from pydantic import BaseModel, validator
 
 

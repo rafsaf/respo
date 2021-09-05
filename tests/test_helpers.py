@@ -1,8 +1,9 @@
 from typing import Tuple
-from respo.helpers import _contains_whitespace
-from respo.helpers import *
+
 import pytest
 from pydantic import ValidationError
+from respo.helpers import *
+from respo.helpers import _contains_whitespace
 
 test_strings = [
     ("xxx", False),

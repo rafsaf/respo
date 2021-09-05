@@ -1,11 +1,13 @@
 import os
-from respo.helpers import RespoException
+from pathlib import Path
+
 import pytest
 from respo import get_respo_model
 from respo.bin import _save_respo_model
-from pathlib import Path
-from tests.conftest import get_model
 from respo.config import config
+from respo.helpers import RespoException
+
+from tests.conftest import get_model
 
 
 def test_model_is_equal_after_dumping():

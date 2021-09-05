@@ -1,4 +1,4 @@
-from respo import get_respo_model, create_respo_client
+from respo import create_respo_client, get_respo_model
 
 respo = get_respo_model()
 client = create_respo_client(role="user", organization="default")

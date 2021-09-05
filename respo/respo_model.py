@@ -2,14 +2,14 @@ from datetime import datetime
 from typing import Dict, List, Literal, Optional, Set, Union
 
 from pydantic import BaseModel, validator
+from respo.client import Client
 from respo.helpers import (
+    DobuelLabel,
     RespoException,
+    TripleLabel,
     is_valid_lowercase,
     logger,
-    DobuelLabel,
-    TripleLabel,
 )
-from respo.client import Client
 
 
 class MetadataSection(BaseModel):

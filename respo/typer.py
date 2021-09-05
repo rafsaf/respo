@@ -1,30 +1,15 @@
 import json
 from pathlib import Path
-from typing import Literal, Optional
-from respo.config import config
+
 import typer
 import yaml
 from pydantic import ValidationError
 from respo.bin import _save_respo_model, get_respo_model
+from respo.config import config
 from respo.respo_model import RespoModel
+from respo.typer_utils import FileFormat, bad, good
 
 app = typer.Typer()
-
-
-from enum import Enum
-
-
-class FileFormat(str, Enum):
-    yml = "yml"
-    json = "json"
-
-
-def good(s: str) -> str:
-    return typer.style("INFO: " + s, fg=typer.colors.GREEN, bold=True)
-
-
-def bad(s: str) -> str:
-    return typer.style("ERROR: " + s, fg=typer.colors.YELLOW, bold=True)
 
 
 @app.command()
