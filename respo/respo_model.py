@@ -12,6 +12,9 @@ from respo.helpers import (
 )
 
 
+# TODO check for same permissions metadata label!
+
+
 class MetadataSection(BaseModel):
     apiVersion: str
     name: str
@@ -172,7 +175,7 @@ class Permission(BaseModel):
                     + f"Rule 'when' condition '{rule.when}' not found in resources labels\n  "
                 )
             for label in rule.then:
-                if rule.then == rule.when:
+                if label == rule.when:
                     raise RespoException(
                         BASE_ERR
                         + RULE_ERR
@@ -184,6 +187,7 @@ class Permission(BaseModel):
                         + RULE_ERR
                         + f"Found two 'then' conditions with the same label '{rule.then}'\n  "
                     )
+                labels_then_set.add(label)
         return rules
 
     @validator("resources")

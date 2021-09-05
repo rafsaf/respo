@@ -1,0 +1,20 @@
+roles: []
+organizations: []
+permissions:
+  - metadata:
+      name: name
+      label: label
+      description: desc
+    resources:
+      - name: name
+        label: label.read
+      - name: name2
+        label: label.read_all
+    rules:
+      - name: R1
+        when: label.read
+        then:
+          - label.read
+metadata:
+  apiVersion: v1
+  name: some_name
