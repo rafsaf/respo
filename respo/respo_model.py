@@ -352,9 +352,7 @@ class RespoModel(BaseModel):
         permissions: Optional[List[Permission]] = values.get("permissions")
         assert permissions is not None, GENERAL_ERROR_MESSAGE
         label_to_rules = cls.dict_label_to_rules(permissions)
-        i = 0
         while True:
-            i += 1
             organizations_after_resolving: List[Organization] = []
             for old_organization in organizations:
                 organization = copy.deepcopy(old_organization)
