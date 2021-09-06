@@ -15,19 +15,9 @@ from respo.helpers import (
 
 
 class MetadataSection(BaseModel):
-    apiVersion: Optional[str] = "v1"
     name: str
     created_at: Optional[str]
     last_modified: Optional[str]
-
-    @validator("apiVersion")
-    def apiVersion_must_be_v1(cls, apiVersion: str) -> str:
-        if not apiVersion == "v1":
-            raise RespoException(
-                "Error in metadata section\n  "
-                "Currently supported apiVersion is only 'v1'\n  "
-            )
-        return apiVersion
 
     @validator("created_at")
     def check_created_at(cls, created_at: str) -> str:

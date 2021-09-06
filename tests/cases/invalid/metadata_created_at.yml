@@ -2,6 +2,5 @@ roles: []
 organizations: []
 permissions: []
 metadata:
-  apiVersion: v1
   name: some_name
   created_at: 12.12-2020

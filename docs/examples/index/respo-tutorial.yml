@@ -1,7 +1,6 @@
 # respo-tutorial.yml
 
 metadata:
-  apiVersion: v1
   name: Tutorial Resource Policy
 
 permissions:

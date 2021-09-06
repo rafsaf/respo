@@ -15,5 +15,4 @@ permissions:
         when: label.something
         then: []
 metadata:
-  apiVersion: v1
   name: some_name

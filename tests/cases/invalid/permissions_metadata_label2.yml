@@ -8,5 +8,4 @@ permissions:
     resources: []
     rules: []
 metadata:
-  apiVersion: v1
   name: some_name

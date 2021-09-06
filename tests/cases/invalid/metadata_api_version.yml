@@ -1,8 +1,0 @@
-roles: []
-organizations: []
-permissions: []
-metadata:
-  apiVersion: random
-  name: some_name
-  created_at:
-  last_modified:

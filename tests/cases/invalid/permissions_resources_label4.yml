@@ -10,5 +10,4 @@ permissions:
         label: label.Read
     rules: []
 metadata:
-  apiVersion: v1
   name: some_name

@@ -17,5 +17,4 @@ permissions:
           - label.read
           - label.read
 metadata:
-  apiVersion: v1
   name: some_name

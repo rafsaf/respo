@@ -10,5 +10,4 @@ permissions:
         label: something.read
     rules: []
 metadata:
-  apiVersion: v1
   name: some_name

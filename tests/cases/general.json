@@ -1,6 +1,5 @@
 {
   "metadata": {
-    "apiVersion": "v1",
     "name": "Resource Policy for my app"
   },
   "organizations": [
