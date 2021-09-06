@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Literal, Optional, Set
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, ValidationError
 from respo.client import Client
 from respo.helpers import (
     DoubleLabel,
@@ -9,8 +9,6 @@ from respo.helpers import (
     TripleLabel,
     is_valid_lowercase,
 )
-
-# TODO check for same permissions metadata label!
 
 
 class MetadataSection(BaseModel):
@@ -73,11 +71,8 @@ class PermissionRule(BaseModel):
 
 class Permission(BaseModel):
     metadata: PermissionMetadata
-    resources: List[PermissionResource] = []
+    resources: List[PermissionResource]
     rules: List[PermissionRule]
-
-    class Config:
-        validate_all = True
 
     @validator("resources")
     def resources_are_valid_and_unique(
@@ -95,40 +90,26 @@ class Permission(BaseModel):
         resource: PermissionResource
         for resource in resources:
             RESOURCE_ERR = f"Resource with label '{resource.label}' is invalid\n  "
-            parsed_resource = resource.label.split(".")
-            if not len(parsed_resource) == 2:
-                raise RespoException(
-                    BASE_ERR
-                    + RESOURCE_ERR
-                    + f"Label '{resource.label}' must be in format 'meta_label.string'\n  "
-                    + f"For example 'user.read'\n  "
-                )
+            try:
+                double_label = DoubleLabel(full_label=resource.label)
+            except ValidationError as exc:
+                raise RespoException(BASE_ERR + RESOURCE_ERR + str(exc))
 
-            if not (
-                is_valid_lowercase(parsed_resource[0])
-                and is_valid_lowercase(parsed_resource[1])
-            ):
-                raise RespoException(
-                    BASE_ERR
-                    + RESOURCE_ERR
-                    + f"Label '{resource.label}' must be lowercase and must not contain any whitespace\n  "
-                )
-
-            if parsed_resource[0] != metadata.label:
+            if double_label.metalabel != metadata.label:
                 raise RespoException(
                     BASE_ERR
                     + RESOURCE_ERR
                     + f"Label '{resource.label}' must start with metadata label '{metadata.label}'\n  "
-                    + f"Eg. change '{parsed_resource[0]}' to '{metadata.label}'\n  "
+                    + f"Eg. change '{double_label.metalabel}' to '{metadata.label}'\n  "
                 )
 
-            if parsed_resource[1] in resources_set:
+            if double_label.label in resources_set:
                 raise RespoException(
                     BASE_ERR
                     + RESOURCE_ERR
-                    + f"Found two resources with the same label '{parsed_resource[1]}'\n  "
+                    + f"Found two resources with the same label '{double_label.label}'\n  "
                 )
-            resources_set.add(parsed_resource[1])
+            resources_set.add(double_label.label)
         return resources
 
     @validator("rules")
@@ -200,7 +181,7 @@ class Permission(BaseModel):
         resources: Optional[List[PermissionResource]] = values.get("resources")
         assert resources is not None, "General error message due to another exception"
 
-        if len(resources) >= 2:
+        if len(resources):
             metadata_label = resources[0].get_label().metalabel
             for rule in rules:
                 if rule.when == f"{metadata_label}.all":
@@ -225,9 +206,8 @@ class OrganizationMetadata(BaseModel):
     label: str
     description: Optional[str]
 
-    @validator("label", pre=True)
-    def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
-
+    @validator("label")
+    def label_must_be_in_valid_format(cls, label: str) -> str:
         if not is_valid_lowercase(label):
             raise RespoException(
                 f"Error in organizations section\n  "
@@ -254,8 +234,7 @@ class RoleMetadata(BaseModel):
     organization: str
 
     @validator("label")
-    def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
-
+    def label_must_be_in_valid_format(cls, label: str) -> str:
         if not is_valid_lowercase(label):
             raise RespoException(
                 f"Error in roles section\n  "
@@ -299,11 +278,25 @@ class RespoModel(BaseModel):
             result_dict[permission.metadata.label] = permission.rules
         return result_dict
 
+    @validator("permissions")
+    def permissions_every_metadata_is_unique_and_valid(
+        cls, permissions: List[Organization]
+    ):
+        permission_names: Set[str] = set()
+        for permission in permissions:
+            if permission.metadata.label in permission_names:
+                raise RespoException(
+                    f"Error in permissions section\n  "
+                    f"Permission '{permission.metadata.label}' metadata is invalid.\n  "
+                    f"Found two permissions with the same label {permission.metadata.label}\n  "
+                )
+            permission_names.add(permission.metadata.label)
+        return permissions
+
     @validator("organizations")
     def organization_every_metadata_is_unique_and_valid(
         cls, organizations: List[Organization]
     ):
-
         organization_names: Set[str] = set()
         for organization in organizations:
             if organization.metadata.label in organization_names:

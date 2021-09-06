@@ -44,15 +44,13 @@ class TripleLabel(BaseModel):
         for label_part in label_list:
             if not is_valid_lowercase(label_part):
                 raise RespoException(
-                    f"Label {label} is not valid\n  "
-                    "Use syntax 'organization.foo.read'\n  "
+                    f"Label {label} is not valid, use syntax 'organization.foo.read'\n  "
                 )
         if len(label_list) == 3:
             return label
         else:
             raise RespoException(
-                f"Label {label} is not valid\n  "
-                "Use syntax 'organization.foo.read'\n  "
+                f"Label {label} is not valid, use syntax 'organization.foo.read'\n  "
             )
 
 
@@ -65,7 +63,7 @@ class DoubleLabel(BaseModel):
 
     @property
     def label(self) -> str:
-        return self.full_label.split(".")[0]
+        return self.full_label.split(".")[1]
 
     @validator("full_label")
     def double_label_is_correct(cls, label: str) -> str:
@@ -73,12 +71,11 @@ class DoubleLabel(BaseModel):
         for label_part in label_list:
             if not is_valid_lowercase(label_part):
                 raise RespoException(
-                    f"Label {label} is not valid\n  "
-                    "Use syntax 'organization.foo.read'\n  "
+                    f"Label {label} is not valid, use syntax 'foo.read'\n  "
                 )
         if len(label_list) == 2:
             return label
         else:
             raise RespoException(
-                f"Label {label} is not valid\n  Use syntax 'foo.read'\n  "
+                f"Label {label} is not valid, use syntax 'foo.read'\n  "
             )
