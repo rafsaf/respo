@@ -1,7 +1,7 @@
 from typing import Tuple
 
 import pytest
-from respo.client import Client, create_respo_client
+from respo.client import create_respo_client
 
 cases = [
     (None, []),

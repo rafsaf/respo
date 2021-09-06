@@ -16,6 +16,6 @@ def get_respo_model() -> RespoModel:
     return model
 
 
-def _save_respo_model(model: RespoModel) -> None:
+def save_respo_model(model: RespoModel) -> None:
     with open(config.RESPO_BINARY_FILE_NAME, "wb") as file:
         pickle.dump(model, file)

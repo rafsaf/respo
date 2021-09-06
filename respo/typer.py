@@ -4,11 +4,11 @@ from pathlib import Path
 import typer
 import yaml
 from pydantic import ValidationError
-from respo.bin import _save_respo_model, get_respo_model
+from respo.bin import get_respo_model, save_respo_model
 from respo.config import config
+from respo.helpers import RespoException
 from respo.respo_model import RespoModel
 from respo.typer_utils import FileFormat, bad, good
-from respo.helpers import RespoException
 
 app = typer.Typer()
 
@@ -52,7 +52,7 @@ def create(
             typer.echo(respo_error)
             raise typer.Abort()
         typer.echo(good("Respo model syntax is ok..."))
-        _save_respo_model(respo_model)
+        save_respo_model(respo_model)
         typer.echo(good(f"Saving as binary file to {config.RESPO_BINARY_FILE_NAME}"))
         typer.echo(good("Success!"))
 

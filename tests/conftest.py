@@ -2,9 +2,7 @@ from pathlib import Path
 
 import pytest
 import yaml
-from respo import RespoModel, get_respo_model
-from respo.bin import _save_respo_model
-from respo.config import config
+from respo import RespoModel, config, get_respo_model, save_respo_model
 from typer.testing import CliRunner
 
 
@@ -31,7 +29,7 @@ def get_model(name: str) -> RespoModel:
 def get_general_model():
     model1 = get_model("tests/cases/general.yml")
 
-    _save_respo_model(model1)
+    save_respo_model(model1)
     respo = get_respo_model()
     yield respo
 

@@ -1,4 +1,4 @@
-from respo.typer_utils import good, bad, FileFormat
+from respo.typer_utils import FileFormat, bad, good
 
 
 def test_good():
