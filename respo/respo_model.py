@@ -1,9 +1,11 @@
+import copy
 from datetime import datetime
 from typing import Dict, List, Literal, Optional, Set
 
-from pydantic import BaseModel, validator, ValidationError
+from pydantic import BaseModel, ValidationError, validator
 from respo.client import Client
 from respo.helpers import (
+    GENERAL_ERROR_MESSAGE,
     DoubleLabel,
     RespoException,
     TripleLabel,
@@ -115,15 +117,13 @@ class Permission(BaseModel):
     @validator("rules")
     def rules_are_valid(cls, rules: List[PermissionRule], values: Dict):
         resources_list: Optional[List[PermissionResource]] = values.get("resources")
-        assert (
-            resources_list is not None
-        ), "General error message due to another exception"
+        assert resources_list is not None, GENERAL_ERROR_MESSAGE
 
         resources_labels: Set[str] = set(
             [resource.label for resource in resources_list]
         )
         metadata: Optional[PermissionMetadata] = values.get("metadata")
-        assert metadata is not None, "General error message due to another exception"
+        assert metadata is not None, GENERAL_ERROR_MESSAGE
 
         BASE_ERR = (
             f"Error in permissions section\n  "
@@ -179,7 +179,7 @@ class Permission(BaseModel):
         cls, rules: List[PermissionRule], values: Dict
     ) -> List[PermissionRule]:
         resources: Optional[List[PermissionResource]] = values.get("resources")
-        assert resources is not None, "General error message due to another exception"
+        assert resources is not None, GENERAL_ERROR_MESSAGE
 
         if len(resources):
             metadata_label = resources[0].get_label().metalabel
@@ -314,7 +314,7 @@ class RespoModel(BaseModel):
     ):
 
         permissions: Optional[List[Permission]] = values.get("permissions")
-        assert permissions is not None, "General error message due to another exception"
+        assert permissions is not None, GENERAL_ERROR_MESSAGE
 
         label_to_resources = cls.dict_label_to_resources(permissions)
         for organization in organizations:
@@ -334,17 +334,14 @@ class RespoModel(BaseModel):
                 exists = False
                 if triple_label.metalabel in label_to_resources:
                     for resource in label_to_resources[triple_label.metalabel]:
-                        if (
-                            resource.label
-                            == f"{triple_label.metalabel}.{triple_label.label}"
-                        ):
+                        if resource.label == triple_label.to_double_label():
                             exists = True
                             break
                 if not exists:
                     raise RespoException(
                         BASE_ERR
                         + PERM_ERR
-                        + f"Permission '{triple_label.metalabel}.{triple_label.label}' not found\n  "
+                        + f"Permission '{triple_label.to_double_label()}' not found\n  "
                     )
         return organizations
 
@@ -353,12 +350,14 @@ class RespoModel(BaseModel):
         cls, organizations: List[Organization], values: Dict
     ):
         permissions: Optional[List[Permission]] = values.get("permissions")
-        assert permissions is not None, "General error message due to another exception"
+        assert permissions is not None, GENERAL_ERROR_MESSAGE
         label_to_rules = cls.dict_label_to_rules(permissions)
-
+        i = 0
         while True:
+            i += 1
             organizations_after_resolving: List[Organization] = []
-            for organization in organizations:
+            for old_organization in organizations:
+                organization = copy.deepcopy(old_organization)
                 for organization_permission in organization.permissions:
                     triple_label = TripleLabel(full_label=organization_permission.label)
                     for rule in label_to_rules[triple_label.metalabel]:
@@ -380,7 +379,6 @@ class RespoModel(BaseModel):
             else:
                 # will look up again for nested rules
                 organizations = organizations_after_resolving
-
         return organizations
 
     @validator("organizations")
@@ -407,9 +405,7 @@ class RespoModel(BaseModel):
     @validator("roles")
     def roles_every_metadata_is_unique_and_valid(cls, roles: List[Role], values: Dict):
         organizations: Optional[List[Organization]] = values.get("organizations")
-        assert (
-            organizations is not None
-        ), "General error message due to another exception"
+        assert organizations is not None, GENERAL_ERROR_MESSAGE
 
         roles_names: Set[str] = set()
         organization_names: Set[str] = set()
@@ -441,7 +437,7 @@ class RespoModel(BaseModel):
         cls, roles: List[Role], values: Dict
     ):
         permissions: Optional[List[Permission]] = values.get("permissions")
-        assert permissions is not None, "General error message due to another exception"
+        assert permissions is not None, GENERAL_ERROR_MESSAGE
         label_to_resources = cls.dict_label_to_resources(permissions)
         for role in roles:
             BASE_ERR = (
@@ -476,18 +472,16 @@ class RespoModel(BaseModel):
     @validator("roles")
     def roles_resolve_complex_allow_deny_rules(cls, roles: List[Role], values: Dict):
         permissions: Optional[List[Permission]] = values.get("permissions")
-        assert permissions is not None, "General error message due to another exception"
+        assert permissions is not None, GENERAL_ERROR_MESSAGE
         label_to_rules = cls.dict_label_to_rules(permissions)
         while True:
             roles_after_resolving: List[Role] = []
-            for role in roles:
+            for old_role in roles:
+                role = copy.deepcopy(old_role)
                 for role_permission in role.permissions:
                     triple_label = TripleLabel(full_label=role_permission.label)
                     for rule in label_to_rules[triple_label.metalabel]:
-                        if (
-                            rule.when
-                            != f"{triple_label.metalabel}.{triple_label.label}"
-                        ):
+                        if rule.when != triple_label.to_double_label():
                             continue
                         for rule_then in rule.then:
                             new_label = f"{role.metadata.organization}.{rule_then}"
@@ -527,17 +521,15 @@ class RespoModel(BaseModel):
             new_roles.append(role)
         return roles
 
-    def _label_resource_exists(self, label: str) -> bool:
-        triple_label = TripleLabel(full_label=label)
+    def _label_resource_exists(self, triple_label: TripleLabel) -> bool:
         for permission in self.permissions:
             if permission.metadata.label == triple_label.metalabel:
                 for resource in permission.resources:
-                    if (
-                        resource.label
-                        == f"{triple_label.metalabel}.{triple_label.label}"
-                    ):
+                    if resource.label == triple_label.to_double_label():
                         return True
-        raise RespoException(f"Permissions resource label {label} not found\n  ")
+        raise RespoException(
+            f"Permissions resource label {triple_label.full_label} not found\n  "
+        )
 
     def _check_organization(self, label: str, organization_name: str) -> bool:
         for organization in self.organizations:
@@ -549,8 +541,9 @@ class RespoModel(BaseModel):
         return False
 
     def check(self, label: str, client: Client, force: bool = False) -> bool:
+        triple_label = TripleLabel(full_label=label)
         if not force:
-            self._label_resource_exists(label)
+            self._label_resource_exists(triple_label)
         checked_organizations: Set[str] = set()
         for client_role in client.role:
             for role in self.roles:

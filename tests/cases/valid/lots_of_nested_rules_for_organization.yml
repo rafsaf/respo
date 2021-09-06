@@ -1,0 +1,30 @@
+metadata:
+  name: some_name
+roles: []
+organizations:
+  - metadata:
+      label: label
+    permissions:
+      - label: label.user.a
+permissions:
+  - metadata:
+      label: user
+    resources:
+      - label: user.a
+      - label: user.b
+      - label: user.c
+      - label: user.d
+      - label: user.e
+      - label: user.f
+      - label: user.g
+    rules:
+      - when: user.a
+        then: [user.b]
+      - when: user.b
+        then: [user.c]
+      - when: user.c
+        then: [user.d]
+      - when: user.e
+        then: [user.f]
+      - when: user.f
+        then: [user.g]

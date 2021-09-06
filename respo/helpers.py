@@ -2,6 +2,8 @@ import string
 
 from pydantic import BaseModel, validator
 
+GENERAL_ERROR_MESSAGE = "General error message due to another exception"
+
 
 class RespoException(ValueError):
     pass

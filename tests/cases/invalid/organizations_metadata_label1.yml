@@ -1,0 +1,8 @@
+metadata:
+  name: some_name
+roles: []
+organizations:
+  - metadata:
+      label: default whitespace
+    permissions: []
+permissions: []

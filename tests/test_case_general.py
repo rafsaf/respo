@@ -1,4 +1,5 @@
-from respo import RespoModel, create_respo_client
+import pytest
+from respo import RespoException, RespoModel, create_respo_client
 
 
 def test_general_yml_organization_book123(get_general_model: RespoModel):
@@ -154,3 +155,16 @@ def test_general_yml_role_admin_role(get_general_model: RespoModel):
     assert not respo.check("default.book.buy_all", client)
     assert not respo.check("default.book.buy", client)
     assert not respo.check("default.book.sell", client)
+
+
+def test_general_yml_role_test_role(get_general_model: RespoModel):
+    respo = get_general_model
+    client = create_respo_client(role="test_role")
+    assert respo.check("default.test.f", client)
+
+
+def test_general_yml_not_existing_permission_label(get_general_model: RespoModel):
+    respo = get_general_model
+    client = create_respo_client(role="test_role")
+    with pytest.raises(RespoException):
+        respo.check("blabla.blabla.blabla", client=client)

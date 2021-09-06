@@ -1,0 +1,12 @@
+metadata:
+  name: some_name
+roles:
+  - metadata:
+      label: defaultAAAA
+      organization: default
+    permissions: []
+organizations:
+  - metadata:
+      label: default
+    permissions: []
+permissions: []

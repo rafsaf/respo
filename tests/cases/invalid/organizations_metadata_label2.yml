@@ -1,0 +1,8 @@
+metadata:
+  name: some_name
+roles: []
+organizations:
+  - metadata:
+      label: defaultBIG
+    permissions: []
+permissions: []
