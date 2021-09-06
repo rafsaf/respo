@@ -1,5 +1,4 @@
 # respo-tutorial.yml
-
 metadata:
   name: Tutorial Resource Policy
 
@@ -7,17 +6,12 @@ permissions:
   - metadata:
       name: User Accounts
       label: user
-      description: All permissions realted to users
     resources:
-      - name: Read users basic informations
-        label: user.read_basic
-      - name: Read all informations about users
-        label: user.read_all
-      - name: Create new user
-        label: user.create
+      - label: user.read_basic
+      - label: user.read_all
+      - label: user.create
     rules:
-      - name: Read all gives basic
-        when: user.read_all
+      - when: user.read_all
         then:
           - user.read_basic
 
@@ -35,7 +29,5 @@ roles:
       name: Default user
       label: user
       organization: default
-      description: User in default organization
     permissions:
       - label: default.user.create
-        type: Allow
