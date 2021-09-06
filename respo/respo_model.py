@@ -31,21 +31,23 @@ class MetadataSection(BaseModel):
                     "'metadata.created_at' is invalid, place valid ISO format or "
                     "leave this field empty so it will be filled\n  "
                 )
-        return created_at
+            return created_at
 
     @validator("last_modified")
     def update_last_modified(cls, _) -> str:
         return datetime.utcnow().isoformat()
 
+    class Config:
+        validate_all = True
+
 
 class PermissionMetadata(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str]
     label: str
-    description: Optional[str] = None
+    description: Optional[str]
 
     @validator("label")
-    def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
-
+    def label_must_be_in_valid_format(cls, label: str) -> str:
         if not is_valid_lowercase(label):
             raise RespoException(
                 f"Error in permissions section\n  "
@@ -56,7 +58,7 @@ class PermissionMetadata(BaseModel):
 
 
 class PermissionResource(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str]
     label: str
 
     def get_label(self):
@@ -64,7 +66,7 @@ class PermissionResource(BaseModel):
 
 
 class PermissionRule(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str]
     when: str
     then: List[str]
 
@@ -219,9 +221,9 @@ class Permission(BaseModel):
 
 
 class OrganizationMetadata(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str]
     label: str
-    description: Optional[str] = None
+    description: Optional[str]
 
     @validator("label", pre=True)
     def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
@@ -246,9 +248,9 @@ class Organization(BaseModel):
 
 
 class RoleMetadata(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str]
     label: str
-    description: Optional[str] = None
+    description: Optional[str]
     organization: str
 
     @validator("label")

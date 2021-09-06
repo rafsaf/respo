@@ -15,9 +15,9 @@ app = typer.Typer()
 
 @app.command()
 def create(
-    file: Path = typer.Argument(..., help="YML file with resource policy"),
+    file: Path = typer.Argument(..., help="Path to file with resource policy"),
     format: FileFormat = typer.Option(
-        default="yml", help="JSON file with resource policy"
+        default="yml", help="Available format is (default) YML and JSON"
     ),
 ):
     typer.echo(good(f"Start looking for file '{file}'"))
@@ -52,6 +52,16 @@ def create(
             typer.echo(respo_error)
             raise typer.Abort()
         typer.echo(good("Respo model syntax is ok..."))
+        try:
+            old_model = get_respo_model()
+        except RespoException:
+            pass
+        else:
+            typer.echo(
+                good("Found already created respo model, it will be overwritten")
+            )
+            respo_model.metadata.created_at = old_model.metadata.created_at
+
         save_respo_model(respo_model)
         typer.echo(good(f"Saving as binary file to {config.RESPO_BINARY_FILE_NAME}"))
         typer.echo(good("Success!"))
@@ -60,19 +70,15 @@ def create(
 @app.command()
 def export(
     file: Path = typer.Argument(
-        default=None, help="YML file where respo model will be exported"
+        default=None, help="Path to file where respo model will be exported"
     ),
     format: FileFormat = typer.Option(
-        default="yml", help="JSON file with resource policy"
+        default="yml", help="Available format is (default) YML and JSON"
     ),
 ):
     if file is None:
-        path = config.RESPO_DEFAULT_EXPORT_FILE
-        if format.value == "yml":
-            path += ".yml"
-        else:
-            path += ".json"
-        file = Path(path)
+        default_path = f"{config.RESPO_DEFAULT_EXPORT_FILE}.{format.value}"
+        file = Path(default_path)
 
     typer.echo(good(f"Start exporting to file '{file}'"))
     if file.exists():
@@ -93,5 +99,5 @@ def export(
             yaml.dump(model.dict(), export_file)
         else:
             json.dump(model.dict(), export_file)
-    typer.echo(good(f"Saving as {format} file to {config.RESPO_DEFAULT_EXPORT_FILE}"))
+    typer.echo(good(f"Saving as {format} file to {file}"))
     typer.echo(good("Success!"))
