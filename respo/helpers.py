@@ -1,17 +1,6 @@
-import logging
 import string
-from logging import getLogger
 
 from pydantic import BaseModel, validator
-
-
-def get_logger():
-    logging.basicConfig(format="%(levelname)s - %(message)s")
-    logger = getLogger()
-    return logger
-
-
-logger = get_logger()
 
 
 class RespoException(ValueError):

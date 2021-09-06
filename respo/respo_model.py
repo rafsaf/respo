@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Literal, Optional, Set, Union
+from typing import Dict, List, Literal, Optional, Set
 
 from pydantic import BaseModel, validator
 from respo.client import Client
@@ -8,7 +8,6 @@ from respo.helpers import (
     RespoException,
     TripleLabel,
     is_valid_lowercase,
-    logger,
 )
 
 # TODO check for same permissions metadata label!
@@ -23,13 +22,11 @@ class MetadataSection(BaseModel):
     def check_created_at(cls, created_at: str) -> str:
         if created_at is None:
             now = datetime.utcnow()
-            logger.warning(f"'metadata.created_at' is null, {now} will be placed")
             return now.isoformat()
         else:
             try:
                 datetime.fromisoformat(created_at)
-            except Exception as data_error:
-                logger.error(data_error)
+            except (ValueError, TypeError):
                 raise RespoException(
                     "'metadata.created_at' is invalid, place valid ISO format or "
                     "leave this field empty so it will be filled\n  "
