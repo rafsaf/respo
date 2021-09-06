@@ -53,7 +53,7 @@ double_label_cases = [
 @pytest.mark.parametrize("case", double_label_cases)
 def test_double_label(case: Tuple[str, bool]):
     with pytest.raises(ValidationError):
-        DobuelLabel(full_label=case[0])
+        DoubleLabel(full_label=case[0])
 
 
 triple_label_cases = [

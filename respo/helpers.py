@@ -67,7 +67,7 @@ class TripleLabel(BaseModel):
             )
 
 
-class DobuelLabel(BaseModel):
+class DoubleLabel(BaseModel):
     full_label: str
 
     @property

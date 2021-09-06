@@ -4,7 +4,7 @@ from typing import Dict, List, Literal, Optional, Set, Union
 from pydantic import BaseModel, validator
 from respo.client import Client
 from respo.helpers import (
-    DobuelLabel,
+    DoubleLabel,
     RespoException,
     TripleLabel,
     is_valid_lowercase,
@@ -74,7 +74,7 @@ class PermissionResource(BaseModel):
     label: str
 
     def get_label(self):
-        return DobuelLabel(full_label=self.label)
+        return DoubleLabel(full_label=self.label)
 
 
 class PermissionRule(BaseModel):
