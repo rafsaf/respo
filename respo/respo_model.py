@@ -16,7 +16,7 @@ from respo.helpers import (
 
 
 class MetadataSection(BaseModel):
-    apiVersion: str
+    apiVersion: Optional[str] = "v1"
     name: str
     created_at: Optional[str]
     last_modified: Optional[str]
@@ -53,26 +53,24 @@ class MetadataSection(BaseModel):
 
 
 class PermissionMetadata(BaseModel):
-    name: str
+    name: Optional[str] = None
     label: str
-    description: str
+    description: Optional[str] = None
 
     @validator("label")
     def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
-        name: Optional[str] = values.get("name")
-        assert name is not None, "General error message due to another exception"
 
         if not is_valid_lowercase(label):
             raise RespoException(
                 f"Error in permissions section\n  "
-                f"Permission '{name}' metadata is invalid.\n  "
+                f"Permission '{label}' metadata is invalid.\n  "
                 f"Label '{label}' must be lowercase and must not contain any whitespace\n  "
             )
         return label
 
 
 class PermissionResource(BaseModel):
-    name: str
+    name: Optional[str] = None
     label: str
 
     def get_label(self):
@@ -80,7 +78,7 @@ class PermissionResource(BaseModel):
 
 
 class PermissionRule(BaseModel):
-    name: str
+    name: Optional[str] = None
     when: str
     then: List[str]
 
@@ -103,12 +101,12 @@ class Permission(BaseModel):
 
         BASE_ERR = (
             f"Error in permissions section\n  "
-            f"Permission '{metadata.name}' resources are invalid.\n  "
+            f"Permission '{metadata.label}' resources are invalid.\n  "
         )
 
         resource: PermissionResource
         for resource in resources:
-            RESOURCE_ERR = f"Resource with name '{resource.name}' is invalid\n  "
+            RESOURCE_ERR = f"Resource with label '{resource.label}' is invalid\n  "
             parsed_resource = resource.label.split(".")
             if not len(parsed_resource) == 2:
                 raise RespoException(
@@ -160,13 +158,13 @@ class Permission(BaseModel):
 
         BASE_ERR = (
             f"Error in permissions section\n  "
-            f"Permission '{metadata.name}' resources are invalid.\n  "
+            f"Permission '{metadata.label}' resources are invalid.\n  "
         )
 
         rule: PermissionRule
         for rule in rules:
             labels_then_set = set()
-            RULE_ERR = f"Rule with name '{rule.name}' is invalid\n  "
+            RULE_ERR = f"Rule with when '{rule.when}' is invalid\n  "
 
             if rule.when not in resources_labels:
                 raise RespoException(
@@ -195,10 +193,11 @@ class Permission(BaseModel):
         cls, resources: List[PermissionResource]
     ) -> List[PermissionResource]:
         if len(resources):
-            for resource in resources:
-                if resource.get_label().label == "all":
-                    return resources
             metadata_label = resources[0].get_label().metalabel
+            for resource in resources:
+                if resource.label == f"{metadata_label}.all":
+                    return resources
+
             resources.append(
                 PermissionResource(
                     name=f"{metadata_label}.all", label=f"{metadata_label}.all"
@@ -234,26 +233,24 @@ class Permission(BaseModel):
 
 
 class OrganizationMetadata(BaseModel):
-    name: str
+    name: Optional[str] = None
     label: str
-    description: str
+    description: Optional[str] = None
 
     @validator("label", pre=True)
     def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
-        name: Optional[str] = values.get("name")
-        assert name is not None, "General error message due to another exception"
 
         if not is_valid_lowercase(label):
             raise RespoException(
                 f"Error in organizations section\n  "
-                f"Organization '{name}' metadata is invalid.\n  "
+                f"Organization '{label}' metadata is invalid.\n  "
                 f"Label '{label}' must be lowercase and must not contain any whitespace\n  "
             )
         return label
 
 
 class OrganizationPermissionGrant(BaseModel):
-    type: Literal["Allow", "Deny"]
+    type: Literal["Allow", "Deny"] = "Allow"
     label: str
 
 
@@ -263,27 +260,25 @@ class Organization(BaseModel):
 
 
 class RoleMetadata(BaseModel):
-    name: str
+    name: Optional[str] = None
     label: str
-    description: str
+    description: Optional[str] = None
     organization: str
 
     @validator("label")
     def label_must_be_in_valid_format(cls, label: str, values: Dict[str, str]) -> str:
-        name: Optional[str] = values.get("name")
-        assert name is not None, "General error message due to another exception"
 
         if not is_valid_lowercase(label):
             raise RespoException(
                 f"Error in roles section\n  "
-                f"Role '{name}' metadata is invalid.\n  "
+                f"Role '{label}' metadata is invalid.\n  "
                 f"Label '{label}' must be lowercase and must not contain any whitespace\n  "
             )
         return label
 
 
 class RolePermissionGrant(BaseModel):
-    type: Literal["Allow", "Deny"]
+    type: Literal["Allow", "Deny"] = "Allow"
     label: str
 
 
@@ -326,7 +321,7 @@ class RespoModel(BaseModel):
             if organization.metadata.label in organization_names:
                 raise RespoException(
                     f"Error in organizations section\n  "
-                    f"Organization '{organization.metadata.name}' metadata is invalid.\n  "
+                    f"Organization '{organization.metadata.label}' metadata is invalid.\n  "
                     f"Found two organizations with the same label {organization.metadata.label}\n  "
                 )
             organization_names.add(organization.metadata.label)
@@ -344,7 +339,7 @@ class RespoModel(BaseModel):
         for organization in organizations:
             BASE_ERR = (
                 f"Error in organizations section\n  "
-                f"Organization '{organization.metadata.name}' permissions are invalid.\n  "
+                f"Organization '{organization.metadata.label}' permissions are invalid.\n  "
             )
             for organization_permission in organization.permissions:
                 PERM_ERR = f"Permission with label '{organization_permission.label}' is invalid\n  "
@@ -444,7 +439,7 @@ class RespoModel(BaseModel):
         for role in roles:
             BASE_ERR = (
                 f"Error in roles section\n  "
-                f"Role '{role.metadata.name}' metadata is invalid.\n  "
+                f"Role '{role.metadata.label}' metadata is invalid.\n  "
             )
             if role.metadata.organization not in organization_names:
                 raise RespoException(
@@ -470,7 +465,7 @@ class RespoModel(BaseModel):
         for role in roles:
             BASE_ERR = (
                 f"Error in roles section\n  "
-                f"Role '{role.metadata.name}' permissions are invalid.\n  "
+                f"Role '{role.metadata.label}' permissions are invalid.\n  "
             )
             for role_permission in role.permissions:
                 PERM_ERR = (

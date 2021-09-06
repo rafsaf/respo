@@ -1,0 +1,24 @@
+roles:
+  - metadata:
+      label: role
+      organization: default
+    permissions:
+      - label: default.user.read_all
+organizations:
+  - metadata:
+      label: default
+    permissions:
+      - label: default.user.read
+permissions:
+  - metadata:
+      label: user
+    resources:
+      - label: user.read
+      - label: user.read_all
+    rules:
+      - when: user.read_all
+        then:
+          - user.read
+
+metadata:
+  name: some_name

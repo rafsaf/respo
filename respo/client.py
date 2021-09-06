@@ -8,7 +8,7 @@ class Client(BaseModel):
     role: List[str]
 
     @validator("*", pre=True)
-    def validate_pk(cls, v):
+    def validate_field(cls, v):
         if v is None:
             return []
         if isinstance(v, str):
