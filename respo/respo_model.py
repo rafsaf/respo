@@ -104,6 +104,13 @@ class Permission(BaseModel):
                     + f"Label '{resource.label}' must start with metadata label '{metadata.label}'\n  "
                     + f"Eg. change '{double_label.metalabel}' to '{metadata.label}'\n  "
                 )
+            if double_label.label == "all":
+                raise RespoException(
+                    BASE_ERR
+                    + RESOURCE_ERR
+                    + f"Label '{resource.label}' cant contain 'all'\n  "
+                    + f"'all' is reserved keyword and will be auto applied\n  "
+                )
 
             if double_label.label in resources_set:
                 raise RespoException(
@@ -141,35 +148,45 @@ class Permission(BaseModel):
                     + RULE_ERR
                     + f"Rule 'when' condition '{rule.when}' not found in resources labels\n  "
                 )
+            if DoubleLabel(full_label=rule.when).label == "all":
+                raise RespoException(
+                    BASE_ERR
+                    + RULE_ERR
+                    + f"Rule 'when' condition '{rule.when}' cant contain 'all'\n  "
+                    + f"'all' is reserved keyword and will be auto applied\n  "
+                )
             for label in rule.then:
+                if DoubleLabel(full_label=label).label == "all":
+                    raise RespoException(
+                        BASE_ERR
+                        + RULE_ERR
+                        + f"Rule 'then' condition '{label}' cant contain 'all'\n  "
+                        + f"'all' is reserved keyword and will be auto applied\n  "
+                    )
                 if label == rule.when:
                     raise RespoException(
                         BASE_ERR
                         + RULE_ERR
-                        + f"Rule 'then' condition '{rule.then}' can't be equal to when condition\n  "
+                        + f"Rule 'then' condition '{label}' can't be equal to when condition\n  "
                     )
                 if label in labels_then_set:
                     raise RespoException(
                         BASE_ERR
                         + RULE_ERR
-                        + f"Found two 'then' conditions with the same label '{rule.then}'\n  "
+                        + f"Found two 'then' conditions with the same label '{label}'\n  "
                     )
                 labels_then_set.add(label)
         return rules
 
     @validator("resources")
-    def add_all_resource_if_not_exist(
+    def add_all_resource(
         cls, resources: List[PermissionResource]
     ) -> List[PermissionResource]:
         if len(resources):
             metadata_label = resources[0].get_label().metalabel
-            for resource in resources:
-                if resource.label == f"{metadata_label}.all":
-                    return resources
-
             resources.append(
                 PermissionResource(
-                    name=f"{metadata_label}.all", label=f"{metadata_label}.all"
+                    name=f"auto {metadata_label}.all", label=f"{metadata_label}.all"
                 )
             )
         return resources
@@ -183,17 +200,13 @@ class Permission(BaseModel):
 
         if len(resources):
             metadata_label = resources[0].get_label().metalabel
-            for rule in rules:
-                if rule.when == f"{metadata_label}.all":
-                    return rules
             new_then_list = []
             for resource in resources:
-                if resource.get_label().label != "all":
-                    new_then_list.append(resource.label)
+                new_then_list.append(resource.label)
 
             rules.append(
                 PermissionRule(
-                    name=f"{metadata_label}.all",
+                    name=f"auto {metadata_label}.all",
                     when=f"{metadata_label}.all",
                     then=new_then_list,
                 )

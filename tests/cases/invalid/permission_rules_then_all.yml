@@ -1,0 +1,14 @@
+metadata:
+  name: some_name
+roles: []
+organizations: []
+permissions:
+  - metadata:
+      label: user
+    resources:
+      - label: user.read
+      - label: user.read_all
+    rules:
+      - when: user.read
+        then:
+          - user.all
