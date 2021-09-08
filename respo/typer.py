@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from time import time
 
 import typer
 import yaml
@@ -31,27 +32,33 @@ def create(
         typer.echo(good("Validating the content..."))
         if format.value == "yml":
             try:
+                before_yml_time = time()
                 data = yaml.safe_load(file.read_text())
+                delta_yml_time = round(time() - before_yml_time, 5)
             except yaml.YAMLError as yml_error:
                 typer.echo(bad("Could not process file"))
                 typer.echo(yml_error)
                 raise typer.Abort()
-            typer.echo(good("YML syntax is ok..."))
+            typer.echo(good(f"YML syntax validated in {delta_yml_time}s..."))
         else:
             try:
+                before_json_time = time()
                 data = json.loads(file.read_text())
+                delta_json_time = round(time() - before_json_time, 5)
             except json.JSONDecodeError as json_eror:
                 typer.echo(bad("Could not process file"))
                 typer.echo(json_eror)
                 raise typer.Abort()
-            typer.echo(good("JSON syntax is ok..."))
+            typer.echo(good(f"JSON syntax validated in {delta_json_time}s..."))
         try:
+            before_respo_time = time()
             respo_model = RespoModel.parse_obj(data)
+            delta_respo_time = round(time() - before_respo_time, 5)
         except ValidationError as respo_error:
             typer.echo(bad("Could not validate data"))
             typer.echo(respo_error)
             raise typer.Abort()
-        typer.echo(good("Respo model syntax is ok..."))
+        typer.echo(good(f"Respo model validated in {delta_respo_time}s..."))
         try:
             old_model = get_respo_model()
         except RespoException:
@@ -89,11 +96,13 @@ def export(
             typer.echo(good(f"The file '{file}' exists, it will be overwritten"))
 
     try:
+        before_respo_model = time()
         model = get_respo_model()
+        delta_respo_model = round(time() - before_respo_model, 5)
     except RespoException as respo_err:
         typer.echo(respo_err)
         raise typer.Abort()
-
+    typer.echo(good(f"Reading respo model took {delta_respo_model}s..."))
     with open(file, "w") as export_file:
         if format == "yml":
             yaml.dump(model.dict(), export_file)

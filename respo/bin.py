@@ -17,5 +17,7 @@ def get_respo_model() -> RespoModel:
 
 
 def save_respo_model(model: RespoModel) -> None:
-    with open(config.RESPO_BINARY_FILE_NAME, "wb") as file:
+    path = Path(config.RESPO_BINARY_FILE_NAME)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "wb") as file:
         pickle.dump(model, file)
