@@ -429,6 +429,11 @@ class RespoModel(BaseModel):
                 f"Error in roles section\n  "
                 f"Role '{role.metadata.label}' metadata is invalid.\n  "
             )
+            if role.metadata.label == f"root.{role.metadata.organization}":
+                raise RespoException(
+                    BASE_ERR
+                    + f"'root.organization' is reserved keyword and will be auto applied\n  "
+                )
             if role.metadata.organization not in organization_names:
                 raise RespoException(
                     BASE_ERR
