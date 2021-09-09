@@ -3,8 +3,8 @@ from datetime import datetime
 from typing import Dict, List, Literal, Optional, Set
 
 from pydantic import BaseModel, ValidationError, validator
-from respo.config import config
 from respo.client import Client
+from respo.config import config
 from respo.helpers import (
     GENERAL_ERROR_MESSAGE,
     DoubleLabel,
