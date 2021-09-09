@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "respo"
 version = "0.1.0"
-description = "Resource Policy in Python made easy"
+description = "File based RBAC in Python made easy"
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/rafsaf/respo"

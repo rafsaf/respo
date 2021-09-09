@@ -5,7 +5,7 @@ theme:
     logo: material/list-status
   name: material
   palette:
-    primary: blue grey
+    primary: light blue
 
 repo_name: rafsaf/respo
 repo_url: https://github.com/rafsaf/respo
