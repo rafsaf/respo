@@ -25,26 +25,16 @@ _respo_ validate input yml or json file, resolve all inheritance problems, **pic
 
 Thanks to **Typer**, _respo_ has powerful cli interface based on python annotations.
 
-```bash
+```sh
 respo --help  # prints all available commands
 
-respo create --yml-file respo-example.yml
+respo create --yml-file respo-example.yml  # create model from file
 
-# Processing respo-example.yml
-# Success!
 ```
 
 And thats it!
 Yml file got validated and compiled to binary format, by default in `__auto__respo_model.bin` file.
-
-## Read and check permissions
-
-```python
-{!./examples/index/index002.py!}
-```
-
-And this is when magic happens: We didn't explicite gave neither role `user` nor `default` organization permission to `user.read_basic`, but during creation of binary form of yml file, it was understood by _respo_. Only by specifying single permission rule.
-
+You can now
 <br>
 <br>
 <br>
