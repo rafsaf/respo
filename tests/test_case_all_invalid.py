@@ -20,5 +20,5 @@ def test_raise_respo_exception(file: DirEntry, runner: CliRunner):
     except ValidationError as exc:
         assert exc.errors()[0]["type"] == "value_error.respoexception"
 
-    result = runner.invoke(app, [f"create", file.path])
+    result = runner.invoke(app, ["create", file.path])
     assert "Could not validate data" in result.stdout

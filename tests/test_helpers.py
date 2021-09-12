@@ -2,8 +2,12 @@ from typing import Tuple
 
 import pytest
 from pydantic import ValidationError
-from respo.helpers import *
-from respo.helpers import _contains_whitespace
+from respo.helpers import (
+    _contains_whitespace,
+    DoubleLabel,
+    TripleLabel,
+    is_valid_lowercase,
+)
 
 test_strings = [
     ("xxx", False),
