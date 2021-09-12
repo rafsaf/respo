@@ -40,10 +40,14 @@ markdown-include = "^0.6.0"
 source = [
     "respo"
 ]
+omit = []
 
 [tool.isort]
 profile = "black"
-known_third_party = ["respo"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-v"
 
 
 [tool.poetry.scripts]
