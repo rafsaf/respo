@@ -26,10 +26,10 @@ class MetadataSection(BaseModel):
             return now.isoformat()
         else:
             try:
-                datetime.fromisoformat(created_at)
+                datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%S.%f")
             except (ValueError, TypeError):
                 raise RespoException(
-                    "'metadata.created_at' is invalid, place valid ISO format or "
+                    "'metadata.created_at' is invalid, place valid ISO format (UTC) or "
                     "leave this field empty so it will be filled\n  "
                 )
             return created_at
@@ -110,7 +110,7 @@ class Permission(BaseModel):
                     BASE_ERR
                     + RESOURCE_ERR
                     + f"Label '{resource.label}' cant contain 'all'\n  "
-                    + f"'all' is reserved keyword and will be auto applied\n  "
+                    + "'all' is reserved keyword and will be auto applied\n  "
                 )
 
             if double_label.label in resources_set:
@@ -154,7 +154,7 @@ class Permission(BaseModel):
                     BASE_ERR
                     + RULE_ERR
                     + f"Rule 'when' condition '{rule.when}' cant contain 'all'\n  "
-                    + f"'all' is reserved keyword and will be auto applied\n  "
+                    + "'all' is reserved keyword and will be auto applied\n  "
                 )
             for label in rule.then:
                 if DoubleLabel(full_label=label).label == "all":
@@ -162,7 +162,7 @@ class Permission(BaseModel):
                         BASE_ERR
                         + RULE_ERR
                         + f"Rule 'then' condition '{label}' cant contain 'all'\n  "
-                        + f"'all' is reserved keyword and will be auto applied\n  "
+                        + "'all' is reserved keyword and will be auto applied\n  "
                     )
                 if label == rule.when:
                     raise RespoException(
@@ -237,7 +237,7 @@ class OrganizationPermissionGrant(BaseModel):
 
     @validator("type")
     def type_must_be_allow_or_deny(cls, type_str: str) -> str:
-        if not type_str in ["Allow", "Deny"]:
+        if type_str not in ["Allow", "Deny"]:
             raise RespoException(
                 f"Permission type must be literal 'Allow' or 'Deny'\n  "
                 f"Currently it is {type_str}"
@@ -273,7 +273,7 @@ class RolePermissionGrant(BaseModel):
 
     @validator("type")
     def type_must_be_allow_or_deny(cls, type_str: str) -> str:
-        if not type_str in ["Allow", "Deny"]:
+        if type_str not in ["Allow", "Deny"]:
             raise RespoException(
                 f"Permission type must be literal 'Allow' or 'Deny'\n  "
                 f"Currently it is {type_str}"
@@ -451,12 +451,12 @@ class RespoModel(BaseModel):
             if role.metadata.label == f"root.{role.metadata.organization}":
                 raise RespoException(
                     BASE_ERR
-                    + f"'root.organization' is reserved keyword and will be auto applied\n  "
+                    + "'root.organization' is reserved keyword and will be auto applied\n  "
                 )
             if role.metadata.organization not in organization_names:
                 raise RespoException(
                     BASE_ERR
-                    + f"Role's declared organization "
+                    + f"Role's declared organization {role.metadata.organization} is invalid"
                     + f"'{role.metadata.organization}' not found\n  "
                 )
             if role.metadata.label in roles_names:

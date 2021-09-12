@@ -1,0 +1,19 @@
+metadata:
+  name: some_name
+roles:
+  - metadata:
+      label: default
+      organization: default
+    permissions:
+      - label: foo.user.read
+        type: Anything
+organizations:
+  - metadata:
+      label: default
+    permissions: []
+permissions:
+  - metadata:
+      label: user
+    resources:
+      - label: user.read
+    rules: []
