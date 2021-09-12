@@ -1,7 +1,8 @@
 from pathlib import Path
 
-from respo import app, get_respo_model
 from typer.testing import CliRunner
+
+from respo import app, get_respo_model
 
 
 def test_respo_create_fail_with_no_file(runner: CliRunner):

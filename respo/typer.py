@@ -5,6 +5,7 @@ from time import time
 import typer
 import yaml
 from pydantic import ValidationError
+
 from respo.bin import get_respo_model, save_respo_model
 from respo.config import config
 from respo.helpers import RespoException

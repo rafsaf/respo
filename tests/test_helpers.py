@@ -2,10 +2,11 @@ from typing import Tuple
 
 import pytest
 from pydantic import ValidationError
+
 from respo.helpers import (
-    _contains_whitespace,
     DoubleLabel,
     TripleLabel,
+    _contains_whitespace,
     is_valid_lowercase,
 )
 

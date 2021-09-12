@@ -3,9 +3,9 @@ from os import DirEntry
 
 import pytest
 from pydantic import ValidationError
-from respo import app
 from typer.testing import CliRunner
 
+from respo import app
 from tests.conftest import get_model
 
 files = [file for file in os.scandir("./tests/cases/invalid")]

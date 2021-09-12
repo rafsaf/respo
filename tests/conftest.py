@@ -2,8 +2,9 @@ from pathlib import Path
 
 import pytest
 import yaml
-from respo import RespoModel, config, get_respo_model, save_respo_model
 from typer.testing import CliRunner
+
+from respo import RespoModel, config, get_respo_model, save_respo_model
 
 
 @pytest.fixture(autouse=True)
