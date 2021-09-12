@@ -1,6 +1,6 @@
 import copy
 from datetime import datetime
-from typing import Dict, List, Literal, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from pydantic import BaseModel, ValidationError, validator
 from respo.client import Client
@@ -232,8 +232,17 @@ class OrganizationMetadata(BaseModel):
 
 
 class OrganizationPermissionGrant(BaseModel):
-    type: Literal["Allow", "Deny"] = "Allow"
+    type: str = "Allow"
     label: str
+
+    @validator("type")
+    def type_must_be_allow_or_deny(cls, type_str: str) -> str:
+        if not type_str in ["Allow", "Deny"]:
+            raise RespoException(
+                f"Permission type must be literal 'Allow' or 'Deny'\n  "
+                f"Currently it is {type_str}"
+            )
+        return type_str
 
 
 class Organization(BaseModel):
@@ -259,8 +268,17 @@ class RoleMetadata(BaseModel):
 
 
 class RolePermissionGrant(BaseModel):
-    type: Literal["Allow", "Deny"] = "Allow"
+    type: str = "Allow"
     label: str
+
+    @validator("type")
+    def type_must_be_allow_or_deny(cls, type_str: str) -> str:
+        if not type_str in ["Allow", "Deny"]:
+            raise RespoException(
+                f"Permission type must be literal 'Allow' or 'Deny'\n  "
+                f"Currently it is {type_str}"
+            )
+        return type_str
 
 
 class Role(BaseModel):
