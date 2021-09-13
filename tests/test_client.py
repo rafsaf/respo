@@ -15,6 +15,6 @@ cases = [
 
 @pytest.mark.parametrize("case", cases)
 def test_create_respo_client_ok_for_every_input(case: Tuple[str, str]):
-    client = create_respo_client(role=case[0], organization=case[0])
-    assert client.organization == case[1]
-    assert client.role == case[1]
+    client = create_respo_client(roles=case[0], organizations=case[0])
+    assert client.organizations == case[1]
+    assert client.roles == case[1]

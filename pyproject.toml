@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "respo"
-version = "0.1.1"
+version = "0.1.2-alpha"
 description = "File based RBAC in Python made easy"
 license = "MIT"
 readme = "README.md"
@@ -36,12 +36,18 @@ mkdocs-material = "^7.2.5"
 pymdown-extensions = "^8.2"
 markdown-include = "^0.6.0"
 flake8 = "^3.9.2"
+fastapi = "^0.68.1"
+uvicorn = "^0.15.0"
+requests = "^2.26.0"
 
 [tool.coverage.run]
 source = [
-    "respo"
+    "respo",
+    "docs"
 ]
-omit = []
+omit = [
+    "**__init__.py**"
+]
 
 [tool.isort]
 profile = "black"
