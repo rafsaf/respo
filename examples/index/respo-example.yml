@@ -1,0 +1,28 @@
+# respo-example.yml
+metadata:
+  name: Just an example file
+
+permissions:
+  - metadata:
+      label: user
+    resources:
+      - label: user.read_basic
+      - label: user.read_all
+      - label: user.create
+    rules:
+      - when: user.read_all
+        then:
+          - user.read_basic
+
+organizations:
+  - metadata:
+      label: default
+    permissions: []
+
+roles:
+  - metadata:
+      label: foo
+      organization: default
+    permissions:
+      - label: default.user.create
+      - label: default.user.read_all
