@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "respo"
-version = "0.1.2-alpha"
+version = "0.1.3"
 description = "File based RBAC in Python made easy"
 license = "MIT"
 readme = "README.md"
