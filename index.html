@@ -457,11 +457,27 @@
 </ul>
 <h2 id="2-parse-yml-file-using-respo-cli-interface">2. Parse YML file using respo CLI interface</h2>
 <p>Thanks to <a href="https://typer.tiangolo.com/">Typer</a>, <em>respo</em> has powerful cli interface based on python annotations.</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>respo --help  <span class="c1"># prints all available commands</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>respo --help  <span class="c1"># prints all available commands</span>
 
 respo create respo-example.yml  <span class="c1"># create model from file</span>
+
+<span class="c1"># Result</span>
+INFO: Start looking <span class="k">for</span> file <span class="s1">&#39;respo-example.yml&#39;</span>
+INFO: Validating the content...
+INFO: YML syntax validated <span class="k">in</span> <span class="m">0</span>.004s...
+INFO: Respo model validated <span class="k">in</span> <span class="m">0</span>.002s...
+INFO: Saving as binary file to .respo_cache/__auto__respo_model.bin
+INFO: Success!
 </code></pre></div>
 </td></tr></table>
 <p>And thats it, yml file got validated and pickled by default to <code>.respo_cache/__auto__respo_model.bin</code> file.</p>
