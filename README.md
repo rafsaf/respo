@@ -18,6 +18,22 @@
     <img src="https://img.shields.io/pypi/pyversions/respo" alt="Python version">
 </a>
 
-## File based RBAC in Python made easy
+# Documentation
 
-### Under development
+**https://rafsaf.github.io/respo/**
+
+# Overview
+
+_respo_ states for **Resource Policy** and is tiny, user friendly tool for building RBAC systems based on single `yml` file, mainly with FastAPI framework in mind. In most cases – for even large set of roles and organizations – single file would be enough to provide restricting system access.
+
+# Installation
+
+```
+pip install respo
+```
+
+# Tests in this project
+
+This project focuses heavily on code quality, good practics and full 100% test coverage
+
+Also, every piece of code in the docs is a tested python/yml file, feel free to use it directly.

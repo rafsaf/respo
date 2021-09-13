@@ -591,7 +591,7 @@ class RespoModel(BaseModel):
         )
 
     def _client_organizations_exists(self, client: Client) -> bool:
-        for client_organization in client.organization:
+        for client_organization in client.organizations:
             invalid = True
             for organization in self.organizations:
                 if client_organization == organization.metadata.label:
@@ -604,7 +604,7 @@ class RespoModel(BaseModel):
         return True
 
     def _client_roles_exists(self, client: Client) -> bool:
-        for client_role in client.role:
+        for client_role in client.roles:
             invalid = True
             for role in self.roles:
                 if client_role == role.metadata.label:
@@ -636,7 +636,7 @@ class RespoModel(BaseModel):
             self._client_organizations_exists(client)
 
         checked_organizations: Set[str] = set()
-        for client_role in client.role:
+        for client_role in client.roles:
             for role in self.roles:
                 if not role.metadata.label == client_role:
                     continue
@@ -650,7 +650,7 @@ class RespoModel(BaseModel):
 
         not_checked_organizations = [
             organization
-            for organization in client.organization
+            for organization in client.organizations
             if organization not in checked_organizations
         ]
         for organization in not_checked_organizations:

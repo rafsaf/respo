@@ -1,10 +1,9 @@
 # respo-example.yml
 metadata:
-  name: Tutorial Resource Policy
+  name: Just an example file
 
 permissions:
   - metadata:
-      name: User Accounts
       label: user
     resources:
       - label: user.read_basic
@@ -17,17 +16,13 @@ permissions:
 
 organizations:
   - metadata:
-      name: Default organization
       label: default
-      description: Organization for tutorial purpose
-    permissions:
-      - label: default.user.read_all
-        type: Allow
+    permissions: []
 
 roles:
   - metadata:
-      name: Default user
-      label: user
+      label: foo
       organization: default
     permissions:
       - label: default.user.create
+      - label: default.user.read_all

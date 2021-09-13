@@ -1,40 +1,46 @@
 # Overview
 
-_respo_ states for **Resource Policy** and is tiny, user friendly tool for building RBAC systems based on single yml file, mainly with FastAPI framework in mind.
+_respo_ states for **Resource Policy** and is tiny, user friendly tool for building RBAC systems based on single `yml` file, mainly with FastAPI framework in mind. In most cases – for even large set of roles and organizations – single file would be enough to provide restricting system access.
 
-```python
-{!./examples/index/index001.py!}
-```
+#### Note, every piece of code in the docs is a tested python/yml file, feel free to use it.
 
-I wanted to have simple RBAC in backend app but couldn't find any solution which satisfied me - i had just fiew concepts in mind:
-
-- **separation of organizations** (If "A" is superuser in _foo_ organization, it has no access to _bar_ organization at all)
-- **permissions inheritance** (It may lead to thousands of `if` statements all over the codebase, i wanted every endpoint with only ONE permission for it (and the logic do the rest))
-- **simplicity** Which means predefined file-based RBAC - it's not for every usecase, only when have predefined number of organization in app, where adding new roles, permissions and organization manually
-- **speed** Parsing yml file, validate it and then pickle - so it can be read instantly
-
-_respo_ validate input yml or json file, resolve all inheritance problems, **pickle** generated pydantic model to binary file and provide function to read from it.
-
-## Example yml file
+## 1. YML file with defined permissions, organizations and roles
 
 ```yaml
 {!./examples/index/respo-example.yml!}
 ```
 
-## Parse yml files
+Note, this is very minimal showcase file, without (optional) **names** and **descriptions** fields for every object so it takes less space.
 
-Thanks to **Typer**, _respo_ has powerful cli interface based on python annotations.
+#### There are 4 sections:
+
+- **metadata**, it will be automatically populated with things like `last_modify` datetime and `created_at` fields
+- **permissions**, list of `permission "groups"` (only one – "user" above), where you specify all possible permission names in **resources** and custom rules (nested as you like) so stronger labels will force weaker
+- **organizations**, list of predefined names and optionally – ensured permissions by default. You may choose to split such as "superadmins", "admins", "normal users", but also "company A", "company B" etc.
+- **roles**, they belong strictly to one of organizations, with set of permissions. Not allowing one-to-many role to organization helps to avoid mistakes.
+
+## 2. Parse YML file using respo CLI interface
+
+Thanks to [Typer](https://typer.tiangolo.com/), _respo_ has powerful cli interface based on python annotations.
 
 ```sh
-respo --help  # prints all available commands
-
-respo create --yml-file respo-example.yml  # create model from file
-
+{!./examples/index/index002_cli.sh!}
 ```
 
-And thats it!
-Yml file got validated and compiled to binary format, by default in `__auto__respo_model.bin` file.
-You can now
+And thats it, yml file got validated and pickled by default to `.respo_cache/__auto__respo_model.bin` file.
+
+## 3. Using created respo model in dummy FastAPI app
+
+```python
+{!./examples/index/index001.py!}
+```
+
+#### Insights:
+
+- Every endpoint has exactly and only exactly **ONE UNIQUE PERMISSION**
+- Nested rules are resolved (note, no `user.read_basic` directly in foo role declaration from above, it was resolved by respo) so no need for complex if statements anywhere, any permission inheritance is done during build time using `respo create some_file`
+- Every endpoint must have `organization` in path, so that different organizations are totally independent
+
 <br>
 <br>
 <br>
