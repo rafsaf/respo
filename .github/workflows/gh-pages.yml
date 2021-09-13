@@ -1,4 +1,4 @@
-name: Build docs and deploy to gh-pages
+name: Gh-Pages
 on:
   workflow_run:
     workflows: ["Test"]

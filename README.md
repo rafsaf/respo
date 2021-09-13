@@ -10,6 +10,10 @@
   <img src="https://github.com/rafsaf/respo/workflows/Publish/badge.svg" alt="Publish">
 </a>
 
+<a href="https://github.com/rafsaf/respo/actions?query=workflow%3AGh-Pages" target="_blank">
+  <img src="https://github.com/rafsaf/respo/workflows/Gh-Pages/badge.svg" alt="Gh-Pages">
+</a>
+
 <a href="https://github.com/rafsaf/respo/blob/main/LICENSE" target="_blank">
     <img src="https://img.shields.io/github/license/rafsaf/respo" alt="License">
 </a>
