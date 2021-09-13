@@ -238,29 +238,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#note-every-piece-of-code-in-the-docs-is-a-tested-pythonyml-file-feel-free-to-use-it" class="md-nav__link">
-    Note, every piece of code in the docs is a tested python/yml file, feel free to use it.
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#1-yml-file-with-defined-permissions-organizations-and-roles" class="md-nav__link">
     1. YML file with defined permissions, organizations and roles
   </a>
-  
-    <nav class="md-nav" aria-label="1. YML file with defined permissions, organizations and roles">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#there-are-4-sections" class="md-nav__link">
-    There are 4 sections:
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -275,19 +255,6 @@
   <a href="#3-using-created-respo-model-in-dummy-fastapi-app" class="md-nav__link">
     3. Using created respo model in dummy FastAPI app
   </a>
-  
-    <nav class="md-nav" aria-label="3. Using created respo model in dummy FastAPI app">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#insights" class="md-nav__link">
-    Insights:
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -382,29 +349,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#note-every-piece-of-code-in-the-docs-is-a-tested-pythonyml-file-feel-free-to-use-it" class="md-nav__link">
-    Note, every piece of code in the docs is a tested python/yml file, feel free to use it.
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#1-yml-file-with-defined-permissions-organizations-and-roles" class="md-nav__link">
     1. YML file with defined permissions, organizations and roles
   </a>
-  
-    <nav class="md-nav" aria-label="1. YML file with defined permissions, organizations and roles">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#there-are-4-sections" class="md-nav__link">
-    There are 4 sections:
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -419,19 +366,6 @@
   <a href="#3-using-created-respo-model-in-dummy-fastapi-app" class="md-nav__link">
     3. Using created respo model in dummy FastAPI app
   </a>
-  
-    <nav class="md-nav" aria-label="3. Using created respo model in dummy FastAPI app">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#insights" class="md-nav__link">
-    Insights:
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -454,7 +388,7 @@
                 
                 <h1 id="overview">Overview</h1>
 <p><em>respo</em> states for <strong>Resource Policy</strong> and is tiny, user friendly tool for building RBAC systems based on single <code>yml</code> file, mainly with FastAPI framework in mind. In most cases – for even large set of roles and organizations – single file would be enough to provide restricting system access.</p>
-<h4 id="note-every-piece-of-code-in-the-docs-is-a-tested-pythonyml-file-feel-free-to-use-it">Note, every piece of code in the docs is a tested python/yml file, feel free to use it.</h4>
+<p>Note, every piece of code in the docs is a tested python/yml file, feel free to use it.</p>
 <h2 id="1-yml-file-with-defined-permissions-organizations-and-roles">1. YML file with defined permissions, organizations and roles</h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
@@ -514,7 +448,7 @@
 </code></pre></div>
 </td></tr></table>
 <p>Note, this is very minimal showcase file, without (optional) <strong>names</strong> and <strong>descriptions</strong> fields for every object so it takes less space.</p>
-<h4 id="there-are-4-sections">There are 4 sections:</h4>
+<p>There are 4 sections:</p>
 <ul>
 <li><strong>metadata</strong>, it will be automatically populated with things like <code>last_modify</code> datetime and <code>created_at</code> fields</li>
 <li><strong>permissions</strong>, list of <code>permission "groups"</code> (only one – "user" above), where you specify all possible permission names in <strong>resources</strong> and custom rules (nested as you like) so stronger labels will force weaker</li>
@@ -617,7 +551,7 @@ respo create respo-example.yml  <span class="c1"># create model from file</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Denied!&quot;</span><span class="p">}</span>
 </code></pre></div>
 </td></tr></table>
-<h4 id="insights">Insights:</h4>
+<p>Insights:</p>
 <ul>
 <li>Every endpoint has exactly and only exactly <strong>ONE UNIQUE PERMISSION</strong></li>
 <li>Nested rules are resolved (note, no <code>user.read_basic</code> directly in foo role declaration from above, it was resolved by respo) so no need for complex if statements anywhere, any permission inheritance is done during build time using <code>respo create some_file</code></li>
