@@ -7,6 +7,7 @@ _respo_ states for **Resource Policy** and is tiny, user friendly tool for build
 ## 1. YML file with defined permissions, organizations and roles
 
 ```yaml
+
 {!./examples/index/respo-example.yml!}
 ```
 
