@@ -1,3 +1,4 @@
+from os import unlink
 from pathlib import Path
 from shutil import rmtree
 
@@ -17,8 +18,14 @@ def mock_env_variables_and_cleanup():
 
     def cleanup():
         rmtree(config.RESPO_AUTO_FOLDER_NAME, ignore_errors=True)
-        Path(f"{config.RESPO_DEFAULT_EXPORT_FILE}.json").unlink(missing_ok=True)
-        Path(f"{config.RESPO_DEFAULT_EXPORT_FILE}.yml").unlink(missing_ok=True)
+        try:
+            unlink(f"{config.RESPO_DEFAULT_EXPORT_FILE}.json")
+        except FileNotFoundError:
+            pass
+        try:
+            unlink(f"{config.RESPO_DEFAULT_EXPORT_FILE}.yml")
+        except FileNotFoundError:
+            pass
 
     cleanup()
     yield
