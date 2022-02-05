@@ -2,12 +2,13 @@ import copy
 from datetime import datetime
 from typing import Dict, List, Optional, Set
 
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import ValidationError, validator
 
 from respo.client import Client
 from respo.config import config
 from respo.helpers import (
     GENERAL_ERROR_MESSAGE,
+    BaseModel,
     DoubleLabel,
     RespoException,
     TripleLabel,
@@ -17,8 +18,8 @@ from respo.helpers import (
 
 class MetadataSection(BaseModel):
     name: str
-    created_at: Optional[str]
-    last_modified: Optional[str]
+    created_at: Optional[str] = None
+    last_modified: Optional[str] = None
 
     @validator("created_at")
     def check_created_at(cls, created_at: str) -> str:
@@ -44,9 +45,9 @@ class MetadataSection(BaseModel):
 
 
 class PermissionMetadata(BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None
     label: str
-    description: Optional[str]
+    description: Optional[str] = None
 
     @validator("label")
     def label_must_be_in_valid_format(cls, label: str) -> str:
@@ -60,7 +61,7 @@ class PermissionMetadata(BaseModel):
 
 
 class PermissionResource(BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None
     label: str
 
     def get_label(self):
@@ -68,7 +69,7 @@ class PermissionResource(BaseModel):
 
 
 class PermissionRule(BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None
     when: str
     then: List[str]
 
@@ -217,9 +218,9 @@ class Permission(BaseModel):
 
 
 class OrganizationMetadata(BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None
     label: str
-    description: Optional[str]
+    description: Optional[str] = None
 
     @validator("label")
     def label_must_be_in_valid_format(cls, label: str) -> str:
@@ -252,9 +253,9 @@ class Organization(BaseModel):
 
 
 class RoleMetadata(BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None
     label: str
-    description: Optional[str]
+    description: Optional[str] = None
     organization: str
 
     @validator("label")

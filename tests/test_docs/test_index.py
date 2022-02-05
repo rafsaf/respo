@@ -1,7 +1,8 @@
-from respo import app
-from typer.testing import CliRunner
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
+from typer.testing import CliRunner
+
+from respo import app
 
 
 def test_respo_example_yml_isvalid(runner: CliRunner):

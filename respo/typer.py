@@ -71,7 +71,16 @@ def create(
             respo_model.metadata.created_at = old_model.metadata.created_at
 
         save_respo_model(respo_model)
-        typer.echo(good(f"Saving as binary file to {config.RESPO_BINARY_FILE_NAME}"))
+        typer.echo(
+            good(
+                f"Saving as binary file to {config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_BINARY_FILE_NAME}"
+            )
+        )
+        typer.echo(
+            good(
+                f"Saving as yml file to {config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_YML_FILE_NAME}"
+            )
+        )
         typer.echo(good("Success!"))
 
 

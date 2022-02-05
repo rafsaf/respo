@@ -20,4 +20,4 @@ def create_respo_client(
     organizations: Optional[Union[List[str], str]] = None,
     roles: Optional[Union[List[str], str]] = None,
 ):
-    return Client(organizations=organizations, roles=roles)
+    return Client(organizations=organizations, roles=roles)  # type: ignore

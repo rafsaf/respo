@@ -3,10 +3,11 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from respo import create_respo_client, get_respo_model, Client
+from respo import Client, create_respo_client, get_respo_model
 
 app = FastAPI()
 respo = get_respo_model()
+
 
 # You would probably use database, this is just a simple User "table"
 class User(BaseModel):

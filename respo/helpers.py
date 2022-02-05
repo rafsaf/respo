@@ -1,8 +1,16 @@
 import string
 
-from pydantic import BaseModel, validator
+import ujson
+from pydantic import BaseModel as PydanticRawBaseModel
+from pydantic import validator
 
 GENERAL_ERROR_MESSAGE = "General error message due to another exception"
+
+
+class BaseModel(PydanticRawBaseModel):
+    class Config:
+        json_loads = ujson.loads
+        json_dumps = ujson.dumps
 
 
 class RespoException(ValueError):
