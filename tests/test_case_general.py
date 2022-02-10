@@ -1,225 +1,202 @@
 import pytest
 
-from respo import RespoException, RespoModel, create_respo_client
+from respo import RespoException, RespoModel, RespoClient
 
 
 def test_general_yml_organization_book123(get_general_model: RespoModel):
     respo = get_general_model
-    client = create_respo_client(organizations="book123")
+    client = RespoClient()
+    client.add_organization("book123", respo)
 
-    assert respo.check("book123.user.read_basic", client)
-    assert not respo.check("book123.user.all", client)
-    assert not respo.check("book123.user.read_all", client)
-    assert not respo.check("book123.user.read_all_better", client)
-    assert not respo.check("book123.user.update", client)
-    assert not respo.check("book123.user.delete", client)
+    assert client.has_permission("book123.user.read_basic", respo)
+    assert not client.has_permission("book123.user.all", respo)
+    assert not client.has_permission("book123.user.read_all", respo)
+    assert not client.has_permission("book123.user.read_all_better", respo)
+    assert not client.has_permission("book123.user.delete", respo)
 
-    assert respo.check("book123.book.list", client)
-    assert respo.check("book123.book.read", client)
-    assert respo.check("book123.book.buy_all", client)
-    assert respo.check("book123.book.buy", client)
-    assert not respo.check("book123.book.sell", client)
+    assert client.has_permission("book123.book.list", respo)
+    assert client.has_permission("book123.book.read", respo)
+    assert client.has_permission("book123.book.buy_all", respo)
+    assert client.has_permission("book123.book.buy", respo)
+    assert not client.has_permission("book123.book.sell", respo)
 
-    assert not respo.check("default.user.read_basic", client)
-    assert not respo.check("default.user.all", client)
-    assert not respo.check("default.user.read_all", client)
-    assert not respo.check("default.user.read_all_better", client)
-    assert not respo.check("default.user.update", client)
-    assert not respo.check("default.user.delete", client)
+    assert not client.has_permission("default.user.read_basic", respo)
+    assert not client.has_permission("default.user.all", respo)
+    assert not client.has_permission("default.user.read_all", respo)
+    assert not client.has_permission("default.user.read_all_better", respo)
+    assert not client.has_permission("default.user.update", respo)
+    assert not client.has_permission("default.user.delete", respo)
 
-    assert not respo.check("default.book.list", client)
-    assert not respo.check("default.book.read", client)
-    assert not respo.check("default.book.buy_all", client)
-    assert not respo.check("default.book.buy", client)
-    assert not respo.check("default.book.sell", client)
+    assert not client.has_permission("default.book.list", respo)
+    assert not client.has_permission("default.book.read", respo)
+    assert not client.has_permission("default.book.buy_all", respo)
+    assert not client.has_permission("default.book.buy", respo)
+    assert not client.has_permission("default.book.sell", respo)
 
 
 def test_general_yml_organization_default(get_general_model: RespoModel):
     respo = get_general_model
-    client = create_respo_client(organizations="default")
+    client = RespoClient()
+    client.add_organization("default", respo)
 
-    assert not respo.check("book123.user.read_basic", client)
-    assert not respo.check("book123.user.all", client)
-    assert not respo.check("book123.user.read_all", client)
-    assert not respo.check("book123.user.read_all_better", client)
-    assert not respo.check("book123.user.update", client)
-    assert not respo.check("book123.user.delete", client)
+    assert not client.has_permission("book123.user.read_basic", respo)
+    assert not client.has_permission("book123.user.all", respo)
+    assert not client.has_permission("book123.user.read_all", respo)
+    assert not client.has_permission("book123.user.read_all_better", respo)
+    assert not client.has_permission("book123.user.update", respo)
+    assert not client.has_permission("book123.user.delete", respo)
 
-    assert not respo.check("book123.book.list", client)
-    assert not respo.check("book123.book.read", client)
-    assert not respo.check("book123.book.buy_all", client)
-    assert not respo.check("book123.book.buy", client)
-    assert not respo.check("book123.book.sell", client)
+    assert not client.has_permission("book123.book.list", respo)
+    assert not client.has_permission("book123.book.read", respo)
+    assert not client.has_permission("book123.book.buy_all", respo)
+    assert not client.has_permission("book123.book.buy", respo)
+    assert not client.has_permission("book123.book.sell", respo)
 
-    assert respo.check("default.user.read_basic", client)
-    assert not respo.check("default.user.all", client)
-    assert respo.check("default.user.read_all", client)
-    assert respo.check("default.user.read_all_better", client)
-    assert not respo.check("default.user.update", client)
-    assert not respo.check("default.user.delete", client)
+    assert client.has_permission("default.user.read_basic", respo)
+    assert not client.has_permission("default.user.all", respo)
+    assert client.has_permission("default.user.read_all", respo)
+    assert client.has_permission("default.user.read_all_better", respo)
+    assert not client.has_permission("default.user.update", respo)
+    assert not client.has_permission("default.user.delete", respo)
 
-    assert not respo.check("default.book.list", client)
-    assert not respo.check("default.book.read", client)
-    assert not respo.check("default.book.buy_all", client)
-    assert not respo.check("default.book.buy", client)
-    assert not respo.check("default.book.sell", client)
+    assert not client.has_permission("default.book.list", respo)
+    assert not client.has_permission("default.book.read", respo)
+    assert not client.has_permission("default.book.buy_all", respo)
+    assert not client.has_permission("default.book.buy", respo)
+    assert not client.has_permission("default.book.sell", respo)
 
 
 def test_general_yml_role_client(get_general_model: RespoModel):
     respo = get_general_model
-    client = create_respo_client(roles="client")
+    client = RespoClient()
+    client.add_role("client", respo)
 
-    assert respo.check("book123.user.read_basic", client)
-    assert not respo.check("book123.user.all", client)
-    assert not respo.check("book123.user.read_all", client)
-    assert not respo.check("book123.user.read_all_better", client)
-    assert not respo.check("book123.user.update", client)
-    assert not respo.check("book123.user.delete", client)
+    assert client.has_permission("book123.user.read_basic", respo)
+    assert not client.has_permission("book123.user.all", respo)
+    assert not client.has_permission("book123.user.read_all", respo)
+    assert not client.has_permission("book123.user.read_all_better", respo)
+    assert not client.has_permission("book123.user.update", respo)
+    assert not client.has_permission("book123.user.delete", respo)
 
-    assert respo.check("book123.book.list", client)
-    assert respo.check("book123.book.read", client)
-    assert respo.check("book123.book.buy_all", client)
-    assert respo.check("book123.book.buy", client)
-    assert not respo.check("book123.book.sell", client)
+    assert client.has_permission("book123.book.list", respo)
+    assert client.has_permission("book123.book.read", respo)
+    assert client.has_permission("book123.book.buy_all", respo)
+    assert client.has_permission("book123.book.buy", respo)
+    assert not client.has_permission("book123.book.sell", respo)
 
-    assert not respo.check("default.user.read_basic", client)
-    assert not respo.check("default.user.all", client)
-    assert not respo.check("default.user.read_all", client)
-    assert not respo.check("default.user.read_all_better", client)
-    assert not respo.check("default.user.update", client)
-    assert not respo.check("default.user.delete", client)
+    assert client.has_permission("default.user.read_basic", respo)
+    assert not client.has_permission("default.user.all", respo)
+    assert client.has_permission("default.user.read_all", respo)
+    assert client.has_permission("default.user.read_all_better", respo)
+    assert not client.has_permission("default.user.update", respo)
+    assert not client.has_permission("default.user.delete", respo)
 
-    assert not respo.check("default.book.list", client)
-    assert not respo.check("default.book.read", client)
-    assert not respo.check("default.book.buy_all", client)
-    assert not respo.check("default.book.buy", client)
-    assert not respo.check("default.book.sell", client)
+    assert not client.has_permission("default.book.list", respo)
+    assert not client.has_permission("default.book.read", respo)
+    assert not client.has_permission("default.book.buy_all", respo)
+    assert not client.has_permission("default.book.buy", respo)
+    assert not client.has_permission("default.book.sell", respo)
 
 
 def test_general_yml_role_superuser_book(get_general_model: RespoModel):
     respo = get_general_model
-    client = create_respo_client(roles="superuser_book")
+    client = RespoClient()
+    client.add_role("superuser_book", respo)
 
-    assert respo.check("book123.user.read_basic", client)
-    assert respo.check("book123.user.all", client)
-    assert respo.check("book123.user.read_all", client)
-    assert respo.check("book123.user.read_all_better", client)
-    assert respo.check("book123.user.update", client)
-    assert respo.check("book123.user.delete", client)
+    assert client.has_permission("book123.user.read_basic", respo)
+    assert client.has_permission("book123.user.all", respo)
+    assert client.has_permission("book123.user.read_all", respo)
+    assert client.has_permission("book123.user.read_all_better", respo)
+    assert client.has_permission("book123.user.update", respo)
+    assert client.has_permission("book123.user.delete", respo)
 
-    assert respo.check("book123.book.list", client)
-    assert respo.check("book123.book.read", client)
-    assert respo.check("book123.book.buy_all", client)
-    assert respo.check("book123.book.buy", client)
-    assert not respo.check("book123.book.sell", client)
+    assert client.has_permission("book123.book.list", respo)
+    assert client.has_permission("book123.book.read", respo)
+    assert client.has_permission("book123.book.buy_all", respo)
+    assert client.has_permission("book123.book.buy", respo)
+    assert not client.has_permission("book123.book.sell", respo)
 
-    assert not respo.check("default.user.read_basic", client)
-    assert not respo.check("default.user.all", client)
-    assert not respo.check("default.user.read_all", client)
-    assert not respo.check("default.user.read_all_better", client)
-    assert not respo.check("default.user.update", client)
-    assert not respo.check("default.user.delete", client)
+    assert client.has_permission("default.user.read_basic", respo)
+    assert not client.has_permission("default.user.all", respo)
+    assert client.has_permission("default.user.read_all", respo)
+    assert client.has_permission("default.user.read_all_better", respo)
+    assert not client.has_permission("default.user.update", respo)
+    assert not client.has_permission("default.user.delete", respo)
 
-    assert not respo.check("default.book.list", client)
-    assert not respo.check("default.book.read", client)
-    assert not respo.check("default.book.buy_all", client)
-    assert not respo.check("default.book.buy", client)
-    assert not respo.check("default.book.sell", client)
+    assert not client.has_permission("default.book.list", respo)
+    assert not client.has_permission("default.book.read", respo)
+    assert not client.has_permission("default.book.buy_all", respo)
+    assert not client.has_permission("default.book.buy", respo)
+    assert not client.has_permission("default.book.sell", respo)
 
 
 def test_general_yml_role_admin_role(get_general_model: RespoModel):
     respo = get_general_model
-    client = create_respo_client(roles="admin_role")
+    client = RespoClient()
+    client.add_role("admin_role", respo)
 
-    assert respo.check("book123.user.read_basic", client)
-    assert not respo.check("book123.user.all", client)
-    assert respo.check("book123.user.read_all", client)
-    assert not respo.check("book123.user.read_all_better", client)
-    assert not respo.check("book123.user.update", client)
-    assert not respo.check("book123.user.delete", client)
+    assert client.has_permission("book123.user.read_basic", respo)
+    assert not client.has_permission("book123.user.all", respo)
+    assert client.has_permission("book123.user.read_all", respo)
+    assert not client.has_permission("book123.user.read_all_better", respo)
+    assert not client.has_permission("book123.user.update", respo)
+    assert not client.has_permission("book123.user.delete", respo)
 
-    assert respo.check("book123.book.list", client)
-    assert respo.check("book123.book.read", client)
-    assert respo.check("book123.book.buy_all", client)
-    assert respo.check("book123.book.buy", client)
-    assert respo.check("book123.book.sell", client)
+    assert client.has_permission("book123.book.list", respo)
+    assert client.has_permission("book123.book.read", respo)
+    assert client.has_permission("book123.book.buy_all", respo)
+    assert client.has_permission("book123.book.buy", respo)
+    assert client.has_permission("book123.book.sell", respo)
 
-    assert not respo.check("default.user.read_basic", client)
-    assert not respo.check("default.user.all", client)
-    assert not respo.check("default.user.read_all", client)
-    assert not respo.check("default.user.read_all_better", client)
-    assert not respo.check("default.user.update", client)
-    assert not respo.check("default.user.delete", client)
+    assert client.has_permission("default.user.read_basic", respo)
+    assert not client.has_permission("default.user.all", respo)
+    assert client.has_permission("default.user.read_all", respo)
+    assert client.has_permission("default.user.read_all_better", respo)
+    assert not client.has_permission("default.user.update", respo)
+    assert not client.has_permission("default.user.delete", respo)
 
-    assert not respo.check("default.book.list", client)
-    assert not respo.check("default.book.read", client)
-    assert not respo.check("default.book.buy_all", client)
-    assert not respo.check("default.book.buy", client)
-    assert not respo.check("default.book.sell", client)
+    assert not client.has_permission("default.book.list", respo)
+    assert not client.has_permission("default.book.read", respo)
+    assert not client.has_permission("default.book.buy_all", respo)
+    assert not client.has_permission("default.book.buy", respo)
+    assert not client.has_permission("default.book.sell", respo)
 
 
 def test_general_yml_role_test_role(get_general_model: RespoModel):
     respo = get_general_model
-    client = create_respo_client(roles="test_role")
-    assert respo.check("default.test.f", client)
+    client = RespoClient()
+    client.add_role("test_role", respo)
+    client.has_permission("default.test.f", respo)
 
 
 def test_general_yml_not_existing_permission_label(get_general_model: RespoModel):
     respo = get_general_model
-    client = create_respo_client(roles="test_role")
+    client = RespoClient()
+    client.add_role("test_role", respo)
     with pytest.raises(RespoException):
-        respo.check("blabla.blabla.blabla", client=client)
+        client.has_permission("blabla.blabla.blabla", respo)
 
 
 def test_general_yml_err_from_not_existing_role_no_force(get_general_model: RespoModel):
     respo = get_general_model
-    client = create_respo_client(roles="not_existing!!! test_role")
+    client = RespoClient()
+    client.add_role("not_existing!!! test_role", respo)
     with pytest.raises(RespoException):
-        respo.check("default.test.f", client)
-    with pytest.raises(RespoException):
-        respo.check("default.test.f", client, force=False)
+        client.has_permission("default.test.f", respo)
 
 
 def test_general_yml_no_err_from_not_existing_role_force(get_general_model: RespoModel):
     respo = get_general_model
-    client = create_respo_client(roles="not_existing!!! test_role")
-
-    assert respo.check("default.test.f", client, force=True)
+    client = RespoClient()
+    client.add_role("not_existing!!! test_role", respo)
+    assert client.has_permission("default.test.f", respo)
 
 
 def test_general_yml_err_from_not_existing_organization_no_force(
     get_general_model: RespoModel,
 ):
     respo = get_general_model
-    client = create_respo_client(organizations="default not_existing?!")
+    client = RespoClient()
+    client.add_organization("default not_existing?!", respo)
     with pytest.raises(RespoException):
-        respo.check("default.test.f", client)
-    with pytest.raises(RespoException):
-        respo.check("default.test.f", client, force=False)
-
-
-def test_general_yml_no_err_from_not_existing_organization_force(
-    get_general_model: RespoModel,
-):
-    respo = get_general_model
-    client = create_respo_client(organizations="default not_existing?!")
-
-    assert respo.check("default.user.read_basic", client, force=True)
-
-
-def test_default_root_is_ok(get_general_model: RespoModel):
-    respo = get_general_model
-    client = create_respo_client(roles="root.default")
-
-    assert respo.check("default.user.read_basic", client)
-    assert respo.check("default.user.all", client)
-    assert respo.check("default.user.read_all", client)
-    assert respo.check("default.user.read_all_better", client)
-    assert respo.check("default.user.update", client)
-    assert respo.check("default.user.delete", client)
-
-    assert respo.check("default.book.list", client)
-    assert respo.check("default.book.read", client)
-    assert respo.check("default.book.buy_all", client)
-    assert respo.check("default.book.buy", client)
-    assert respo.check("default.book.sell", client)
+        assert client.has_permission("default.test.f", respo)

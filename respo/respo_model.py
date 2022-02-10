@@ -1,10 +1,11 @@
+from collections import defaultdict
 import copy
+
 from datetime import datetime
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Union
 
 from pydantic import ValidationError, validator
 
-from respo.client import Client
 from respo.config import config
 from respo.helpers import (
     GENERAL_ERROR_MESSAGE,
@@ -293,6 +294,8 @@ class RespoModel(BaseModel):
     permissions: List[Permission]
     organizations: List[Organization]
     roles: List[Role]
+    permission_to_role_dict: Dict[str, Set[str]] = defaultdict(set)
+    permission_to_organization_dict: Dict[str, Set[str]] = defaultdict(set)
 
     @classmethod
     def dict_label_to_resources(
@@ -581,81 +584,45 @@ class RespoModel(BaseModel):
             roles.append(root_role)
         return roles
 
-    def _label_resource_exists(self, triple_label: TripleLabel) -> bool:
-        for permission in self.permissions:
-            if permission.metadata.label == triple_label.metalabel:
-                for resource in permission.resources:
-                    if resource.label == triple_label.to_double_label():
-                        return True
-        raise RespoException(
-            f"Permissions resource label {triple_label.full_label} not found in model\n  "
-        )
+    @validator("permission_to_role_dict")
+    def creating_permission_to_role_dict_for_extra_fast_checking_permissions(
+        cls, permission_to_role_dict: Dict[str, Set[str]], values: Dict
+    ):
+        roles: Optional[List[Role]] = values.get("roles")
+        assert roles is not None, GENERAL_ERROR_MESSAGE
 
-    def _client_organizations_exists(self, client: Client) -> bool:
-        for client_organization in client.organizations:
-            invalid = True
-            for organization in self.organizations:
-                if client_organization == organization.metadata.label:
-                    invalid = False
-                    break
-            if invalid:
-                raise RespoException(
-                    f"Client organization {client_organization} not found in model\n  "
-                )
-        return True
+        for role in roles:
+            for permission in role.permissions:
+                permission_to_role_dict[
+                    f"{role.metadata.organization}.{role.metadata.label}.{permission.label}"
+                ].add(f"{role.metadata.organization}.{role.metadata.label}")
+        return permission_to_role_dict
 
-    def _client_roles_exists(self, client: Client) -> bool:
-        for client_role in client.roles:
-            invalid = True
-            for role in self.roles:
-                if client_role == role.metadata.label:
-                    invalid = False
-                    break
-            if invalid:
-                raise RespoException(
-                    f"Client role {client_role} not found in model\n  "
-                )
-        return True
+    @validator("permission_to_organization_dict")
+    def creating_permission_to_organization_dict_for_extra_fast_checking_permissions(
+        cls, permission_to_organization_dict: Dict[str, Set[str]], values: Dict
+    ):
+        organizations: Optional[List[Organization]] = values.get("organizations")
+        assert organizations is not None, GENERAL_ERROR_MESSAGE
 
-    def _check_organization(self, label: str, organization_name: str) -> bool:
-        for organization in self.organizations:
-            if organization.metadata.label != organization_name:
-                continue
+        for organization in organizations:
             for permission in organization.permissions:
-                if permission.label == label:
-                    return True
+                permission_to_organization_dict[permission.label].add(
+                    organization.metadata.label
+                )
+        return permission_to_organization_dict
+
+    def organization_exists(self, organization_name: str) -> bool:
+        for organization in self.organizations:
+            if organization_name == organization.metadata.label:
+                return True
         return False
 
-    def check(self, label: str, client: Client, force: Optional[bool] = None) -> bool:
-        triple_label = TripleLabel(full_label=label)
-
-        if force is None:
-            force = config.RESPO_CHECK_FORCE
-        if not force:
-            self._label_resource_exists(triple_label)
-            self._client_roles_exists(client)
-            self._client_organizations_exists(client)
-
-        checked_organizations: Set[str] = set()
-        for client_role in client.roles:
-            for role in self.roles:
-                if not role.metadata.label == client_role:
-                    continue
-                else:
-                    for permission in role.permissions:
-                        if permission.label == label:
-                            return True
-                    if self._check_organization(label, role.metadata.organization):
-                        return True
-                    checked_organizations.add(role.metadata.organization)
-
-        not_checked_organizations = [
-            organization
-            for organization in client.organizations
-            if organization not in checked_organizations
-        ]
-        for organization in not_checked_organizations:
-            if self._check_organization(label, organization):
+    def role_exists(self, role_name: str, organization_name: str) -> bool:
+        for role in self.roles:
+            if (
+                role.metadata.label == role_name
+                and role.metadata.organization == organization_name
+            ):
                 return True
-
         return False

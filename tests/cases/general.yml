@@ -82,21 +82,25 @@ roles:
       - label: default.user.read_all
       - label: default.user.delete
         type: Deny
+
   - metadata:
       label: superuser_book
       organization: book123
     permissions:
       - label: book123.user.all
+
   - metadata:
       label: client
       organization: book123
     permissions: []
+
   - metadata:
       label: admin_role
       organization: book123
     permissions:
       - label: book123.user.read_all
       - label: book123.book.sell
+
   - metadata:
       label: test_role
       organization: default
