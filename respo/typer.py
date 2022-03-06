@@ -1,3 +1,4 @@
+import ujson
 import json
 from pathlib import Path
 from time import time
@@ -44,7 +45,7 @@ def create(
         else:
             try:
                 before_json_time = time()
-                data = json.loads(file.read_text())
+                data = ujson.loads(file.read_text())
                 delta_json_time = round(time() - before_json_time, 5)
             except json.JSONDecodeError as json_eror:
                 typer.echo(bad("Could not process file"))
@@ -117,6 +118,6 @@ def export(
         if format == "yml":
             yaml.dump(model.dict(), export_file)
         else:
-            json.dump(model.dict(), export_file)
+            ujson.dump(model.dict(), export_file)
     typer.echo(good(f"Saving as {format} file to {file}"))
     typer.echo(good("Success!"))

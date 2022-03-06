@@ -8,19 +8,27 @@ from respo.respo_model import RespoModel
 
 class RespoClient:
     def __init__(self, json_string: Optional[str] = "") -> None:
+        self._value: Dict[str, List[str]] = {}
+        self._initialized: bool = False
+        self._json_string: str = json_string or ""
         if not json_string:
-            self._value: Dict[str, List[str]] = {"organizations": [], "roles": []}
-        else:
-            # no validation step
-            self._value: Dict[str, List[str]] = ujson.loads(json_string)
+            self._value = {"organizations": [], "roles": []}
+            self._initialized = True
 
     def __str__(self) -> str:
         return ujson.dumps(self._value)
 
+    def _load(self):
+        if not self._initialized:
+            self._value = ujson.loads(self._json_string)
+            self._initialized = True
+
     def roles(self):
+        self._load()
         return self._value["roles"]
 
     def organizations(self):
+        self._load()
         return self._value["organizations"]
 
     def add_role(
