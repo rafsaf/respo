@@ -1,9 +1,9 @@
-import ujson
 import json
 from pathlib import Path
 from time import time
 
 import typer
+import ujson
 import yaml
 from pydantic import ValidationError
 

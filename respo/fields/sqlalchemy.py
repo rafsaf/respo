@@ -1,4 +1,5 @@
-from sqlalchemy.types import TypeDecorator, TEXT
+from sqlalchemy.types import TEXT, TypeDecorator
+
 from respo.client import RespoClient
 
 

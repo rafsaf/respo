@@ -35,4 +35,9 @@ def save_respo_model(model: RespoModel) -> None:
         pickle.dump(model, file)
 
     with open(path_yml, "w") as file:
-        yaml.dump(model.dict(), file)
+        yaml.dump(
+            model.dict(
+                exclude={"permission_to_organization_dict", "permission_to_role_dict"}
+            ),
+            file,
+        )

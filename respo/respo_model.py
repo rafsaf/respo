@@ -292,8 +292,11 @@ class RespoModel(BaseModel):
     permissions: List[Permission]
     organizations: List[Organization]
     roles: List[Role]
-    permission_to_role_dict: Dict[str, Set[str]] = defaultdict(set)
-    permission_to_organization_dict: Dict[str, Set[str]] = defaultdict(set)
+    permission_to_role_dict: Dict[str, Set[str]] = {}
+    permission_to_organization_dict: Dict[str, Set[str]] = {}
+
+    class Config:
+        validate_all = True
 
     @classmethod
     def dict_label_to_resources(
@@ -586,6 +589,7 @@ class RespoModel(BaseModel):
     def creating_permission_to_role_dict_for_extra_fast_checking_permissions(
         cls, permission_to_role_dict: Dict[str, Set[str]], values: Dict
     ):
+        permission_to_role_dict = defaultdict(set)
         roles: Optional[List[Role]] = values.get("roles")
         assert roles is not None, GENERAL_ERROR_MESSAGE
 
@@ -600,6 +604,7 @@ class RespoModel(BaseModel):
     def creating_permission_to_organization_dict_for_extra_fast_checking_permissions(
         cls, permission_to_organization_dict: Dict[str, Set[str]], values: Dict
     ):
+        permission_to_organization_dict = defaultdict(set)
         organizations: Optional[List[Organization]] = values.get("organizations")
         assert organizations is not None, GENERAL_ERROR_MESSAGE
 
