@@ -1,13 +1,14 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
+
 import ujson
-import respo
+
 from respo.helpers import RespoException, RoleLabel
 from respo.respo_model import RespoModel
 
 
 class RespoClient:
-    def __init__(self, json_string: str = "") -> None:
-        if json_string == "":
+    def __init__(self, json_string: Optional[str] = "") -> None:
+        if not json_string:
             self._value: Dict[str, List[str]] = {"organizations": [], "roles": []}
         else:
             # no validation step
@@ -37,7 +38,7 @@ class RespoClient:
                     f"Could not add role {role_name}."
                     f" Role not found in organization {role_label.organization}"
                 )
-        if not role_label.organization in self._value["organizations"]:
+        if role_label.organization not in self._value["organizations"]:
             raise RespoException(
                 f"Could not add role {role_name}."
                 f" Organization {role_label.organization} must be added to this RespoClient before adding role."

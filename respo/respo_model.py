@@ -1,12 +1,10 @@
-from collections import defaultdict
 import copy
-
+from collections import defaultdict
 from datetime import datetime
-from typing import Dict, List, Optional, Set, Union
+from typing import Dict, List, Optional, Set
 
 from pydantic import ValidationError, validator
 
-from respo.config import config
 from respo.helpers import (
     GENERAL_ERROR_MESSAGE,
     BaseModel,

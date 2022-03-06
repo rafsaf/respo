@@ -14,5 +14,4 @@ cases = [
 
 @pytest.mark.parametrize("case", cases)
 def test_create_respo_client_ok_for_every_input(case: Tuple[str, str]):
-    client = RespoClient()
-    pass
+    RespoClient()
