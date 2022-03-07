@@ -1,17 +1,21 @@
+import logging
 from typing import Dict, List, Optional
 
 import ujson
 
 from respo.helpers import RespoException, RoleLabel
 from respo.respo_model import RespoModel
+import itertools
 
 
 class RespoClient:
+    count_id = itertools.count()
+
     def __init__(self, json_string: Optional[str] = "") -> None:
         self._value: Dict[str, List[str]] = {}
         self._initialized: bool = False
         self._json_string: str = json_string or ""
-        if not json_string:
+        if self._json_string == "":
             self._value = {"organizations": [], "roles": []}
             self._initialized = True
 
@@ -37,6 +41,7 @@ class RespoClient:
         respo_model: RespoModel,
         validate_input: bool = True,
     ):
+        self._load()
         role_label = RoleLabel(full_label=role_name)
         if validate_input:
             if not respo_model.role_exists(
@@ -54,6 +59,7 @@ class RespoClient:
         if role_name in self._value["roles"]:
             raise RespoException(f"Already have the role {role_name}.")
         self._value["roles"].append(role_name)
+        self.id = next(self.count_id)
 
     def add_organization(
         self,
@@ -61,6 +67,7 @@ class RespoClient:
         respo_model: RespoModel,
         validate_input: bool = True,
     ):
+        self._load()
         if validate_input:
             if not respo_model.organization_exists(organization_name):
                 raise RespoException(
@@ -70,8 +77,10 @@ class RespoClient:
         if organization_name in self._value["organizations"]:
             raise RespoException(f"Already have organization {organization_name}.")
         self._value["organizations"].append(organization_name)
+        self.id = next(self.count_id)
 
     def has_permission(self, full_permission_name: str, respo_model: RespoModel):
+        self._load()
         for role in self._value["roles"]:
             if role in respo_model.permission_to_role_dict[full_permission_name]:
                 return True
