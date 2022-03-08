@@ -11,7 +11,10 @@ files = [file for file in os.scandir("./tests/cases/valid")]
 
 
 @pytest.mark.parametrize("file", files)
-def test_raise_respo_exception(file: DirEntry, runner: CliRunner):
+def test_all_models_valid(file: DirEntry, runner: CliRunner):
     get_model(file.path)
+    print(file)
+    print(file.path)
+    print(type(file.path))
     result = runner.invoke(app, ["create", file.path])
     assert "Success!" in result.stdout

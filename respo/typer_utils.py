@@ -26,6 +26,7 @@ def generate_respo_model_file(respo_model: BaseRespoModel):
     text += "from respo import Organization, Role, BaseRespoModel\n\n\n"
     text += "class RespoModel(BaseRespoModel):\n"
     text += "    class ORGS:\n"
+    text += "        pass\n"
     orgs = sorted(respo_model.ORGS.__dict__.items(), key=lambda item: item[0])
     for attr_name, _ in orgs:
         if not attr_name.isupper():
@@ -33,6 +34,7 @@ def generate_respo_model_file(respo_model: BaseRespoModel):
         text += f"        {attr_name}: Organization\n"
     text += "\n"
     text += "    class ROLES:\n"
+    text += "        pass\n"
     roles = sorted(respo_model.ROLES.__dict__.items(), key=lambda item: item[0])
     for attr_name, _ in roles:
         if not attr_name.isupper():
@@ -40,6 +42,7 @@ def generate_respo_model_file(respo_model: BaseRespoModel):
         text += f"        {attr_name}: Role\n"
     text += "\n"
     text += "    class PERMS:\n"
+    text += "        pass\n"
     perms = sorted(respo_model.PERMS.__dict__.items(), key=lambda item: item[0])
     for attr_name, _ in perms:
         if not attr_name.isupper():

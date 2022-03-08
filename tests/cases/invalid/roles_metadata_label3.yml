@@ -2,7 +2,7 @@ metadata:
   name: some_name
 roles:
   - metadata:
-      label: root.default
+      label: root
       organization: default
     permissions: []
 organizations:

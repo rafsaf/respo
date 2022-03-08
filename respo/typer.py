@@ -41,15 +41,21 @@ def create(
                 typer.echo(bad("Could not process file"))
                 typer.echo(yml_error)
                 raise typer.Abort()
+            except Exception:  # pragma: no cover
+                typer.echo(bad("Unexpected error when processing yml."))
+                raise typer.Abort()
             typer.echo(good(f"YML syntax validated in {delta_yml_time}s..."))
         else:
             try:
                 before_json_time = time()
                 data = ujson.loads(file.read_text())
                 delta_json_time = round(time() - before_json_time, 5)
-            except json.JSONDecodeError as json_eror:
+            except ValueError as json_eror:
                 typer.echo(bad("Could not process file"))
                 typer.echo(json_eror)
+                raise typer.Abort()
+            except Exception:  # pragma: no cover
+                typer.echo(bad("Unexpected error when processing json."))
                 raise typer.Abort()
             typer.echo(good(f"JSON syntax validated in {delta_json_time}s..."))
         try:
@@ -89,38 +95,5 @@ def create(
 
 
 @app.command()
-def export(
-    file: Path = typer.Argument(
-        default=None, help="Path to file where respo model will be exported"
-    ),
-    format: FileFormat = typer.Option(
-        default="yml", help="Available format is (default) YML and JSON"
-    ),
-):
-    if file is None:
-        default_path = f"{config.RESPO_DEFAULT_EXPORT_FILE}.{format.value}"
-        file = Path(default_path)
-
-    typer.echo(good(f"Start exporting to file '{file}'"))
-    if file.exists():
-        if file.is_dir():
-            typer.echo(bad(f"The file '{file}' is not a file but a directory"))
-            raise typer.Abort()
-        else:
-            typer.echo(good(f"The file '{file}' exists, it will be overwritten"))
-
-    try:
-        before_respo_model = time()
-        model = BaseRespoModel.get_respo_model()
-        delta_respo_model = round(time() - before_respo_model, 5)
-    except RespoException as respo_err:
-        typer.echo(respo_err)
-        raise typer.Abort()
-    typer.echo(good(f"Reading respo model took {delta_respo_model}s..."))
-    with open(file, "w") as export_file:
-        if format == "yml":
-            yaml.dump(model.dict(), export_file)
-        else:
-            ujson.dump(model.dict(), export_file)
-    typer.echo(good(f"Saving as {format} file to {file}"))
-    typer.echo(good("Success!"))
+def export():
+    pass

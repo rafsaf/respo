@@ -22,7 +22,13 @@ def save_respo_model(model: BaseRespoModel) -> None:
     with open(path_yml, "w") as file:
         yaml.dump(
             model.dict(
-                exclude={"permission_to_organization_dict", "permission_to_role_dict"}
+                exclude={
+                    "permission_to_organization_dict",
+                    "permission_to_role_dict",
+                    "PERMS",
+                    "ORGS",
+                    "ROLES",
+                }
             ),
             file,
         )

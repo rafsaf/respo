@@ -15,6 +15,7 @@ def mock_env_variables_and_cleanup():
     config.RESPO_AUTO_FOLDER_NAME = ".respo_test_cache"
     config.RESPO_AUTO_YML_FILE_NAME = "test_yml_respo.yml"
     config.RESPO_DEFAULT_EXPORT_FILE = "test_export_respo"
+    config.RESPO_CHECK_FORCE = True
 
     def cleanup():
         rmtree(config.RESPO_AUTO_FOLDER_NAME, ignore_errors=True)
@@ -49,5 +50,4 @@ def get_general_model():
 
 @pytest.fixture()
 def runner():
-    runner = CliRunner()
-    return runner
+    return CliRunner()

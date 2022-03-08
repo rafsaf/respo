@@ -19,8 +19,13 @@ from respo.helpers import (
 
 
 class T:
-    def __init__(self) -> None:
-        pass
+    def __eq__(self, other: "T") -> bool:
+        for item, value in self.__dict__.items():
+            if not item.isupper():
+                continue
+            if not (item in other.__dict__ and other.__dict__[item] == value):
+                return False
+        return True
 
 
 class MetadataSection(BaseModel):
@@ -662,9 +667,9 @@ class BaseRespoModel(BaseModel):
 
         for role in roles:
             for permission in role.permissions:
-                permission_to_role_dict[
-                    f"{role.metadata.organization}.{role.metadata.label}.{permission.label}"
-                ].add(f"{role.metadata.organization}.{role.metadata.label}")
+                permission_to_role_dict[permission.label].add(
+                    f"{role.metadata.organization}.{role.metadata.label}"
+                )
         return permission_to_role_dict
 
     @validator("permission_to_organization_dict")
