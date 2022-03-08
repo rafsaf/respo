@@ -14,3 +14,4 @@ __auto__respo_model.json
 dist
 htmlcov
 coverage.xml
+respo_model.py

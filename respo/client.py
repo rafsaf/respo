@@ -1,10 +1,10 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import ujson
 
-from respo.helpers import RespoException, RoleLabel
-from respo.respo_model import RespoModel
 from respo.config import config
+from respo.helpers import RespoException, RoleLabel
+from respo.respo_model import Organization, RespoModel, Role
 
 
 class RespoClient:
@@ -58,10 +58,11 @@ class RespoClient:
 
     def add_role(
         self,
-        role_name: str,
+        role_name: Union[str, Role],
         respo_model: Optional[RespoModel],
         validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
+        role_name = str(role_name)
         role_label = RoleLabel(full_label=role_name)
         if validate_input:
             self.validate_role(role_label=role_label, respo_model=respo_model)
@@ -80,10 +81,11 @@ class RespoClient:
 
     def remove_role(
         self,
-        role_name: str,
+        role_name: Union[str, Role],
         respo_model: Optional[RespoModel],
         validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
+        role_name = str(role_name)
         role_label = RoleLabel(full_label=role_name)
         if validate_input:
             self.validate_role(role_label=role_label, respo_model=respo_model)
@@ -96,10 +98,11 @@ class RespoClient:
 
     def add_organization(
         self,
-        organization_name: str,
+        organization_name: Union[str, Organization],
         respo_model: Optional[RespoModel],
         validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
+        organization_name = str(organization_name)
         if validate_input:
             self.validate_organization(
                 organization_name=organization_name, respo_model=respo_model
@@ -112,10 +115,11 @@ class RespoClient:
 
     def remove_organization(
         self,
-        organization_name: str,
+        organization_name: Union[str, Organization],
         respo_model: Optional[RespoModel],
         validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
+        organization_name = str(organization_name)
         if validate_input:
             self.validate_organization(
                 organization_name=organization_name, respo_model=respo_model

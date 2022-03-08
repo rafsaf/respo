@@ -249,12 +249,15 @@ class OrganizationPermissionGrant(BaseModel):
         return type_str
 
     def label_to_attribute_name(self):
-        return self.label.replace(".", "_").upper()
+        return self.label.replace(".", "__").upper()
 
 
 class Organization(BaseModel):
     metadata: OrganizationMetadata
     permissions: List[OrganizationPermissionGrant]
+
+    def __str__(self) -> str:
+        return self.metadata.label
 
 
 class RoleMetadata(BaseModel):
@@ -278,7 +281,7 @@ class RoleMetadata(BaseModel):
         return f"{self.organization}.{self.label}"
 
     def full_label_to_attribute_name(self):
-        return self.full_label.replace(".", "_").upper()
+        return self.full_label.replace(".", "__").upper()
 
 
 class RolePermissionGrant(BaseModel):
@@ -298,6 +301,9 @@ class RolePermissionGrant(BaseModel):
 class Role(BaseModel):
     metadata: RoleMetadata
     permissions: List[RolePermissionGrant]
+
+    def __str__(self) -> str:
+        return self.metadata.full_label
 
 
 class RespoModel(BaseModel):
@@ -326,17 +332,19 @@ class RespoModel(BaseModel):
             setattr(
                 self.ORGS,
                 organization.metadata.label_to_attribute_name(),
-                organization.metadata.label,
+                organization,
             )
-            for permission in organization.permissions:
+            for org_permission in organization.permissions:
                 setattr(
-                    self.PERMS, permission.label_to_attribute_name(), permission.label
+                    self.PERMS,
+                    org_permission.label_to_attribute_name(),
+                    org_permission.label,
                 )
         for role in self.roles:
             setattr(
                 self.ROLES,
                 role.metadata.full_label_to_attribute_name(),
-                role.metadata.full_label,
+                role,
             )
 
     @classmethod

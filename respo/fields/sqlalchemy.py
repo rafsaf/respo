@@ -1,11 +1,11 @@
-from typing import Optional
+from typing import Optional, Union
 
 from sqlalchemy import Column
 from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.types import TEXT, TypeDecorator
 
 from respo.client import RespoClient
-from respo.respo_model import RespoModel
+from respo.respo_model import Organization, RespoModel, Role
 
 
 class TEXTRespoField(TypeDecorator):
@@ -43,7 +43,7 @@ class MutableRespoClient(Mutable, RespoClient):
 
     def add_organization(
         self,
-        organization_name: str,
+        organization_name: Union[str, Organization],
         respo_model: Optional[RespoModel],
         validate_input: bool = ...,
     ) -> bool:
@@ -53,7 +53,7 @@ class MutableRespoClient(Mutable, RespoClient):
 
     def remove_organization(
         self,
-        organization_name: str,
+        organization_name: Union[str, Organization],
         respo_model: Optional[RespoModel],
         validate_input: bool = ...,
     ) -> bool:
@@ -65,7 +65,7 @@ class MutableRespoClient(Mutable, RespoClient):
 
     def add_role(
         self,
-        role_name: str,
+        role_name: Union[str, Role],
         respo_model: Optional[RespoModel],
         validate_input: bool = ...,
     ) -> bool:
@@ -75,7 +75,7 @@ class MutableRespoClient(Mutable, RespoClient):
 
     def remove_role(
         self,
-        role_name: str,
+        role_name: Union[str, Role],
         respo_model: Optional[RespoModel],
         validate_input: bool = ...,
     ) -> bool:

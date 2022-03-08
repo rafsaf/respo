@@ -8,6 +8,7 @@ class Config(BaseSettings):
 
     RESPO_DEFAULT_EXPORT_FILE: str = "generated_respo_model"
     RESPO_CHECK_FORCE: bool = False
+    RESPO_FILE_NAME_RESPO_MODEL: str = "respo_model.py"
 
 
 config = Config()

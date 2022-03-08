@@ -11,7 +11,7 @@ from respo.bin import get_respo_model, save_respo_model
 from respo.config import config
 from respo.helpers import RespoException
 from respo.respo_model import RespoModel
-from respo.typer_utils import FileFormat, bad, good
+from respo.typer_utils import FileFormat, bad, generate_respo_model_file, good
 
 app = typer.Typer()
 
@@ -82,9 +82,9 @@ def create(
                 f"Saving as yml file to {config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_YML_FILE_NAME}"
             )
         )
-        import logging
-
-        logging.error(respo_model.ORGS.__dict__)
+        typer.echo(good("Generating respo model file..."))
+        generate_respo_model_file(respo_model=respo_model)
+        typer.echo(good(f"Saving as py file to {config.RESPO_FILE_NAME_RESPO_MODEL}"))
         typer.echo(good("Success!"))
 
 
