@@ -5,8 +5,8 @@ from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.types import TEXT, TypeDecorator
 
 from respo.client import RespoClient
-from respo.respo_model import Organization, BaseRespoModel, Role
 from respo.config import config
+from respo.respo_model import BaseRespoModel, Organization, Role
 
 
 class TEXTRespoField(TypeDecorator):

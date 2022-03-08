@@ -1,6 +1,4 @@
-import pytest
-
-from respo import RespoException, save_respo_model, BaseRespoModel
+from respo import BaseRespoModel, save_respo_model
 from tests.conftest import get_model
 
 

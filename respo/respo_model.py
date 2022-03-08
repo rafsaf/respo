@@ -1,10 +1,13 @@
 import copy
+import pickle
 from collections import defaultdict
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Optional, Set
 
 from pydantic import ValidationError, validator
 
+from respo.config import config
 from respo.helpers import (
     GENERAL_ERROR_MESSAGE,
     BaseModel,
@@ -13,11 +16,6 @@ from respo.helpers import (
     TripleLabel,
     is_valid_lowercase,
 )
-
-from pathlib import Path
-import pickle
-
-from respo.config import config
 
 
 class T:
@@ -524,7 +522,7 @@ class BaseRespoModel(BaseModel):
                 f"Error in roles section\n  "
                 f"Role '{role.metadata.label}' metadata is invalid.\n  "
             )
-            if role.metadata.label == f"root":
+            if role.metadata.label == "root":
                 raise RespoException(
                     BASE_ERR + "'root' is reserved keyword and will be auto applied\n  "
                 )
@@ -641,7 +639,7 @@ class BaseRespoModel(BaseModel):
         for organization in organizations:
             role_metadata = RoleMetadata(
                 organization=organization.metadata.label,
-                label=f"root",
+                label="root",
             )
             root_role = Role(metadata=role_metadata, permissions=[])
             for permission in permissions:

@@ -3,6 +3,7 @@ from respo.client import RespoClient
 from respo.config import Config, config
 from respo.helpers import DoubleLabel, RespoException, TripleLabel
 from respo.respo_model import (
+    BaseRespoModel,
     MetadataSection,
     Organization,
     OrganizationMetadata,
@@ -11,7 +12,6 @@ from respo.respo_model import (
     PermissionMetadata,
     PermissionResource,
     PermissionRule,
-    BaseRespoModel,
     Role,
     RoleMetadata,
     RolePermissionGrant,

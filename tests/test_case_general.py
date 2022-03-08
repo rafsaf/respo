@@ -1,6 +1,6 @@
 import pytest
 
-from respo import RespoClient, RespoException, BaseRespoModel
+from respo import BaseRespoModel, RespoClient, RespoException
 
 
 def test_general_yml_organization_book123(get_general_model: BaseRespoModel):

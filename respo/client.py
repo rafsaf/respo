@@ -4,7 +4,7 @@ import ujson
 
 from respo.config import config
 from respo.helpers import RespoException, RoleLabel
-from respo.respo_model import Organization, BaseRespoModel, Role
+from respo.respo_model import BaseRespoModel, Organization, Role
 
 
 class RespoClient:
@@ -13,7 +13,6 @@ class RespoClient:
         self._json_string: str = json_string or ""
         if self._json_string == "":
             self._value = {"organizations": [], "roles": []}
-            self._initialized = True
         else:
             self._value = ujson.loads(self._json_string)
 

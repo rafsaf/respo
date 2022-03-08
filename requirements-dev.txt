@@ -9,6 +9,7 @@ charset-normalizer==2.0.12; python_full_version >= "3.6.0" and python_version >=
 click==8.0.4; python_version >= "3.7" and python_full_version >= "3.6.2"
 colorama==0.4.4; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
 coverage==6.3.2; python_version >= "3.7"
+django==3.2.12; python_version >= "3.6"
 fastapi==0.75.0; python_full_version >= "3.6.1"
 flake8==4.0.1; python_version >= "3.6"
 ghp-import==2.0.2; python_version >= "3.6"
@@ -41,12 +42,14 @@ pymdown-extensions==9.2; python_version >= "3.7"
 pyparsing==3.0.7; python_version >= "3.6"
 pytest==7.0.1; python_version >= "3.6"
 python-dateutil==2.8.2; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.6"
+pytz==2021.3; python_version >= "3.6"
 pyyaml-env-tag==0.1; python_version >= "3.6"
 pyyaml==6.0; python_version >= "3.6"
 requests==2.27.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.6.0")
 six==1.16.0; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "3.6"
 sniffio==1.2.0; python_version >= "3.6" and python_full_version >= "3.6.2"
 sqlalchemy==1.4.32; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.6.0")
+sqlparse==0.4.2; python_version >= "3.6"
 starlette==0.17.1; python_version >= "3.6" and python_full_version >= "3.6.1"
 tomli==2.0.1; python_version >= "3.7" and python_full_version >= "3.6.2"
 typed-ast==1.5.2; python_version < "3.8" and implementation_name == "cpython" and python_full_version >= "3.6.2" and python_version >= "3.6"

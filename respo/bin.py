@@ -4,7 +4,6 @@ from pathlib import Path
 import yaml
 
 from respo.config import config
-from respo.helpers import RespoException
 from respo.respo_model import BaseRespoModel
 
 
