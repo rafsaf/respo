@@ -231,6 +231,9 @@ class OrganizationMetadata(BaseModel):
             )
         return label
 
+    def label_to_attribute_name(self):
+        return self.label.upper()
+
 
 class OrganizationPermissionGrant(BaseModel):
     type: str = "Allow"
@@ -244,6 +247,9 @@ class OrganizationPermissionGrant(BaseModel):
                 f"Currently it is {type_str}"
             )
         return type_str
+
+    def label_to_attribute_name(self):
+        return self.label.replace(".", "_").upper()
 
 
 class Organization(BaseModel):
@@ -266,6 +272,13 @@ class RoleMetadata(BaseModel):
                 f"Label '{label}' must be lowercase and must not contain any whitespace\n  "
             )
         return label
+
+    @property
+    def full_label(self):
+        return f"{self.organization}.{self.label}"
+
+    def full_label_to_attribute_name(self):
+        return self.full_label.replace(".", "_").upper()
 
 
 class RolePermissionGrant(BaseModel):
@@ -295,8 +308,36 @@ class RespoModel(BaseModel):
     permission_to_role_dict: Dict[str, Set[str]] = {}
     permission_to_organization_dict: Dict[str, Set[str]] = {}
 
+    class ORGS:
+        pass
+
+    class ROLES:
+        pass
+
+    class PERMS:
+        pass
+
     class Config:
         validate_all = True
+
+    def __init__(self, *args, **data):
+        super().__init__(*args, **data)
+        for organization in self.organizations:
+            setattr(
+                self.ORGS,
+                organization.metadata.label_to_attribute_name(),
+                organization.metadata.label,
+            )
+            for permission in organization.permissions:
+                setattr(
+                    self.PERMS, permission.label_to_attribute_name(), permission.label
+                )
+        for role in self.roles:
+            setattr(
+                self.ROLES,
+                role.metadata.full_label_to_attribute_name(),
+                role.metadata.full_label,
+            )
 
     @classmethod
     def dict_label_to_resources(

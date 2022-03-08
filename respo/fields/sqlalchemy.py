@@ -1,10 +1,11 @@
 from typing import Optional
+
+from sqlalchemy import Column
+from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.types import TEXT, TypeDecorator
 
 from respo.client import RespoClient
 from respo.respo_model import RespoModel
-from sqlalchemy.ext.mutable import Mutable
-from sqlalchemy import Column
 
 
 class TEXTRespoField(TypeDecorator):
@@ -43,17 +44,44 @@ class MutableRespoClient(Mutable, RespoClient):
     def add_organization(
         self,
         organization_name: str,
-        respo_model: RespoModel,
-        validate_input: bool = True,
-    ):
-        super().add_organization(organization_name, respo_model, validate_input)
+        respo_model: Optional[RespoModel],
+        validate_input: bool = ...,
+    ) -> bool:
+        res = super().add_organization(organization_name, respo_model, validate_input)
         self.changed()
+        return res
+
+    def remove_organization(
+        self,
+        organization_name: str,
+        respo_model: Optional[RespoModel],
+        validate_input: bool = ...,
+    ) -> bool:
+        res = super().remove_organization(
+            organization_name, respo_model, validate_input
+        )
+        self.changed()
+        return res
 
     def add_role(
-        self, role_name: str, respo_model: RespoModel, validate_input: bool = True
-    ):
-        super().add_role(role_name, respo_model, validate_input)
+        self,
+        role_name: str,
+        respo_model: Optional[RespoModel],
+        validate_input: bool = ...,
+    ) -> bool:
+        res = super().add_role(role_name, respo_model, validate_input)
         self.changed()
+        return res
+
+    def remove_role(
+        self,
+        role_name: str,
+        respo_model: Optional[RespoModel],
+        validate_input: bool = ...,
+    ) -> bool:
+        res = super().remove_role(role_name, respo_model, validate_input)
+        self.changed()
+        return res
 
 
 class ColumnMixRespoField(Column, MutableRespoClient):
@@ -61,5 +89,7 @@ class ColumnMixRespoField(Column, MutableRespoClient):
 
 
 RespoField: ColumnMixRespoField = Column(
-    MutableRespoClient.as_mutable(TEXTRespoField), nullable=False, server_default=""  # type: ignore
+    MutableRespoClient.as_mutable(TEXTRespoField),  # type: ignore
+    nullable=False,
+    server_default="",
 )
