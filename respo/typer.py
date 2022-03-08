@@ -7,10 +7,10 @@ import ujson
 import yaml
 from pydantic import ValidationError
 
-from respo.bin import get_respo_model, save_respo_model
+from respo.bin import save_respo_model
 from respo.config import config
 from respo.helpers import RespoException
-from respo.respo_model import RespoModel
+from respo.respo_model import BaseRespoModel
 from respo.typer_utils import FileFormat, bad, generate_respo_model_file, good
 
 app = typer.Typer()
@@ -54,7 +54,7 @@ def create(
             typer.echo(good(f"JSON syntax validated in {delta_json_time}s..."))
         try:
             before_respo_time = time()
-            respo_model = RespoModel.parse_obj(data)
+            respo_model = BaseRespoModel.parse_obj(data)
             delta_respo_time = round(time() - before_respo_time, 5)
         except ValidationError as respo_error:
             typer.echo(bad("Could not validate data"))
@@ -62,7 +62,7 @@ def create(
             raise typer.Abort()
         typer.echo(good(f"Respo model validated in {delta_respo_time}s..."))
         try:
-            old_model = get_respo_model()
+            old_model = BaseRespoModel.get_respo_model()
         except RespoException:
             pass
         else:
@@ -111,7 +111,7 @@ def export(
 
     try:
         before_respo_model = time()
-        model = get_respo_model()
+        model = BaseRespoModel.get_respo_model()
         delta_respo_model = round(time() - before_respo_model, 5)
     except RespoException as respo_err:
         typer.echo(respo_err)

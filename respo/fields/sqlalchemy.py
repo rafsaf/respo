@@ -5,7 +5,8 @@ from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.types import TEXT, TypeDecorator
 
 from respo.client import RespoClient
-from respo.respo_model import Organization, RespoModel, Role
+from respo.respo_model import Organization, BaseRespoModel, Role
+from respo.config import config
 
 
 class TEXTRespoField(TypeDecorator):
@@ -44,8 +45,8 @@ class MutableRespoClient(Mutable, RespoClient):
     def add_organization(
         self,
         organization_name: Union[str, Organization],
-        respo_model: Optional[RespoModel],
-        validate_input: bool = ...,
+        respo_model: Optional[BaseRespoModel] = None,
+        validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
         res = super().add_organization(organization_name, respo_model, validate_input)
         self.changed()
@@ -54,8 +55,8 @@ class MutableRespoClient(Mutable, RespoClient):
     def remove_organization(
         self,
         organization_name: Union[str, Organization],
-        respo_model: Optional[RespoModel],
-        validate_input: bool = ...,
+        respo_model: Optional[BaseRespoModel] = None,
+        validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
         res = super().remove_organization(
             organization_name, respo_model, validate_input
@@ -66,8 +67,8 @@ class MutableRespoClient(Mutable, RespoClient):
     def add_role(
         self,
         role_name: Union[str, Role],
-        respo_model: Optional[RespoModel],
-        validate_input: bool = ...,
+        respo_model: Optional[BaseRespoModel] = None,
+        validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
         res = super().add_role(role_name, respo_model, validate_input)
         self.changed()
@@ -76,8 +77,8 @@ class MutableRespoClient(Mutable, RespoClient):
     def remove_role(
         self,
         role_name: Union[str, Role],
-        respo_model: Optional[RespoModel],
-        validate_input: bool = ...,
+        respo_model: Optional[BaseRespoModel] = None,
+        validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
         res = super().remove_role(role_name, respo_model, validate_input)
         self.changed()

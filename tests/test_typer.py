@@ -2,7 +2,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from respo import app, get_respo_model
+from respo import app, BaseRespoModel
 
 
 def test_respo_create_fail_with_no_file(runner: CliRunner):
@@ -45,9 +45,9 @@ def test_respo_create_success_valid_yml_file(runner: CliRunner):
 
 def test_respo_create_success_valid_yml_file_2x_modify_created_ok(runner: CliRunner):
     result = runner.invoke(app, ["create", "tests/cases/general.yml"])
-    model1 = get_respo_model()
+    model1 = BaseRespoModel.get_respo_model()
     result = runner.invoke(app, ["create", "tests/cases/general.yml"])
-    model2 = get_respo_model()
+    model2 = BaseRespoModel.get_respo_model()
     assert model1.metadata.created_at == model2.metadata.created_at
     assert not model1.metadata.last_modified == model2.metadata.last_modified
     assert result.exit_code == 0

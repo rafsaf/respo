@@ -14,6 +14,16 @@ from respo.helpers import (
     is_valid_lowercase,
 )
 
+from pathlib import Path
+import pickle
+
+from respo.config import config
+
+
+class T:
+    def __init__(self) -> None:
+        pass
+
 
 class MetadataSection(BaseModel):
     name: str
@@ -306,28 +316,24 @@ class Role(BaseModel):
         return self.metadata.full_label
 
 
-class RespoModel(BaseModel):
+class BaseRespoModel(BaseModel):
     metadata: MetadataSection
     permissions: List[Permission]
     organizations: List[Organization]
     roles: List[Role]
     permission_to_role_dict: Dict[str, Set[str]] = {}
     permission_to_organization_dict: Dict[str, Set[str]] = {}
-
-    class ORGS:
-        pass
-
-    class ROLES:
-        pass
-
-    class PERMS:
-        pass
+    ORGS: T = T()
+    ROLES: T = T()
+    PERMS: T = T()
 
     class Config:
         validate_all = True
+        arbitrary_types_allowed = True
 
     def __init__(self, *args, **data):
         super().__init__(*args, **data)
+
         for organization in self.organizations:
             setattr(
                 self.ORGS,
@@ -346,6 +352,21 @@ class RespoModel(BaseModel):
                 role.metadata.full_label_to_attribute_name(),
                 role,
             )
+
+    @staticmethod
+    def get_respo_model() -> "BaseRespoModel":
+        if not Path(
+            f"{config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_BINARY_FILE_NAME}"
+        ).exists():
+            raise RespoException(
+                f"{config.RESPO_AUTO_BINARY_FILE_NAME} file does not exist. Did you forget to create it?"
+            )
+        with open(
+            f"{config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_BINARY_FILE_NAME}",
+            "rb",
+        ) as respo_model_file:
+            model = pickle.load(respo_model_file)
+        return model
 
     @classmethod
     def dict_label_to_resources(
@@ -503,10 +524,9 @@ class RespoModel(BaseModel):
                 f"Error in roles section\n  "
                 f"Role '{role.metadata.label}' metadata is invalid.\n  "
             )
-            if role.metadata.label == f"root.{role.metadata.organization}":
+            if role.metadata.label == f"root":
                 raise RespoException(
-                    BASE_ERR
-                    + "'root.organization' is reserved keyword and will be auto applied\n  "
+                    BASE_ERR + "'root' is reserved keyword and will be auto applied\n  "
                 )
             if role.metadata.organization not in organization_names:
                 raise RespoException(
@@ -621,7 +641,7 @@ class RespoModel(BaseModel):
         for organization in organizations:
             role_metadata = RoleMetadata(
                 organization=organization.metadata.label,
-                label=f"root.{organization.metadata.label}",
+                label=f"root",
             )
             root_role = Role(metadata=role_metadata, permissions=[])
             for permission in permissions:

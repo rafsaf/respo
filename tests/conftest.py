@@ -6,7 +6,7 @@ import pytest
 import yaml
 from typer.testing import CliRunner
 
-from respo import RespoModel, config, get_respo_model, save_respo_model
+from respo import BaseRespoModel, config, save_respo_model
 
 
 @pytest.fixture(autouse=True)
@@ -32,10 +32,10 @@ def mock_env_variables_and_cleanup():
     cleanup()
 
 
-def get_model(name: str) -> RespoModel:
+def get_model(name: str) -> BaseRespoModel:
     yml_file = Path(name)
     data = yaml.safe_load(yml_file.read_text())
-    return RespoModel.parse_obj(data)
+    return BaseRespoModel.parse_obj(data)
 
 
 @pytest.fixture
@@ -43,7 +43,7 @@ def get_general_model():
     model1 = get_model("tests/cases/general.yml")
 
     save_respo_model(model1)
-    respo = get_respo_model()
+    respo = BaseRespoModel.get_respo_model()
     yield respo
 
 

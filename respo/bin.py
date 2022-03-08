@@ -5,24 +5,10 @@ import yaml
 
 from respo.config import config
 from respo.helpers import RespoException
-from respo.respo_model import RespoModel
+from respo.respo_model import BaseRespoModel
 
 
-def get_respo_model() -> RespoModel:
-    if not Path(
-        f"{config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_BINARY_FILE_NAME}"
-    ).exists():
-        raise RespoException(
-            f"{config.RESPO_AUTO_BINARY_FILE_NAME} file does not exist. Did you forget to create it?"
-        )
-    with open(
-        f"{config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_BINARY_FILE_NAME}", "rb"
-    ) as respo_model_file:
-        model = pickle.load(respo_model_file)
-    return model
-
-
-def save_respo_model(model: RespoModel) -> None:
+def save_respo_model(model: BaseRespoModel) -> None:
     path_bin = Path(
         f"{config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_BINARY_FILE_NAME}"
     )

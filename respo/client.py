@@ -4,7 +4,7 @@ import ujson
 
 from respo.config import config
 from respo.helpers import RespoException, RoleLabel
-from respo.respo_model import Organization, RespoModel, Role
+from respo.respo_model import Organization, BaseRespoModel, Role
 
 
 class RespoClient:
@@ -27,7 +27,7 @@ class RespoClient:
         return self._value["organizations"]
 
     @staticmethod
-    def validate_role(role_label: RoleLabel, respo_model: Optional[RespoModel]):
+    def validate_role(role_label: RoleLabel, respo_model: Optional[BaseRespoModel]):
         if respo_model is None:
             raise RespoException(
                 f"Error in validate_role: {role_label.full_label}."
@@ -43,7 +43,7 @@ class RespoClient:
 
     @staticmethod
     def validate_organization(
-        organization_name: str, respo_model: Optional[RespoModel]
+        organization_name: str, respo_model: Optional[BaseRespoModel]
     ):
         if respo_model is None:
             raise RespoException(
@@ -59,7 +59,7 @@ class RespoClient:
     def add_role(
         self,
         role_name: Union[str, Role],
-        respo_model: Optional[RespoModel],
+        respo_model: Optional[BaseRespoModel] = None,
         validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
         role_name = str(role_name)
@@ -82,7 +82,7 @@ class RespoClient:
     def remove_role(
         self,
         role_name: Union[str, Role],
-        respo_model: Optional[RespoModel],
+        respo_model: Optional[BaseRespoModel] = None,
         validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
         role_name = str(role_name)
@@ -99,7 +99,7 @@ class RespoClient:
     def add_organization(
         self,
         organization_name: Union[str, Organization],
-        respo_model: Optional[RespoModel],
+        respo_model: Optional[BaseRespoModel] = None,
         validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
         organization_name = str(organization_name)
@@ -116,7 +116,7 @@ class RespoClient:
     def remove_organization(
         self,
         organization_name: Union[str, Organization],
-        respo_model: Optional[RespoModel],
+        respo_model: Optional[BaseRespoModel] = None,
         validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
         organization_name = str(organization_name)
@@ -131,7 +131,7 @@ class RespoClient:
             return False
 
     def has_permission(
-        self, full_permission_name: str, respo_model: RespoModel
+        self, full_permission_name: str, respo_model: BaseRespoModel
     ) -> bool:
         for role in self._value["roles"]:
             if role in respo_model.permission_to_role_dict[full_permission_name]:

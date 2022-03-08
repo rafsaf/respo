@@ -1,4 +1,4 @@
-from respo.bin import get_respo_model, save_respo_model
+from respo.bin import save_respo_model
 from respo.client import RespoClient
 from respo.config import Config, config
 from respo.helpers import DoubleLabel, RespoException, TripleLabel
@@ -11,7 +11,7 @@ from respo.respo_model import (
     PermissionMetadata,
     PermissionResource,
     PermissionRule,
-    RespoModel,
+    BaseRespoModel,
     Role,
     RoleMetadata,
     RolePermissionGrant,
