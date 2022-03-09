@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from typer.testing import CliRunner
 
 from respo import BaseRespoModel, app
@@ -27,6 +25,14 @@ def test_respo_create_fail_when_yaml_sytax_invalid(runner: CliRunner):
     result = runner.invoke(app, ["create", "tests/cases/other/invalid_yml"])
     assert result.exit_code == 1
     assert "Could not process file" in result.stdout
+
+
+def test_respo_create_fail_when_yaml_sytax_valid_but_broken(runner: CliRunner):
+    result = runner.invoke(
+        app, ["create", "tests/cases/invalid/metadata_created_at.yml"]
+    )
+    assert result.exit_code == 1
+    assert "Could not validate data" in result.stdout
 
 
 def test_respo_create_fail_when_json_sytax_invalid(runner: CliRunner):

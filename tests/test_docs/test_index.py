@@ -1,5 +1,3 @@
-import pytest
-from fastapi.testclient import TestClient
 from typer.testing import CliRunner
 
 from respo import app

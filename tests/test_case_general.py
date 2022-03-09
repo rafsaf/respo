@@ -1,7 +1,4 @@
-from pydantic import ValidationError
-import pytest
-
-from respo import BaseRespoModel, RespoClient, RespoException
+from respo import BaseRespoModel, RespoClient
 
 
 def test_general_yml_organization_book123(get_general_model: BaseRespoModel):
@@ -167,50 +164,3 @@ def test_general_yml_role_admin_role(get_general_model: BaseRespoModel):
     assert not client.has_permission("default.book.buy_all", respo)
     assert not client.has_permission("default.book.buy", respo)
     assert not client.has_permission("default.book.sell", respo)
-
-
-def test_general_yml_not_existing_role_validation_raise_error(
-    get_general_model: BaseRespoModel,
-):
-    respo = get_general_model
-    client = RespoClient()
-    assert client.add_organization("test_org_x", validate_input=False)
-    with pytest.raises(RespoException):
-        client.add_role("test_org_x.test_role_y", respo, validate_input=True)
-
-
-def test_general_yml_invalid_syntax_no_dot_error(
-    get_general_model: BaseRespoModel,
-):
-    respo = get_general_model
-    client = RespoClient()
-    with pytest.raises(ValidationError):
-        client.add_role("test_role_y", respo, validate_input=True)
-    with pytest.raises(ValidationError):
-        client.add_role("test_role_y", validate_input=False)
-
-
-def test_general_yml_not_existing_organization_raise_error():
-    client = RespoClient()
-    with pytest.raises(RespoException):
-        client.add_role("test_org_x.test_role_y", validate_input=False)
-
-
-def test_general_yml_no_validation_role_added_when_no_validation():
-    client = RespoClient()
-    assert client.add_organization("test_org_x", validate_input=False)
-    assert client.add_role("test_org_x.test_role_y", validate_input=False)
-
-
-def test_general_yml_not_existing_organization_validation_raise_error(
-    get_general_model: BaseRespoModel,
-):
-    respo = get_general_model
-    client = RespoClient()
-    with pytest.raises(RespoException):
-        client.add_organization("test_org_x", respo, validate_input=True)
-
-
-def test_general_yml_not_existing_organization_no_validation_is_ok():
-    client = RespoClient()
-    assert client.add_organization("test_org_x", validate_input=False)

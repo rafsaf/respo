@@ -18,7 +18,7 @@ from respo.helpers import (
 )
 
 
-class T:
+class T:  # pragma: no cover
     def __eq__(self, other: "T") -> bool:
         for item, value in self.__dict__.items():
             if not item.isupper():

@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 from time import time
 
@@ -95,5 +94,5 @@ def create(
 
 
 @app.command()
-def export():
+def future():  # pragma: no cover
     pass
