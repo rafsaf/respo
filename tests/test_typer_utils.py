@@ -1,5 +1,9 @@
-from respo import BaseRespoModel, config
-from respo.typer_utils import FileFormat, bad, generate_respo_model_file, good
+import pytest
+from typer.testing import CliRunner
+
+from respo import config
+from respo.typer import app
+from respo.typer_utils import FileFormat, bad, good
 
 
 def test_good():
@@ -20,11 +24,24 @@ def test_file_format():
     assert file_format.json == "json"
 
 
-def test_generate_respo_model_file(get_general_model: BaseRespoModel):
-    respo = get_general_model
-    generate_respo_model_file(respo)
-    with open("tests/cases/typer_generated_file.py", "r") as file:
-        case_general = file.read()
+@pytest.mark.parametrize(
+    "in_file,out_file",
+    [
+        ("tests/cases/general.yml", "tests/cases/typer_out_general.py"),
+        (
+            "tests/cases/valid/minimal_valid_roles.yml",
+            "tests/cases/typer_out_minimal_valid_roles.py",
+        ),
+        (
+            "tests/cases/valid/minimal_valid.yml",
+            "tests/cases/typer_out_minimal_valid.py",
+        ),
+    ],
+)
+def test_generate_respo_model_file(runner: CliRunner, in_file: str, out_file: str):
+    runner.invoke(app, ["create", in_file])
+    with open(out_file, "r") as file:
+        case = file.read()
     with open(config.RESPO_FILE_NAME_RESPO_MODEL, "r") as file:
         generated = file.read()
-    assert generated == case_general
+    assert generated == case

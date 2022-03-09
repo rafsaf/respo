@@ -1,6 +1,4 @@
-from os import unlink
 from pathlib import Path
-from shutil import rmtree
 
 import pytest
 import yaml
@@ -10,27 +8,9 @@ from respo import BaseRespoModel, config, save_respo_model
 
 
 @pytest.fixture(autouse=True)
-def mock_env_variables_and_cleanup():
-    config.RESPO_AUTO_BINARY_FILE_NAME = "test_bin_respo.bin"
-    config.RESPO_AUTO_FOLDER_NAME = ".respo_test_cache"
-    config.RESPO_AUTO_YML_FILE_NAME = "test_yml_respo.yml"
-    config.RESPO_DEFAULT_EXPORT_FILE = "test_export_respo"
-    config.RESPO_CHECK_FORCE = True
-
-    def cleanup():
-        rmtree(config.RESPO_AUTO_FOLDER_NAME, ignore_errors=True)
-        try:
-            unlink(f"{config.RESPO_DEFAULT_EXPORT_FILE}.json")
-        except FileNotFoundError:
-            pass
-        try:
-            unlink(f"{config.RESPO_DEFAULT_EXPORT_FILE}.yml")
-        except FileNotFoundError:
-            pass
-
-    cleanup()
-    yield
-    cleanup()
+def mock_env_variables_and_cleanup(tmpdir):
+    config.RESPO_AUTO_FOLDER_NAME = f"{tmpdir}/auto"
+    config.RESPO_FILE_NAME_RESPO_MODEL = f"{tmpdir}/respo_model.py"
 
 
 def get_model(name: str) -> BaseRespoModel:
