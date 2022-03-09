@@ -42,6 +42,7 @@ fastapi = "^0.75.0"
 uvicorn = "^0.17.5"
 requests = "^2.27.1"
 autoflake = "^1.4"
+pytest-django = "^4.5.2"
 
 [tool.coverage.run]
 source = [
@@ -56,6 +57,7 @@ omit = [
 profile = "black"
 
 [tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.test_django_field.respo_field_test.settings"
 minversion = "6.0"
 addopts = "-v"
 

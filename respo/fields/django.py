@@ -5,11 +5,11 @@ from django.db.models import TextField
 from respo.client import RespoClient
 
 
-class RespoField(TextField, RespoClient):
+class DjangoRespoField(TextField, RespoClient):
     def from_db_value(self, value: Optional[str], expression, connection):
         return RespoClient(value)
 
-    def to_python(self, value):
+    def to_python(self, value):  # pragma: no cover
         if isinstance(value, RespoClient):
             return value
         return RespoClient(value)

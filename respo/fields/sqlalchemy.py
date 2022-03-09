@@ -89,7 +89,7 @@ class ColumnMixRespoField(Column, MutableRespoClient):
     pass
 
 
-RespoField: ColumnMixRespoField = Column(
+SQLAlchemyRespoField: ColumnMixRespoField = Column(
     MutableRespoClient.as_mutable(TEXTRespoField),  # type: ignore
     nullable=False,
     server_default="",

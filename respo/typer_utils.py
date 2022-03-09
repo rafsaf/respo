@@ -23,7 +23,7 @@ def generate_respo_model_file(respo_model: BaseRespoModel):
     text = ""
     text += '"""\nAuto generated using respo create command\n'
     text += 'Docs: https://rafsaf.github.io/respo/\n"""\n\n'
-    text += "from respo import Organization, Role, BaseRespoModel\n\n\n"
+    text += "from respo import BaseRespoModel, Organization, Role\n\n\n"
     text += "class RespoModel(BaseRespoModel):\n"
     text += "    class ORGS:\n"
     text += "        pass\n"

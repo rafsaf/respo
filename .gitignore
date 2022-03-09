@@ -8,6 +8,7 @@ env
 .coverage
 .mypy_cache
 .vscode
+db.sqlite3
 .idea
 __auto__respo_model.yml
 __auto__respo_model.json
