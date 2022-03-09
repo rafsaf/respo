@@ -12,25 +12,20 @@ from respo.respo_model import BaseRespoModel, Organization, Role
 class TEXTRespoField(TypeDecorator):
     """Platform-independent Custom Type to store Respo model based on TEXT type"""
 
-    class TEXTRespo(TEXT):
-        @property
-        def python_type(self):
-            return MutableRespoClient
-
-    impl = TEXTRespo
+    impl = TEXT
     cache_ok = True
 
     def process_bind_param(
         self, value: Optional[RespoClient], dialect
     ) -> Optional[str]:
-        if value is None:
+        if value is None:  # pragma: no cover
             return value
         return str(value)
 
     def process_result_value(
         self, value: Optional[str], dialect
     ) -> Optional["MutableRespoClient"]:
-        if value is None:
+        if value is None:  # pragma: no cover
             return value
         return MutableRespoClient(json_string=value)
 
@@ -40,7 +35,9 @@ class MutableRespoClient(Mutable, RespoClient):
     def coerce(cls, key, value):
         if isinstance(value, cls):
             return value
-        return MutableRespoClient.coerce(key, value)
+        elif isinstance(value, RespoClient):
+            return cls(str(value))
+        raise ValueError("Field must be instance of RespoClient or MutableRespoClient")
 
     def add_organization(
         self,
@@ -89,8 +86,13 @@ class ColumnMixRespoField(Column, MutableRespoClient):
     pass
 
 
+def get_empty_respo_field():
+    return MutableRespoClient()
+
+
 SQLAlchemyRespoField: ColumnMixRespoField = Column(
     MutableRespoClient.as_mutable(TEXTRespoField),  # type: ignore
     nullable=False,
     server_default="",
+    default=get_empty_respo_field,
 )

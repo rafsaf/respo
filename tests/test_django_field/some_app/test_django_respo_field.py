@@ -1,7 +1,7 @@
 import pytest
 
 from respo import RespoClient
-from tests.test_django_field.some_app.models import TheModel
+from tests.test_django_field.some_app.models import TheModel  # type: ignore
 
 
 @pytest.mark.django_db

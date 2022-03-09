@@ -19,7 +19,9 @@ from respo.helpers import (
 
 
 class T:  # pragma: no cover
-    def __eq__(self, other: "T") -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, T):
+            return NotImplemented
         for item, value in self.__dict__.items():
             if not item.isupper():
                 continue

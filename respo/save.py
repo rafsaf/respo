@@ -19,7 +19,7 @@ def save_respo_model(model: BaseRespoModel) -> None:
     with open(path_bin, "wb") as file:
         pickle.dump(model, file)
 
-    with open(path_yml, "w") as file:
+    with open(path_yml, mode="w") as file:  # type: ignore
         yaml.dump(
             model.dict(
                 exclude={
