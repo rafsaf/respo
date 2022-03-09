@@ -6,10 +6,10 @@ import ujson
 import yaml
 from pydantic import ValidationError
 
-from respo.bin import save_respo_model
 from respo.config import config
 from respo.helpers import RespoException
 from respo.respo_model import BaseRespoModel
+from respo.save import save_respo_model
 from respo.typer_utils import FileFormat, bad, generate_respo_model_file, good
 
 app = typer.Typer()

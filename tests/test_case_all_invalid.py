@@ -5,7 +5,7 @@ import pytest
 from pydantic import ValidationError
 from typer.testing import CliRunner
 
-from respo import app
+from respo.typer import app
 from tests.conftest import get_model
 
 files = [file for file in os.scandir("./tests/cases/invalid")]

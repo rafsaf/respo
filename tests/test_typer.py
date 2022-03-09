@@ -1,6 +1,7 @@
 from typer.testing import CliRunner
 
-from respo import BaseRespoModel, app
+from respo import BaseRespoModel
+from respo.typer import app
 
 
 def test_respo_create_fail_with_no_file(runner: CliRunner):

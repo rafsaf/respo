@@ -1,4 +1,5 @@
-from respo import BaseRespoModel, save_respo_model
+from respo import BaseRespoModel
+from respo.save import save_respo_model
 from tests.conftest import get_model
 
 

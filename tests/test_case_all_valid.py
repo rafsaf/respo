@@ -4,7 +4,7 @@ from os import DirEntry
 import pytest
 from typer.testing import CliRunner
 
-from respo import app
+from respo.typer import app
 from tests.conftest import get_model
 
 files = [file for file in os.scandir("./tests/cases/valid")]
