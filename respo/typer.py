@@ -5,7 +5,6 @@ import typer
 import ujson
 import yaml
 from pydantic import ValidationError
-
 from respo.config import config
 from respo.helpers import RespoException
 from respo.respo_model import BaseRespoModel
