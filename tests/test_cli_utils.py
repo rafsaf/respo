@@ -1,9 +1,9 @@
 import pytest
-from typer.testing import CliRunner
+from click.testing import CliRunner
 
 from respo import config
-from respo.typer import app
-from respo.typer_utils import FileFormat, bad, good
+from respo.cli import app
+from respo.cli_utils import bad, good
 
 
 def test_good():
@@ -15,13 +15,6 @@ def test_good():
 def test_bad():
     bad_text = "BBB AAA"
     assert bad(bad_text) == "\x1b[33m\x1b[1mERROR: BBB AAA\x1b[0m"
-
-
-def test_file_format():
-    file_format = FileFormat("yml")
-    assert file_format.value == "yml"
-    assert file_format.yml == "yml"
-    assert file_format.json == "json"
 
 
 @pytest.mark.parametrize(

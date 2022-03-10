@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 import yaml
-from typer.testing import CliRunner
+from click.testing import CliRunner
 
 from respo import BaseRespoModel, config
 from respo.save import save_respo_model

@@ -1,6 +1,6 @@
-from typer.testing import CliRunner
+from click.testing import CliRunner
 
-from respo.typer import app
+from respo.cli import app
 
 
 def test_respo_example_yml_isvalid(runner: CliRunner):

@@ -2,10 +2,10 @@ import os
 from os import DirEntry
 
 import pytest
+from click.testing import CliRunner
 from pydantic import ValidationError
-from typer.testing import CliRunner
 
-from respo.typer import app
+from respo.cli import app
 from tests.conftest import get_model
 
 files = [file for file in os.scandir("./tests/cases/invalid")]
@@ -21,4 +21,4 @@ def test_raise_respo_exception(file: DirEntry, runner: CliRunner):
         assert exc.errors()[0]["type"] == "value_error.respoexception"
 
     result = runner.invoke(app, ["create", file.path])
-    assert "Could not validate data" in result.stdout
+    assert "Could not validate respo model" in result.stdout

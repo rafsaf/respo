@@ -1,23 +1,17 @@
-from enum import Enum
 from typing import Any, List, Tuple
 
-import typer
+import click
 
 from respo.config import config
 from respo.respo_model import BaseRespoModel
 
 
-class FileFormat(str, Enum):
-    yml = "yml"
-    json = "json"
-
-
 def good(s: str) -> str:
-    return typer.style("INFO: " + s, fg=typer.colors.GREEN, bold=True)
+    return click.style("INFO: " + s, fg="green", bold=True)
 
 
 def bad(s: str) -> str:
-    return typer.style("ERROR: " + s, fg=typer.colors.YELLOW, bold=True)
+    return click.style("ERROR: " + s, fg="yellow", bold=True)
 
 
 def generate_respo_model_file(respo_model: BaseRespoModel):

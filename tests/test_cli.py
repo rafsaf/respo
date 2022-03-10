@@ -1,7 +1,7 @@
-from typer.testing import CliRunner
+from click.testing import CliRunner
 
 from respo import BaseRespoModel
-from respo.typer import app
+from respo.cli import app
 
 
 def test_respo_create_fail_with_no_file(runner: CliRunner):
@@ -12,14 +12,14 @@ def test_respo_create_fail_with_no_file(runner: CliRunner):
 
 def test_respo_create_fail_when_dir(runner: CliRunner):
     result = runner.invoke(app, ["create", "tests"])
-    assert result.exit_code == 1
-    assert "The file 'tests' is not a file but a directory" in result.stdout
+    assert result.exit_code == 2
+    assert "Is a directory" in result.stdout
 
 
 def test_respo_create_fail_when_no_file(runner: CliRunner):
     result = runner.invoke(app, ["create", "some NoT ExisTing File!"])
-    assert result.exit_code == 1
-    assert "The file 'some NoT ExisTing File!' does not exist" in result.stdout
+    assert result.exit_code == 2
+    assert "No such file or directory" in result.stdout
 
 
 def test_respo_create_fail_when_yaml_sytax_invalid(runner: CliRunner):
@@ -33,7 +33,7 @@ def test_respo_create_fail_when_yaml_sytax_valid_but_broken(runner: CliRunner):
         app, ["create", "tests/cases/invalid/metadata_created_at.yml"]
     )
     assert result.exit_code == 1
-    assert "Could not validate data" in result.stdout
+    assert "Could not validate respo model" in result.stdout
 
 
 def test_respo_create_fail_when_json_sytax_invalid(runner: CliRunner):
