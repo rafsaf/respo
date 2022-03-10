@@ -12,7 +12,7 @@ classifiers = [
   "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
   "Typing :: Typed",
 ]
-description = "File based RBAC in Python made easy"
+description = "File based RBAC in Python made easy."
 documentation = "https://respo.rafsaf.pl"
 homepage = "https://github.com/rafsaf/respo"
 license = "MIT"
@@ -24,12 +24,12 @@ version = "0.2.0"
 [tool.poetry.dependencies]
 pydantic = "^1.7.0"
 python = "^3.7"
-ujson = "^5.0"
+ujson = ">=5.0"
 
-PyYAML = {version = "^6.0", optional = true}
-SQLAlchemy = {version = "^1.4", optional = true}
-click = "^8.0.0"
-django = {version = "^3.0", optional = true}
+PyYAML = {version = ">=5.0", optional = true}
+SQLAlchemy = {version = ">=1.3", optional = true}
+click = {version = ">=6.0.0", optional = true}
+django = {version = ">=3.0", optional = true}
 
 [tool.poetry.extras]
 all = ["django", "PyYAML", "SQLAlchemy", "click"]
@@ -38,18 +38,21 @@ django = ["django"]
 sqlalchemy = ["SQLAlchemy"]
 
 [tool.poetry.dev-dependencies]
-PyYAML = "^6.0"
-SQLAlchemy = "^1.4"
+PyYAML = ">=5.0"
+SQLAlchemy = ">=1.4"
 aiosqlite = "^0.17.0"
 autoflake = "^1.4"
 black = "^22.1.0"
+click = ">=6.0.0"
 colorama = "^0.4"
 coverage = {extras = ["toml"], version = "^6.3.2"}
-django = "^3.0"
+django = ">=3.0"
+django-stubs = "^1.9.0"
 fastapi = "^0.75.0"
-flake8 = "^4.0.1"
+flake8 = "^3.9"
 isort = "^5.10.1"
 markdown-include = "^0.6.0"
+mkdocs = "^1.2.3"
 mkdocs-material = "^8.2.5"
 mypy = "^0.931"
 pymdown-extensions = "^9.2"
@@ -57,8 +60,8 @@ pytest = "^7.0.1"
 pytest-asyncio = "^0.18.2"
 pytest-django = "^4.5.2"
 requests = "^2.27.1"
+sqlalchemy2-stubs = "^0.0.2-alpha.20"
 toml = "^0.10.2"
-typer = "^0.4"
 types-toml = "^0.10.4"
 types-ujson = "^4.2.1"
 uvicorn = "^0.17.5"
@@ -83,6 +86,9 @@ minversion = "6.0"
 
 [tool.poetry.scripts]
 respo = "respo.cli:app"
+
+[tool.mypy]
+plugins = "sqlalchemy.ext.mypy.plugin"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"

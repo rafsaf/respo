@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.session import sessionmaker
 
 from respo import RespoClient
-from respo.fields.sqlalchemy import SQLAlchemyRespoField
+from respo.fields.sqlalchemy import SQLAlchemyRespoColumn
 
 Base: Any = declarative_base()
 
@@ -15,7 +15,7 @@ Base: Any = declarative_base()
 class TheModel(Base):
     __tablename__ = "themodel"
     id = Column(Integer, primary_key=True, index=True)
-    respo_field = SQLAlchemyRespoField
+    respo_field = SQLAlchemyRespoColumn
     name = Column(String(128), nullable=False, server_default="Ursula")
 
 

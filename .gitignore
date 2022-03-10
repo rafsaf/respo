@@ -3,6 +3,7 @@ venv
 .venv
 env
 .env
+site
 .pytest_cache
 .respo_cache
 .coverage

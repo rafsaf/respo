@@ -90,8 +90,10 @@ def get_empty_respo_field():
     return MutableRespoClient()
 
 
-SQLAlchemyRespoField: ColumnMixRespoField = Column(
-    MutableRespoClient.as_mutable(TEXTRespoField),  # type: ignore
+_SQLAlchemyRespoField = MutableRespoClient.as_mutable(TEXTRespoField)
+
+SQLAlchemyRespoColumn: ColumnMixRespoField = Column(
+    _SQLAlchemyRespoField,  # type: ignore
     nullable=False,
     server_default="",
     default=get_empty_respo_field,
