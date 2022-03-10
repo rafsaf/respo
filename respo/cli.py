@@ -27,7 +27,8 @@ def create(file: TextIOWrapper, format: str):
     """
     Parse FILENAME with declared respo resource policies.
     Creates pickled model representation by default in .respo_cache folder
-    and python file with generated model in respo_model.py
+    and python file with generated model in respo_model.py to improve
+    typing support for end user.
     """
 
     click.echo(good("Validating the content..."))

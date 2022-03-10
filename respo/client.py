@@ -8,7 +8,34 @@ from respo.respo_model import BaseRespoModel, Organization, Role
 
 
 class RespoClient:
+    """
+    Main class that represent single client, user, unit or any entity
+    that can join a organization or be given a role allowing access to resources.
+    """
+
     def __init__(self, json_string: Optional[str] = "") -> None:
+        """
+        Main class that represent single client, user, unit or any entity
+        that can join a organization or be given a role allowing access to resources.
+
+        Implements adding and removing roles and organizations methods and `has_permission`
+        to validate access. Note, neither `_json_string` nor `_value` should be ever changed directly.
+        If `json_string` is None or empty string, `_value` will be equal to `{"organizations": [], "roles": []}`.
+
+        Args:
+            json_string (Optional[str]): `str` serialized representation of dict
+            with roles and organizations. It then always get deserialized using `ujson.loads`
+            to dictionary.
+
+        Examples of json_string :
+        ```
+        json_string = None
+        json_string = ""
+        json_string = '{"organizations":["test_org_x"],"roles":["test_org_x.test_role_y"]}'
+        json_string = "Not a json" # INVALID, ValueError will be raised
+        ```
+
+        """
         self._value: Dict[str, List[str]] = {}
         self._json_string: str = json_string or ""
         if self._json_string == "":
@@ -17,16 +44,61 @@ class RespoClient:
             self._value = ujson.loads(self._json_string)
 
     def dict(self):
+        """
+        Dict representation of instance.
+
+        Example return:
+        ```
+        {"organizations": ["o1", "o2"], "roles": ["o1.role1"]}
+        ```
+        """
         return self._value
 
     def roles(self):
+        """
+        List representing this instance `roles`.
+
+        Example return:
+        ```
+        ["o1.some_role", "organization_default.admin", "default.root"]
+        ```
+        Note, the first part of each string IS ALWAYS one of the client's organizations,
+        in this case calling `self.organizations()` will return:
+        ```
+        [..., "o1", ..., "organization_default", ..., "default", ...]
+        ```
+        """
         return self._value["roles"]
 
     def organizations(self):
+        """
+        List representing this instance `organizations`.
+
+        Example return:
+        ```
+        ["o1", "organization_default", "default"]
+        ```
+        """
         return self._value["organizations"]
 
     @staticmethod
     def validate_role(role_label: RoleLabel, respo_model: Optional[BaseRespoModel]):
+        """Validates `role`
+
+        Raises:
+            `respo.RespoException`: when `respo_model` is None
+            `respo.RespoException`: when role does not exists for provided model
+
+        Examples:
+        ```
+        from respo import RoleLabel, BaseRespoModel, RespoClient
+
+        model = BaseRespoModel.get_respo_model()
+        label = RoleLabel("organization_name.role_name")
+
+        RespoClient.validate_role(label, model)
+        ```
+        """
         if respo_model is None:
             raise RespoException(
                 f"Error in validate_role: {role_label.full_label}."
@@ -44,6 +116,21 @@ class RespoClient:
     def validate_organization(
         organization_name: str, respo_model: Optional[BaseRespoModel]
     ):
+        """Validates `organization`
+
+        Raises:
+            `respo.RespoException`: when `respo_model` is None
+            `respo.RespoException`: when organization does not exists for provided model
+
+        Examples:
+        ```
+        from respo import BaseRespoModel, RespoClient
+
+        model = BaseRespoModel.get_respo_model()
+
+        RespoClient.validate_organization("my_organization", model)
+        ```
+        """
         if respo_model is None:
             raise RespoException(
                 f"Error in validate_organization: {organization_name}."
@@ -61,6 +148,36 @@ class RespoClient:
         respo_model: Optional[BaseRespoModel] = None,
         validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
+        """
+        Adds `role_name` to this client instance. `respo_model` can be both `str` and `respo.Role` instance.
+        See examples below. `respo_model` is required when `validate_input` is True, then input role_name
+        will be additinaly validated. `validate_input` defaults to `respo.config.RESPO_CHECK_FORCE`.
+
+        When `validate_input` is False, there will be no safe checks!
+
+        Return:
+            `True`: when role was added and it didn't exist.
+            `False`: when role is already bound to the client
+
+        Raises:
+            `pydantic.ValidationError`: when role_name is invalid
+            `respo.RespoException`: when `respo_model` is `None` and validate_input is `True`
+            `respo.RespoException`: when validate_input is `True` and role doen not exist for provided model
+            `respo.RespoException`: when organization wasn't earlier added using `self.add_organization`
+
+        Examples:
+        ```
+        from respo_model import RespoModel
+
+        respo_model = RespoModel.get_respo_model()
+        respo_client = RespoClient()
+
+        assert respo_client.add_role("org.role1", validate_input=False)
+        assert not respo_client.add_role("org.role1", validate_input=False) # False because it was already added
+        assert respo_client.add_role("org.role", respo_model, validate_input=True)
+        assert respo_client.add_role(respo_model.ROLES.DEFAULT__SOME_ROLE, respo_model, validate_input=True)
+        ```
+        """
         role_name = str(role_name)
         role_label = RoleLabel(full_label=role_name)
         if validate_input:
@@ -84,6 +201,35 @@ class RespoClient:
         respo_model: Optional[BaseRespoModel] = None,
         validate_input: bool = config.RESPO_CHECK_FORCE,
     ) -> bool:
+        """
+        Removes `role_name` from this client instance. `respo_model` can be both `str` and `respo.Role` instance.
+        See examples below. `respo_model` is required when `validate_input` is True, then input role_name
+        will be additinaly validated. `validate_input` defaults to `respo.config.RESPO_CHECK_FORCE`.
+
+        When `validate_input` is False, there will be no safe checks!
+
+        Return:
+            `True`: when role removed.
+            `False`: when role does not exist in this client instance
+
+        Raises:
+            `pydantic.ValidationError`: when role_name is invalid
+            `respo.RespoException`: when `respo_model` is `None` and validate_input is `True`
+            `respo.RespoException`: when validate_input is `True` and role does not exist for provided model
+
+        Examples:
+        ```
+        from respo_model import RespoModel
+
+        respo_model = RespoModel.get_respo_model()
+        respo_client = RespoClient()
+
+        assert respo_client.remove_role("org.role1", validate_input=False)
+        assert not respo_client.remove_role("org.role1", validate_input=False) # False because it was already removed
+        assert respo_client.remove_role("org.role", respo_model, validate_input=True)
+        assert respo_client.remove_role(respo_model.ROLES.DEFAULT__SOME_ROLE, respo_model, validate_input=True)
+        ```
+        """
         role_name = str(role_name)
         role_label = RoleLabel(full_label=role_name)
         if validate_input:
