@@ -6,7 +6,7 @@ from pydantic import ValidationError
 from respo.helpers import (
     DoubleLabel,
     TripleLabel,
-    _contains_whitespace,
+    string_contains_whitespace,
     is_valid_lowercase,
 )
 
@@ -22,8 +22,8 @@ test_strings = [
 
 
 @pytest.mark.parametrize("case", test_strings)
-def test_contains_whitespace(case: Tuple[str, bool]):
-    assert _contains_whitespace(case[0]) == case[1]
+def teststring_contains_whitespace(case: Tuple[str, bool]):
+    assert string_contains_whitespace(case[0]) == case[1]
 
 
 lowercase_test_strings = [
@@ -35,6 +35,9 @@ lowercase_test_strings = [
     (" xxx", False),
     ("xxx ", False),
     ("xxX", False),
+    ("śćż", False),
+    ("早上好/早", False),
+    ("pp;&x", False),
 ]
 
 

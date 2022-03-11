@@ -6,13 +6,13 @@ roles:
       organization: default
     permissions:
       - label: foo.user.read
-        type: Deny
+        type: deny
 organizations:
   - metadata:
       label: default
     permissions:
       - label: foo.user.read
-        type: NotAllowOrDeny
+        type: NotallowOrdeny
 permissions:
   - metadata:
       label: user

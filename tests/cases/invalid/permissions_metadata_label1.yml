@@ -3,7 +3,7 @@ organizations: []
 permissions:
   - metadata:
       name: name
-      label: NotAllowed
+      label: Notallowed
       description: desc
     resources: []
     rules: []

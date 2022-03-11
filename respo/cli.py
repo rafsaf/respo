@@ -8,7 +8,7 @@ from pydantic import ValidationError
 
 from respo.cli_utils import bad, generate_respo_model_file, good
 from respo.config import config
-from respo.helpers import RespoException
+from respo.helpers import RespoError
 from respo.respo_model import BaseRespoModel
 from respo.save import save_respo_model
 
@@ -59,7 +59,7 @@ def create(file: TextIOWrapper, format: str):
         click.echo(good(f"Respo model validated in {delta}s..."))
     try:
         old_model = BaseRespoModel.get_respo_model()
-    except RespoException:
+    except RespoError:
         pass
     else:
         click.echo(good("Found already created respo model, it will be overwritten"))

@@ -23,7 +23,7 @@ version = "0.2.0"
 
 [tool.poetry.dependencies]
 pydantic = "^1.7.0"
-python = "^3.7"
+python = "^3.8"
 ujson = ">=5.0"
 
 PyYAML = {version = ">=5.0", optional = true}

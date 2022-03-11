@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from respo import BaseRespoModel, RespoClient, RespoException
+from respo import BaseRespoModel, RespoClient, RespoError
 from respo.respo_model import Organization, Role
 
 
@@ -55,7 +55,7 @@ def test_respo_client_add_and_remove_role(get_general_model: BaseRespoModel):
     for role in respo.roles:
         if role.metadata.label == "client" and role.metadata.organization == "book123":
             book_role = role
-    with pytest.raises(RespoException):
+    with pytest.raises(RespoError):
         assert client.add_role(
             "book123.not_exists", respo_model=None, validate_input=False
         )
@@ -80,13 +80,13 @@ def test_respo_client_add_and_remove_role(get_general_model: BaseRespoModel):
         client.remove_role("book123.ERROR", respo_model=respo, validate_input=False)
 
     assert client.add_role("book123.not_exists", respo_model=None, validate_input=False)
-    with pytest.raises(RespoException):
+    with pytest.raises(RespoError):
         client.add_role("book123.not_exists", respo_model=respo, validate_input=True)
-    with pytest.raises(RespoException):
+    with pytest.raises(RespoError):
         client.add_role("book123.not_exists", respo_model=None, validate_input=True)
-    with pytest.raises(RespoException):
+    with pytest.raises(RespoError):
         client.remove_role("book123.not_exists", respo_model=respo, validate_input=True)
-    with pytest.raises(RespoException):
+    with pytest.raises(RespoError):
         client.remove_role("book123.not_exists", respo_model=None, validate_input=True)
     assert client.roles() == ["book123.not_exists"]
     assert client.remove_role(
@@ -123,13 +123,13 @@ def test_respo_client_add_and_remove_organization(get_general_model: BaseRespoMo
         "book1234", validate_input=False, respo_model=None
     )
 
-    with pytest.raises(RespoException):
+    with pytest.raises(RespoError):
         client.add_organization("book1234", respo_model=None, validate_input=True)
-    with pytest.raises(RespoException):
+    with pytest.raises(RespoError):
         client.add_organization("book1234", respo_model=respo, validate_input=True)
-    with pytest.raises(RespoException):
+    with pytest.raises(RespoError):
         client.remove_organization("book1234", respo_model=respo, validate_input=True)
-    with pytest.raises(RespoException):
+    with pytest.raises(RespoError):
         client.remove_organization("book1234", respo_model=None, validate_input=True)
 
     assert client.add_organization(book_org, respo_model=respo, validate_input=True)

@@ -12,7 +12,7 @@
       "permissions": [
         {
           "label": "default.user.read_all_better",
-          "type": "Allow"
+          "type": "allow"
         }
       ]
     },
@@ -25,15 +25,15 @@
       "permissions": [
         {
           "label": "book123.user.read_basic",
-          "type": "Allow"
+          "type": "allow"
         },
         {
           "label": "book123.book.list",
-          "type": "Allow"
+          "type": "allow"
         },
         {
           "label": "book123.book.buy_all",
-          "type": "Allow"
+          "type": "allow"
         }
       ]
     }
@@ -71,16 +71,12 @@
         {
           "name": "R1",
           "when": "user.read_all",
-          "then": [
-            "user.read_basic"
-          ]
+          "then": ["user.read_basic"]
         },
         {
           "name": "R2",
           "when": "user.read_all_better",
-          "then": [
-            "user.read_all"
-          ]
+          "then": ["user.read_all"]
         }
       ]
     },
@@ -116,16 +112,12 @@
         {
           "name": "R1",
           "when": "book.buy_all",
-          "then": [
-            "book.buy"
-          ]
+          "then": ["book.buy"]
         },
         {
           "name": "R2",
           "when": "book.list",
-          "then": [
-            "book.read"
-          ]
+          "then": ["book.read"]
         }
       ]
     }
@@ -141,11 +133,11 @@
       "permissions": [
         {
           "label": "default.user.read_all",
-          "type": "Allow"
+          "type": "allow"
         },
         {
           "label": "default.user.delete",
-          "type": "Deny"
+          "type": "deny"
         }
       ]
     },
@@ -159,7 +151,7 @@
       "permissions": [
         {
           "label": "book123.user.all",
-          "type": "Allow"
+          "type": "allow"
         }
       ]
     },
@@ -182,11 +174,11 @@
       "permissions": [
         {
           "label": "book123.user.read_all",
-          "type": "Allow"
+          "type": "allow"
         },
         {
           "label": "book123.book.sell",
-          "type": "Allow"
+          "type": "allow"
         }
       ]
     }

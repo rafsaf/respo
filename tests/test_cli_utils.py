@@ -20,14 +20,14 @@ def test_bad():
 @pytest.mark.parametrize(
     "in_file,out_file",
     [
-        ("tests/cases/general.yml", "tests/cases/typer_out_general.py"),
+        ("tests/cases/general.yml", "tests/cases/click_out_general.py"),
         (
             "tests/cases/valid/minimal_valid_roles.yml",
-            "tests/cases/typer_out_minimal_valid_roles.py",
+            "tests/cases/click_out_minimal_valid_roles.py",
         ),
         (
             "tests/cases/valid/minimal_valid.yml",
-            "tests/cases/typer_out_minimal_valid.py",
+            "tests/cases/click_out_minimal_valid.py",
         ),
     ],
 )

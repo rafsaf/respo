@@ -9,7 +9,7 @@ organizations:
       label: default_deny
     permissions:
       - label: default_deny.user.read_all_better
-        type: Deny
+        type: deny
   - metadata:
       label: book123
     permissions:
@@ -81,7 +81,7 @@ roles:
     permissions:
       - label: default.user.read_all
       - label: default.user.delete
-        type: Deny
+        type: deny
 
   - metadata:
       label: superuser_book

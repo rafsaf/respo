@@ -3,8 +3,7 @@ from typing import Dict, List, Optional, Union
 import ujson
 
 from respo.config import config
-from respo.helpers import RespoException, RoleLabel
-from respo.respo_model import BaseRespoModel, Organization, Role
+from respo.respo_model import BaseRespoModel, Organization, Role, RespoError
 
 
 class RespoClient:
@@ -86,8 +85,8 @@ class RespoClient:
         """Validates `role`
 
         Raises:
-            `respo.RespoException`: when `respo_model` is None
-            `respo.RespoException`: when role does not exists for provided model
+            `respo.RespoError`: when `respo_model` is None
+            `respo.RespoError`: when role does not exists for provided model
 
         Examples:
         ```
@@ -100,14 +99,14 @@ class RespoClient:
         ```
         """
         if respo_model is None:
-            raise RespoException(
+            raise RespoError(
                 f"Error in validate_role: {role_label.full_label}."
                 " Parameter `respo_model` cannot be None"
             )
         if not respo_model.role_exists(
             role_name=role_label.role, organization_name=role_label.organization
         ):
-            raise RespoException(
+            raise RespoError(
                 f"Error in validation: {role_label.full_label}."
                 f" Role not found in organization {role_label.organization}"
             )
@@ -119,8 +118,8 @@ class RespoClient:
         """Validates `organization`
 
         Raises:
-            `respo.RespoException`: when `respo_model` is None
-            `respo.RespoException`: when organization does not exists for provided model
+            `respo.RespoError`: when `respo_model` is None
+            `respo.RespoError`: when organization does not exists for provided model
 
         Examples:
         ```
@@ -132,12 +131,12 @@ class RespoClient:
         ```
         """
         if respo_model is None:
-            raise RespoException(
+            raise RespoError(
                 f"Error in validate_organization: {organization_name}."
                 " Parameter `respo_model` cannot be None"
             )
         if not respo_model.organization_exists(organization_name):
-            raise RespoException(
+            raise RespoError(
                 f"Could not add organization {organization_name}."
                 f" Organization {organization_name} not found in respo model"
             )
@@ -161,9 +160,9 @@ class RespoClient:
 
         Raises:
             `pydantic.ValidationError`: when role_name is invalid
-            `respo.RespoException`: when `respo_model` is `None` and validate_input is `True`
-            `respo.RespoException`: when validate_input is `True` and role doen not exist for provided model
-            `respo.RespoException`: when organization wasn't earlier added using `self.add_organization`
+            `respo.RespoError`: when `respo_model` is `None` and validate_input is `True`
+            `respo.RespoError`: when validate_input is `True` and role doen not exist for provided model
+            `respo.RespoError`: when organization wasn't earlier added using `self.add_organization`
 
         Examples:
         ```
@@ -184,7 +183,7 @@ class RespoClient:
             self.validate_role(role_label=role_label, respo_model=respo_model)
 
         if role_label.organization not in self._value["organizations"]:
-            raise RespoException(
+            raise RespoError(
                 f"Could not add role {role_name}."
                 f" Organization {role_label.organization} must"
                 " be added to this RespoClient before adding role."
@@ -214,8 +213,8 @@ class RespoClient:
 
         Raises:
             `pydantic.ValidationError`: when role_name is invalid
-            `respo.RespoException`: when `respo_model` is `None` and validate_input is `True`
-            `respo.RespoException`: when validate_input is `True` and role does not exist for provided model
+            `respo.RespoError`: when `respo_model` is `None` and validate_input is `True`
+            `respo.RespoError`: when validate_input is `True` and role does not exist for provided model
 
         Examples:
         ```

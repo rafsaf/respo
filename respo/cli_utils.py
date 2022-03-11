@@ -3,100 +3,67 @@ from typing import Any, List, Tuple
 import click
 
 from respo.config import config
-from respo.respo_model import BaseRespoModel
+from respo.respo_model import BaseRespoModel, AttributesContainer
 
 
-def good(s: str) -> str:
-    return click.style("INFO: " + s, fg="green", bold=True)
+def good(text: str) -> str:
+    """Styles text to green."""
+
+    return click.style(f"INFO: {text}", fg="green", bold=True)
 
 
-def bad(s: str) -> str:
-    return click.style("ERROR: " + s, fg="yellow", bold=True)
+def bad(text: str) -> str:
+    """Styles text to yellow."""
+    return click.style(f"ERROR: {text}", fg="yellow", bold=True)
 
 
-def generate_respo_model_file(respo_model: BaseRespoModel):
-    """
-    Generates python file with `RespoModel` class that inheritate from `respo.BaseRespoModel`
-    It mainly add annotations for classes `ORGS`, `PERMS`, `ROLES` that are filled using
-    magic methods during `respo.BaseRespoModel` initialization, to greatly improve typing support for end user.
+def generate_respo_model_file(respo_model: BaseRespoModel) -> None:
+    """Generates python file from respo_model.
 
-    Generated file is written to `config.RESPO_FILE_NAME_RESPO_MODEL`
-
-    Used by click cli `respo create` command.
+    Generated file contains class definition that inheritates from
+    BaseRespoModel, but with additional typing annotations. It is written
+    to config.RESPO_FILE_NAME_RESPO_MODEL.
 
     Args:
-        respo_model (BaseRespoModel)
+        respo_model: instance of BaseRespoModel
 
-    Example output file (note, no docstring below)
-
-    ```
-        \"\"\"
-        Auto generated using respo create command
-        Docs: https://rafsaf.github.io/respo/
-        \"\"\"
-
-        from respo import BaseRespoModel, Organization, Role
-
-
-        class RespoModel(BaseRespoModel):
-            class ORGS:
-                DEFAULT: Organization
-
-            class ROLES:
-                DEFAULT__ROOT: Role
-                DEFAULT__USER: Role
-
-            class PERMS:
-                pass
-
-            @staticmethod
-            def get_respo_model() -> "RespoModel":
-                return BaseRespoModel.get_respo_model()  # type: ignore
-    ```
+    Returns:
+        None
     """
+    imports: List[str] = ["BaseRespoModel"]
 
-    def class_part(name: str, annotation: str, lst: List[Tuple[str, Any]]):
-        counter = 0
-        part = f"    class {name}:\n"
-        for attr_name, _ in lst:
-            if not attr_name.isupper():  # pragma: no cover
-                continue
-            part += f"        {attr_name}: {annotation}\n"
-            counter += 1
-        if not counter:
-            part += "        pass\n"
-        return part, counter
+    def class_definition(item: AttributesContainer, class_name: str):
+        result_lst = []
+        result_lst.append(f"    class {class_name}:\n")
+        if not item.mapping:
+            result_lst.append("        pass\n")
+        else:
+            for name, value in sorted(item.mapping.items()):
+                result_lst.append(f"        {name}: {value.__class__.__name__}\n")
 
-    text = ""
-    text += '"""\nAuto generated using respo create command\n'
-    text += 'Docs: https://rafsaf.github.io/respo/\n"""\n\n'
+        return "".join(result_lst)
 
-    imports = ["BaseRespoModel"]
-    orgs = sorted(respo_model.ORGS.__dict__.items(), key=lambda item: item[0])
-    organization_part, o_number = class_part("ORGS", "Organization", orgs)
-    if o_number:
+    output_text_lst: List[str] = []
+    output_text_lst.append('"""\nAuto generated using respo create command\n')
+    output_text_lst.append('Docs: https://rafsaf.github.io/respo/\n"""\n\n')
+
+    organization_definition = class_definition(respo_model.ORGS, "ORGS")
+    if not organization_definition.endswith("pass\n"):
         imports.append("Organization")
 
-    roles = sorted(respo_model.ROLES.__dict__.items(), key=lambda item: item[0])
-    roles_part, r_number = class_part("ROLES", "Role", roles)
-    if r_number:
+    roles_definition = class_definition(respo_model.ROLES, "ROLES")
+    if not roles_definition.endswith("pass\n"):
         imports.append("Role")
 
-    perms = sorted(respo_model.PERMS.__dict__.items(), key=lambda item: item[0])
-    perms_part, _ = class_part("PERMS", "str", perms)
+    perms_definition = class_definition(respo_model.PERMS, "PERMS")
 
-    text += f"from respo import {', '.join(imports)}\n\n\n"
-    text += "class RespoModel(BaseRespoModel):\n"
-    text += organization_part
-    text += "\n"
-    text += roles_part
-    text += "\n"
-    text += perms_part
-    text += "\n"
-
-    text += "    @staticmethod\n"
-    text += '    def get_respo_model() -> "RespoModel":\n'
-    text += "        return BaseRespoModel.get_respo_model()  # type: ignore\n"
+    output_text_lst.append(f"from respo import {', '.join(imports)}\n\n\n")
+    output_text_lst.append("class RespoModel(BaseRespoModel):\n")
+    output_text_lst.append(organization_definition)
+    output_text_lst.append("\n")
+    output_text_lst.append(roles_definition)
+    output_text_lst.append("\n")
+    output_text_lst.append(perms_definition)
 
     with open(config.RESPO_FILE_NAME_RESPO_MODEL, "w") as file:
-        file.write(text)
+        file.write("".join(output_text_lst))

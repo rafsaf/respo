@@ -3,35 +3,91 @@ import pickle
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Literal, Optional, Set, Union
 
-from pydantic import ValidationError, validator
+from pydantic import ValidationError, validator, Field, ConstrainedStr
 
 from respo.config import config
-from respo.helpers import (
-    GENERAL_ERROR_MESSAGE,
-    BaseModel,
-    DoubleLabel,
-    RespoException,
-    TripleLabel,
-    is_valid_lowercase,
-)
+import re
+from typing import Dict
+
+import ujson
+from pydantic import BaseModel as PydanticRawBaseModel
+from pydantic import validator
+
+GENERAL_ERROR_MESSAGE = "Raised directly by above exception"
+
+SINGLE_LABEL_REGEX = re.compile(r"^[a-z_]*")
+DOUBLE_LABEL_REGEX = re.compile(r"^[a-z_]*.[a-z_]*")
+TRIPLE_LABEL_REGEX = re.compile(r"^[a-z_]*.[a-z_]*.[a-z_]*")
 
 
-class T:  # pragma: no cover
+class RespoError(ValueError):
+    pass
+
+
+class BaseModel(PydanticRawBaseModel):
+    class Config:
+        json_loads = ujson.loads
+        json_dumps = ujson.dumps
+
+
+class SingleLabel(ConstrainedStr):
+    regex = SINGLE_LABEL_REGEX
+    min_length = 1
+    max_length = 128
+
+
+class DoubleDotLabel(ConstrainedStr):
+    regex = DOUBLE_LABEL_REGEX
+    min_length = 3
+    max_length = 128
+
+
+class TripleDotLabel(ConstrainedStr):
+    regex = TRIPLE_LABEL_REGEX
+    min_length = 5
+    max_length = 128
+
+
+class TripleLabel:
+    def __init__(self, full_label: Union[str, TripleDotLabel]) -> None:
+        full_label_split = full_label.split(".")
+        self.full_label = full_label
+        self.organization = full_label_split[0]
+        self.metalabel = full_label_split[1]
+        self.label = full_label_split[2]
+
+    def to_double_label(self):
+        return f"{self.metalabel}.{self.label}"
+
+
+class AttributesContainer:
+    def __init__(self) -> None:
+        self.mapping: Dict[str, Union[str, Organization, Role]] = {}
+
+    def add_item(self, key: str, value: Union[str, "Organization", "Role"]) -> None:
+        if not key.isupper():
+            raise ValueError(f"Key must be uppercase: {key}")
+        if not isinstance(value, (str, Organization, Role)):
+            raise ValueError(
+                f"Invalid type of value (possible: str, Organization, Role): {value}"
+            )
+        self.mapping[key] = value
+
+    def __getattr__(self, name: str) -> Union[str, "Organization", "Role"]:
+        if name.isupper():
+            return self.mapping[name]
+        raise AttributeError
+
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, T):
-            return NotImplemented
-        for item, value in self.__dict__.items():
-            if not item.isupper():
-                continue
-            if not (item in other.__dict__ and other.__dict__[item] == value):
-                return False
-        return True
+        if not isinstance(other, AttributesContainer):
+            raise ValueError(f"Cannot compare with AttributesContainer: {other}")
+        return self.mapping == other.mapping
 
 
 class MetadataSection(BaseModel):
-    name: str
+    name: SingleLabel
     created_at: Optional[str] = None
     last_modified: Optional[str] = None
 
@@ -44,7 +100,7 @@ class MetadataSection(BaseModel):
             try:
                 datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%S.%f")
             except (ValueError, TypeError):
-                raise RespoException(
+                raise RespoError(
                     "'metadata.created_at' is invalid, place valid ISO format (UTC) or "
                     "leave this field empty so it will be filled\n  "
                 )
@@ -59,33 +115,16 @@ class MetadataSection(BaseModel):
 
 
 class PermissionMetadata(BaseModel):
-    name: Optional[str] = None
-    label: str
-    description: Optional[str] = None
-
-    @validator("label")
-    def label_must_be_in_valid_format(cls, label: str) -> str:
-        if not is_valid_lowercase(label):
-            raise RespoException(
-                f"Error in permissions section\n  "
-                f"Permission '{label}' metadata is invalid.\n  "
-                f"Label '{label}' must be lowercase and must not contain any whitespace\n  "
-            )
-        return label
+    label: SingleLabel
 
 
 class PermissionResource(BaseModel):
-    name: Optional[str] = None
-    label: str
-
-    def get_label(self):
-        return DoubleLabel(full_label=self.label)
+    label: DoubleDotLabel
 
 
 class PermissionRule(BaseModel):
-    name: Optional[str] = None
-    when: str
-    then: List[str]
+    when: DoubleDotLabel
+    then: List[DoubleDotLabel]
 
 
 class Permission(BaseModel):
@@ -109,33 +148,30 @@ class Permission(BaseModel):
         resource: PermissionResource
         for resource in resources:
             RESOURCE_ERR = f"Resource with label '{resource.label}' is invalid\n  "
-            try:
-                double_label = DoubleLabel(full_label=resource.label)
-            except ValidationError as exc:
-                raise RespoException(BASE_ERR + RESOURCE_ERR + str(exc))
-
-            if double_label.metalabel != metadata.label:
-                raise RespoException(
+            metalabel = resource.label.split(".")[0]
+            perm_name = resource.label.split(".")[1]
+            if metalabel != metadata.label:
+                raise RespoError(
                     BASE_ERR
                     + RESOURCE_ERR
                     + f"Label '{resource.label}' must start with metadata label '{metadata.label}'\n  "
-                    + f"Eg. change '{double_label.metalabel}' to '{metadata.label}'\n  "
+                    + f"Eg. change '{metalabel}' to '{metadata.label}'\n  "
                 )
-            if double_label.label == "all":
-                raise RespoException(
+            if perm_name == "all":
+                raise RespoError(
                     BASE_ERR
                     + RESOURCE_ERR
                     + f"Label '{resource.label}' cant contain 'all'\n  "
                     + "'all' is reserved keyword and will be auto applied\n  "
                 )
 
-            if double_label.label in resources_set:
-                raise RespoException(
+            if perm_name in resources_set:
+                raise RespoError(
                     BASE_ERR
                     + RESOURCE_ERR
-                    + f"Found two resources with the same label '{double_label.label}'\n  "
+                    + f"Found two resources with the same label '{perm_name}'\n  "
                 )
-            resources_set.add(double_label.label)
+            resources_set.add(perm_name)
         return resources
 
     @validator("rules")
@@ -160,34 +196,35 @@ class Permission(BaseModel):
             RULE_ERR = f"Rule with when '{rule.when}' is invalid\n  "
 
             if rule.when not in resources_labels:
-                raise RespoException(
+                raise RespoError(
                     BASE_ERR
                     + RULE_ERR
                     + f"Rule 'when' condition '{rule.when}' not found in resources labels\n  "
                 )
-            if DoubleLabel(full_label=rule.when).label == "all":
-                raise RespoException(
+            perm_name = rule.when.split(".")[1]
+            if perm_name == "all":
+                raise RespoError(
                     BASE_ERR
                     + RULE_ERR
                     + f"Rule 'when' condition '{rule.when}' cant contain 'all'\n  "
                     + "'all' is reserved keyword and will be auto applied\n  "
                 )
             for label in rule.then:
-                if DoubleLabel(full_label=label).label == "all":
-                    raise RespoException(
+                if perm_name == label.split(".")[1]:
+                    raise RespoError(
                         BASE_ERR
                         + RULE_ERR
                         + f"Rule 'then' condition '{label}' cant contain 'all'\n  "
                         + "'all' is reserved keyword and will be auto applied\n  "
                     )
                 if label == rule.when:
-                    raise RespoException(
+                    raise RespoError(
                         BASE_ERR
                         + RULE_ERR
                         + f"Rule 'then' condition '{label}' can't be equal to when condition\n  "
                     )
                 if label in labels_then_set:
-                    raise RespoException(
+                    raise RespoError(
                         BASE_ERR
                         + RULE_ERR
                         + f"Found two 'then' conditions with the same label '{label}'\n  "
@@ -200,11 +237,9 @@ class Permission(BaseModel):
         cls, resources: List[PermissionResource]
     ) -> List[PermissionResource]:
         if len(resources):
-            metadata_label = resources[0].get_label().metalabel
+            metadata_label = resources[0].label.split(".")[0]
             resources.append(
-                PermissionResource(
-                    name=f"auto {metadata_label}.all", label=f"{metadata_label}.all"
-                )
+                PermissionResource(label=DoubleDotLabel(f"{metadata_label}.all"))
             )
         return resources
 
@@ -216,15 +251,14 @@ class Permission(BaseModel):
         assert resources is not None, GENERAL_ERROR_MESSAGE
 
         if len(resources):
-            metadata_label = resources[0].get_label().metalabel
+            metadata_label = resources[0].label.split(".")[0]
             new_then_list = []
             for resource in resources:
                 new_then_list.append(resource.label)
 
             rules.append(
                 PermissionRule(
-                    name=f"auto {metadata_label}.all",
-                    when=f"{metadata_label}.all",
+                    when=DoubleDotLabel(f"{metadata_label}.all"),
                     then=new_then_list,
                 )
             )
@@ -232,36 +266,15 @@ class Permission(BaseModel):
 
 
 class OrganizationMetadata(BaseModel):
-    name: Optional[str] = None
-    label: str
-    description: Optional[str] = None
-
-    @validator("label")
-    def label_must_be_in_valid_format(cls, label: str) -> str:
-        if not is_valid_lowercase(label):
-            raise RespoException(
-                f"Error in organizations section\n  "
-                f"Organization '{label}' metadata is invalid.\n  "
-                f"Label '{label}' must be lowercase and must not contain any whitespace\n  "
-            )
-        return label
+    label: SingleLabel
 
     def label_to_attribute_name(self):
         return self.label.upper()
 
 
 class OrganizationPermissionGrant(BaseModel):
-    type: str = "Allow"
-    label: str
-
-    @validator("type")
-    def type_must_be_allow_or_deny(cls, type_str: str) -> str:
-        if type_str not in ["Allow", "Deny"]:
-            raise RespoException(
-                f"Permission type must be literal 'Allow' or 'Deny'\n  "
-                f"Currently it is {type_str}"
-            )
-        return type_str
+    type: Literal["allow", "deny"] = "allow"
+    label: TripleDotLabel
 
     def label_to_attribute_name(self):
         return self.label.replace(".", "__").upper()
@@ -276,20 +289,8 @@ class Organization(BaseModel):
 
 
 class RoleMetadata(BaseModel):
-    name: Optional[str] = None
-    label: str
-    description: Optional[str] = None
-    organization: str
-
-    @validator("label")
-    def label_must_be_in_valid_format(cls, label: str) -> str:
-        if not is_valid_lowercase(label):
-            raise RespoException(
-                f"Error in roles section\n  "
-                f"Role '{label}' metadata is invalid.\n  "
-                f"Label '{label}' must be lowercase and must not contain any whitespace\n  "
-            )
-        return label
+    label: SingleLabel
+    organization: SingleLabel
 
     @property
     def full_label(self):
@@ -300,17 +301,8 @@ class RoleMetadata(BaseModel):
 
 
 class RolePermissionGrant(BaseModel):
-    type: str = "Allow"
-    label: str
-
-    @validator("type")
-    def type_must_be_allow_or_deny(cls, type_str: str) -> str:
-        if type_str not in ["Allow", "Deny"]:
-            raise RespoException(
-                f"Permission type must be literal 'Allow' or 'Deny'\n  "
-                f"Currently it is {type_str}"
-            )
-        return type_str
+    type: Literal["allow", "deny"] = "allow"
+    label: TripleDotLabel
 
 
 class Role(BaseModel):
@@ -328,9 +320,9 @@ class BaseRespoModel(BaseModel):
     roles: List[Role]
     permission_to_role_dict: Dict[str, Set[str]] = {}
     permission_to_organization_dict: Dict[str, Set[str]] = {}
-    ORGS: T = T()
-    ROLES: T = T()
-    PERMS: T = T()
+    ORGS: AttributesContainer = AttributesContainer()
+    ROLES: AttributesContainer = AttributesContainer()
+    PERMS: AttributesContainer = AttributesContainer()
 
     class Config:
         validate_all = True
@@ -340,30 +332,22 @@ class BaseRespoModel(BaseModel):
         super().__init__(*args, **data)
 
         for organization in self.organizations:
-            setattr(
-                self.ORGS,
-                organization.metadata.label_to_attribute_name(),
-                organization,
+            self.ORGS.add_item(
+                organization.metadata.label_to_attribute_name(), organization
             )
             for org_permission in organization.permissions:
-                setattr(
-                    self.PERMS,
-                    org_permission.label_to_attribute_name(),
-                    org_permission.label,
+                self.PERMS.add_item(
+                    org_permission.label_to_attribute_name(), org_permission.label
                 )
         for role in self.roles:
-            setattr(
-                self.ROLES,
-                role.metadata.full_label_to_attribute_name(),
-                role,
-            )
+            self.ROLES.add_item(role.metadata.full_label_to_attribute_name(), role)
 
     @staticmethod
     def get_respo_model() -> "BaseRespoModel":
         if not Path(
             f"{config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_BINARY_FILE_NAME}"
         ).exists():
-            raise RespoException(
+            raise RespoError(
                 f"{config.RESPO_AUTO_BINARY_FILE_NAME} file does not exist. Did you forget to create it?"
             )
         with open(
@@ -398,7 +382,7 @@ class BaseRespoModel(BaseModel):
         permission_names: Set[str] = set()
         for permission in permissions:
             if permission.metadata.label in permission_names:
-                raise RespoException(
+                raise RespoError(
                     f"Error in permissions section\n  "
                     f"Permission '{permission.metadata.label}' metadata is invalid.\n  "
                     f"Found two permissions with the same label {permission.metadata.label}\n  "
@@ -413,7 +397,7 @@ class BaseRespoModel(BaseModel):
         organization_names: Set[str] = set()
         for organization in organizations:
             if organization.metadata.label in organization_names:
-                raise RespoException(
+                raise RespoError(
                     f"Error in organizations section\n  "
                     f"Organization '{organization.metadata.label}' metadata is invalid.\n  "
                     f"Found two organizations with the same label {organization.metadata.label}\n  "
@@ -439,7 +423,7 @@ class BaseRespoModel(BaseModel):
                 PERM_ERR = f"Permission with label '{organization_permission.label}' is invalid\n  "
                 triple_label = TripleLabel(full_label=organization_permission.label)
                 if triple_label.organization != organization.metadata.label:
-                    raise RespoException(
+                    raise RespoError(
                         BASE_ERR
                         + PERM_ERR
                         + f"'{triple_label.organization}' must be equal to '{organization.metadata.label}'\n  "
@@ -451,7 +435,7 @@ class BaseRespoModel(BaseModel):
                             exists = True
                             break
                 if not exists:
-                    raise RespoException(
+                    raise RespoError(
                         BASE_ERR
                         + PERM_ERR
                         + f"Permission '{triple_label.to_double_label()}' not found\n  "
@@ -475,7 +459,9 @@ class BaseRespoModel(BaseModel):
                         if rule.when != triple_label.to_double_label():
                             continue
                         for rule_then in rule.then:
-                            new_label = f"{organization.metadata.label}.{rule_then}"
+                            new_label = TripleDotLabel(
+                                f"{organization.metadata.label}.{rule_then}"
+                            )
                             grant = OrganizationPermissionGrant(
                                 type=organization_permission.type,
                                 label=new_label,
@@ -500,14 +486,16 @@ class BaseRespoModel(BaseModel):
             allow_set: Set[str] = set()
             deny_set: Set[str] = set()
             for organization_permission in organization.permissions:
-                if organization_permission.type == "Allow":
+                if organization_permission.type == "allow":
                     allow_set.add(organization_permission.label)
                 else:
                     deny_set.add(organization_permission.label)
             new_allow_set = allow_set - deny_set
             for label in new_allow_set:
                 result_permissions.append(
-                    OrganizationPermissionGrant(type="Allow", label=label)
+                    OrganizationPermissionGrant(
+                        type="allow", label=TripleDotLabel(label)
+                    )
                 )
             organization.permissions = result_permissions
             new_organizations.append(organization)
@@ -530,17 +518,17 @@ class BaseRespoModel(BaseModel):
                 f"Role '{role.metadata.label}' metadata is invalid.\n  "
             )
             if role.metadata.label == "root":
-                raise RespoException(
+                raise RespoError(
                     BASE_ERR + "'root' is reserved keyword and will be auto applied\n  "
                 )
             if role.metadata.organization not in organization_names:
-                raise RespoException(
+                raise RespoError(
                     BASE_ERR
                     + f"Role's declared organization {role.metadata.organization} is invalid"
                     + f"'{role.metadata.organization}' not found\n  "
                 )
             if role.metadata.label in roles_names:
-                raise RespoException(
+                raise RespoError(
                     BASE_ERR
                     + f"Found two roles with the same label '{role.metadata.label}'\n  "
                 )
@@ -565,7 +553,7 @@ class BaseRespoModel(BaseModel):
                 )
                 triple_label = TripleLabel(full_label=role_permission.label)
                 if triple_label.organization != role.metadata.organization:
-                    raise RespoException(
+                    raise RespoError(
                         BASE_ERR
                         + PERM_ERR
                         + f"'{triple_label.organization}' must be equal to '{role.metadata.organization}'\n  "
@@ -577,7 +565,7 @@ class BaseRespoModel(BaseModel):
                             exists = True
                             break
                 if not exists:
-                    raise RespoException(
+                    raise RespoError(
                         BASE_ERR
                         + PERM_ERR
                         + f"Permission '{triple_label.to_double_label()}' not found\n  "
@@ -602,7 +590,7 @@ class BaseRespoModel(BaseModel):
                             new_label = f"{role.metadata.organization}.{rule_then}"
                             grant = RolePermissionGrant(
                                 type=role_permission.type,
-                                label=new_label,
+                                label=TripleDotLabel(new_label),
                             )
                             if grant not in role.permissions:
                                 role.permissions.append(grant)
@@ -623,14 +611,14 @@ class BaseRespoModel(BaseModel):
             allow_set: Set[str] = set()
             deny_set: Set[str] = set()
             for role_permission in role.permissions:
-                if role_permission.type == "Allow":
+                if role_permission.type == "allow":
                     allow_set.add(role_permission.label)
                 else:
                     deny_set.add(role_permission.label)
             new_allow_set = allow_set - deny_set
             for label in new_allow_set:
                 result_permissions.append(
-                    RolePermissionGrant(type="Allow", label=label)
+                    RolePermissionGrant(type="allow", label=TripleDotLabel(label))
                 )
             role.permissions = result_permissions
             new_roles.append(role)
@@ -646,14 +634,16 @@ class BaseRespoModel(BaseModel):
         for organization in organizations:
             role_metadata = RoleMetadata(
                 organization=organization.metadata.label,
-                label="root",
+                label=SingleLabel("root"),
             )
             root_role = Role(metadata=role_metadata, permissions=[])
             for permission in permissions:
                 for resource in permission.resources:
                     root_role.permissions.append(
                         RolePermissionGrant(
-                            label=f"{organization.metadata.label}.{resource.label}"
+                            label=TripleDotLabel(
+                                f"{organization.metadata.label}.{resource.label}"
+                            )
                         )
                     )
             roles.append(root_role)
