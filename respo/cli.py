@@ -1,5 +1,9 @@
+import os
+import pickle
 from io import TextIOWrapper
+from pathlib import Path
 from time import time
+from typing import List
 
 import click
 import ujson
@@ -7,16 +11,33 @@ import yaml
 from pydantic import ValidationError
 
 from respo.config import config
-from respo.respo_model import RespoError
-from respo.respo_model import BaseRespoModel
-from respo.save import save_respo_model
+from respo.respo_model import AttributesContainer, BaseRespoModel, RespoError
 
-from typing import Any, List, Tuple
 
-import click
+def save_respo_model(model: BaseRespoModel) -> None:
+    """Dumps respo model into bin and yml format.
 
-from respo.config import config
-from respo.respo_model import BaseRespoModel, AttributesContainer
+    Pickle and yml files are generated and saved to paths specified
+    in respo.config. This behaviour may be overwritten using ENV variables.
+    """
+    Path(config.RESPO_AUTO_FOLDER_NAME).mkdir(parents=True, exist_ok=True)
+
+    with open(config.path_bin_file, "wb") as file:
+        pickle.dump(model, file)
+
+    with open(config.path_yml_file, mode="w") as file:  # type: ignore
+        yaml.dump(
+            model.dict(
+                exclude={
+                    "permission_to_organization_dict",
+                    "permission_to_role_dict",
+                    "PERMS",
+                    "ORGS",
+                    "ROLES",
+                }
+            ),
+            file,
+        )
 
 
 def generate_respo_model_file(respo_model: BaseRespoModel) -> None:
@@ -100,8 +121,8 @@ def create(file: TextIOWrapper, format: str):
     typing support for end user.
     """
 
-    click.echo(good("Validating the content..."))
-    before = time()
+    click.echo(good(f"Validating respo model from {file.name}..."))
+    start_time = time()
     try:
         if format == "yml":
             data = yaml.safe_load(file.read())
@@ -120,34 +141,24 @@ def create(file: TextIOWrapper, format: str):
         click.echo(bad("Could not process file, json syntax is invalid"))
         click.echo(json_eror)
         raise click.Abort()
-    except Exception as err:  # pragma: no cover
-        click.echo(bad(f"Unexpected error when processing this file. {err}"))
-        raise click.Abort()
-    else:
-        delta = round(time() - before, 5)
-        click.echo(good(f"Respo model validated in {delta}s..."))
     try:
         old_model = BaseRespoModel.get_respo_model()
     except RespoError:
         pass
     else:
-        click.echo(good("Found already created respo model, it will be overwritten"))
         respo_model.metadata.created_at = old_model.metadata.created_at
+        click.echo(good("Existing model updated."))
 
     save_respo_model(respo_model)
-    click.echo(
-        good(
-            "Saving as binary file to "
-            f"{config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_BINARY_FILE_NAME}"
-        )
-    )
-    click.echo(
-        good(
-            "Saving as yml file to "
-            f"{config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_YML_FILE_NAME}"
-        )
-    )
-    click.echo(good("Generating respo model file..."))
     generate_respo_model_file(respo_model=respo_model)
-    click.echo(good(f"Saving as python file to {config.RESPO_FILE_NAME_RESPO_MODEL}"))
+
+    click.echo(good(f"Saved binary file to {config.path_bin_file}"))
+    click.echo(good(f"Saved yml file to {config.path_yml_file}"))
+    click.echo(good(f"Saved python file to {config.path_python_file}"))
+
+    process_time = round(time() - start_time, 4)
+    bin_file_size = round(os.path.getsize(config.path_bin_file) / 1048576, 4)
+    click.echo(
+        good(f"Processed in {process_time}s. Bin file size: {bin_file_size} mb.")
+    )
     click.echo(good("Success!"))

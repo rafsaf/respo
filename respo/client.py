@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Union
 import ujson
 
 from respo.config import config
-from respo.respo_model import BaseRespoModel, Organization, Role, RespoError, RoleLabel
+from respo.respo_model import BaseRespoModel, Organization, RespoError, Role, RoleLabel
 
 
 class RespoClient:
@@ -177,7 +177,6 @@ class RespoClient:
         assert respo_client.add_role(respo_model.ROLES.DEFAULT__SOME_ROLE, respo_model, validate_input=True)
         ```
         """
-        role_name = str(role_name)
         role_label = RoleLabel(full_label=role_name)
         if validate_input:
             self.validate_role(role_label=role_label, respo_model=respo_model)
@@ -188,10 +187,10 @@ class RespoClient:
                 f" Organization {role_label.organization} must"
                 " be added to this RespoClient before adding role."
             )
-        if role_name in self._value["roles"]:
+        if role_label.full_label in self._value["roles"]:
             return False
         else:
-            self._value["roles"].append(role_name)
+            self._value["roles"].append(role_label.full_label)
             return True
 
     def remove_role(
@@ -229,13 +228,12 @@ class RespoClient:
         assert respo_client.remove_role(respo_model.ROLES.DEFAULT__SOME_ROLE, respo_model, validate_input=True)
         ```
         """
-        role_name = str(role_name)
         role_label = RoleLabel(full_label=role_name)
         if validate_input:
             self.validate_role(role_label=role_label, respo_model=respo_model)
 
-        if role_name in self._value["roles"]:
-            self._value["roles"].remove(role_name)
+        if role_label.full_label in self._value["roles"]:
+            self._value["roles"].remove(role_label.full_label)
             return True
         else:
             return False

@@ -1,20 +1,16 @@
 import copy
 import pickle
+import re
 from collections import defaultdict
 from datetime import datetime
-from pathlib import Path
 from typing import Dict, List, Literal, Optional, Set, Union
 
-from pydantic import ValidationError, validator, Field, ConstrainedStr
+import ujson
+from pydantic import BaseModel as _OriginalBaseModel
+from pydantic import ConstrainedStr as _OriginalConstrainedStr
+from pydantic import errors, validator
 
 from respo.config import config
-import re
-
-from typing import Dict
-
-import ujson
-from pydantic import BaseModel as PydanticRawBaseModel
-from pydantic import validator
 
 GENERAL_ERROR_MESSAGE = "Raised directly by above exception"
 
@@ -27,25 +23,35 @@ class RespoError(ValueError):
     pass
 
 
-class BaseModel(PydanticRawBaseModel):
+class BaseModel(_OriginalBaseModel):
     class Config:
         json_loads = ujson.loads
         json_dumps = ujson.dumps
 
 
-class SingleLabel(ConstrainedStr):
+class LabelConstrainedStr(_OriginalConstrainedStr):
+    @classmethod
+    def validate(cls, value: str) -> str:
+        if cls.regex:
+            if cls.regex.fullmatch(value) is None:
+                raise errors.StrRegexError(pattern=cls.regex.pattern)
+
+        return value
+
+
+class SingleLabel(LabelConstrainedStr):
     regex = SINGLE_LABEL_REGEX
     min_length = 1
     max_length = 128
 
 
-class DoubleDotLabel(ConstrainedStr):
+class DoubleDotLabel(LabelConstrainedStr):
     regex = DOUBLE_LABEL_REGEX
     min_length = 3
     max_length = 128
 
 
-class TripleDotLabel(ConstrainedStr):
+class TripleDotLabel(LabelConstrainedStr):
     regex = TRIPLE_LABEL_REGEX
     min_length = 5
     max_length = 128
@@ -230,15 +236,15 @@ class Permission(BaseModel):
                 raise RespoError(
                     BASE_ERR
                     + RULE_ERR
-                    + f"Rule 'when' condition '{rule.when}' cant contain 'all'\n  "
+                    + f"Rule 'when' condition '{rule.when}' cant be equal to 'all'\n  "
                     + "'all' is reserved keyword and will be auto applied\n  "
                 )
             for label in rule.then:
-                if perm_name == label.split(".")[1]:
+                if label.split(".")[1] == "all":
                     raise RespoError(
                         BASE_ERR
                         + RULE_ERR
-                        + f"Rule 'then' condition '{label}' cant contain 'all'\n  "
+                        + f"Rule 'then' condition '{label}' cant be equal to 'all'\n  "
                         + "'all' is reserved keyword and will be auto applied\n  "
                     )
                 if label == rule.when:
@@ -368,16 +374,12 @@ class BaseRespoModel(BaseModel):
 
     @staticmethod
     def get_respo_model() -> "BaseRespoModel":
-        if not Path(
-            f"{config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_BINARY_FILE_NAME}"
-        ).exists():
+        if not config.path_bin_file.exists():
             raise RespoError(
-                f"{config.RESPO_AUTO_BINARY_FILE_NAME} file does not exist. Did you forget to create it?"
+                f"Respo bin file does not exist in {config.path_bin_file}."
+                " Use command: respo create [OPTIONS] FILENAME"
             )
-        with open(
-            f"{config.RESPO_AUTO_FOLDER_NAME}/{config.RESPO_AUTO_BINARY_FILE_NAME}",
-            "rb",
-        ) as respo_model_file:
+        with open(config.path_bin_file, "rb") as respo_model_file:
             model = pickle.load(respo_model_file)
         return model
 

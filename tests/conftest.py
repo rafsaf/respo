@@ -5,7 +5,7 @@ import yaml
 from click.testing import CliRunner
 
 from respo import BaseRespoModel, config
-from respo.save import save_respo_model
+from respo.cli import save_respo_model
 
 
 @pytest.fixture(autouse=True)

@@ -8,8 +8,8 @@ from respo.respo_model import (
     BaseRespoModel,
     Organization,
     Permission,
-    Role,
     RespoError,
+    Role,
     RoleLabel,
     TripleLabel,
 )

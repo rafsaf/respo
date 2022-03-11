@@ -1,7 +1,17 @@
-from click.testing import CliRunner
 import pytest
+from click.testing import CliRunner
+
 from respo import BaseRespoModel, config
-from respo.cli import app, good, bad
+from respo.cli import app, bad, good, save_respo_model
+
+from .conftest import get_model
+
+
+def test_model_is_equal_after_dumping():
+    model1 = get_model("tests/cases/general.yml")
+    save_respo_model(model1)
+    model2 = BaseRespoModel.get_respo_model()
+    assert model1 == model2
 
 
 def test_good():
@@ -62,7 +72,7 @@ def test_respo_create_fail_when_yaml_sytax_invalid(runner: CliRunner):
     assert "Could not process file" in result.stdout
 
 
-def test_respo_create_fail_when_yaml_sytax_valid_but_broken(runner: CliRunner):
+def test_respo_create_fail_when_yaml_sytax_valid_but_invalid_model(runner: CliRunner):
     result = runner.invoke(
         app, ["create", "tests/cases/invalid/metadata_created_at.yml"]
     )
@@ -84,7 +94,7 @@ def test_respo_create_success_valid_yml_file(runner: CliRunner):
     assert "Success!" in result.stdout
 
 
-def test_respo_create_success_valid_yml_file_2x_modify_created_ok(runner: CliRunner):
+def test_respo_create_success_valid_yml_file_2x_modify_ok(runner: CliRunner):
     result = runner.invoke(app, ["create", "tests/cases/general.yml"])
     model1 = BaseRespoModel.get_respo_model()
     result = runner.invoke(app, ["create", "tests/cases/general.yml"])

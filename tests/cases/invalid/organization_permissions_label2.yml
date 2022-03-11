@@ -5,7 +5,7 @@ organizations:
   - metadata:
       label: label
     permissions:
-      - label: label.user.someting_not_exists?
+      - label: label.user.someting_not_exists
 permissions:
   - metadata:
       label: user

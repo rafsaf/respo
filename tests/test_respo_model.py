@@ -1,9 +1,44 @@
+import os
 from typing import Tuple
 
 import pytest
+from click.testing import CliRunner
 from pydantic import ValidationError
 
-from respo import TripleLabel, RoleLabel
+from respo import RoleLabel, TripleLabel
+from respo.cli import app
+from respo.respo_model import AttributesContainer
+from tests.conftest import get_model
+
+valid_files = [file for file in os.scandir("./tests/cases/valid")]
+
+
+@pytest.mark.parametrize("file", valid_files)
+def test_respo_model_for_valid_cases(file: os.DirEntry, runner: CliRunner):
+    get_model(file.path)
+    result = runner.invoke(app, ["create", file.path])
+    assert "Success!" in result.stdout
+
+
+invalid_files = [file for file in os.scandir("./tests/cases/invalid")]
+
+
+@pytest.mark.parametrize("file", invalid_files)
+def test_respo_model_for_invalid_cases(file: os.DirEntry, runner: CliRunner):
+    with pytest.raises(ValidationError):
+        get_model(file.path)
+    try:
+        get_model(file.path)
+    except ValidationError as exc:
+        assert exc.errors()[0]["type"] in [
+            "value_error.respo",
+            "value_error.str.regex",
+            "value_error.const",
+        ]
+
+    result = runner.invoke(app, ["create", file.path])
+    assert "Could not validate respo model" in result.stdout
+
 
 double_label_cases = [
     ("foo.bar.read", False),
@@ -56,3 +91,16 @@ def test_triple_label(case: Tuple[str, bool]):
         assert triple_label.label == triple_label.full_label.split(".")[2]
         assert triple_label.organization == triple_label.full_label.split(".")[0]
         assert triple_label.full_label == case[0]
+
+
+def test_attributes_container():
+    item = AttributesContainer()
+
+    with pytest.raises(ValueError):
+        item.add_item("lowercase", "value")
+
+    with pytest.raises(ValueError):
+        item.add_item("SOME_NAME", set())  # type: ignore
+
+    with pytest.raises(ValueError):
+        item == "some string"
