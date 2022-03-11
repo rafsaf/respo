@@ -18,7 +18,11 @@ def test_raise_respo_exception(file: DirEntry, runner: CliRunner):
     try:
         get_model(file.path)
     except ValidationError as exc:
-        assert exc.errors()[0]["type"] == "value_error.respo"
+        assert exc.errors()[0]["type"] in [
+            "value_error.respo",
+            "value_error.str.regex",
+            "value_error.const",
+        ]
 
     result = runner.invoke(app, ["create", file.path])
     assert "Could not validate respo model" in result.stdout

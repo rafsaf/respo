@@ -9,6 +9,7 @@ from pydantic import ValidationError, validator, Field, ConstrainedStr
 
 from respo.config import config
 import re
+
 from typing import Dict
 
 import ujson
@@ -17,9 +18,9 @@ from pydantic import validator
 
 GENERAL_ERROR_MESSAGE = "Raised directly by above exception"
 
-SINGLE_LABEL_REGEX = re.compile(r"^[a-z_]*")
-DOUBLE_LABEL_REGEX = re.compile(r"^[a-z_]*.[a-z_]*")
-TRIPLE_LABEL_REGEX = re.compile(r"^[a-z_]*.[a-z_]*.[a-z_]*")
+SINGLE_LABEL_REGEX = re.compile(r"^[a-z_0-9]*$")
+DOUBLE_LABEL_REGEX = re.compile(r"^[a-z_0-9]*\.[a-z_0-9]*$")
+TRIPLE_LABEL_REGEX = re.compile(r"^[a-z_0-9]*\.[a-z_0-9]*\.[a-z_0-9]*$")
 
 
 class RespoError(ValueError):
@@ -52,14 +53,37 @@ class TripleDotLabel(ConstrainedStr):
 
 class TripleLabel:
     def __init__(self, full_label: Union[str, TripleDotLabel]) -> None:
-        full_label_split = full_label.split(".")
-        self.full_label = full_label
+        if isinstance(full_label, TripleDotLabel):
+            full_label_split = full_label.split(".")
+        else:
+            if TRIPLE_LABEL_REGEX.fullmatch(full_label) is None:
+                raise ValueError(
+                    f"Label does not match {TRIPLE_LABEL_REGEX} regex: {full_label}"
+                )
+            full_label_split = full_label.split(".")
+
+        self.full_label = str(full_label)
         self.organization = full_label_split[0]
         self.metalabel = full_label_split[1]
         self.label = full_label_split[2]
 
     def to_double_label(self):
         return f"{self.metalabel}.{self.label}"
+
+
+class RoleLabel:
+    def __init__(self, full_label: Union[str, "Role"]) -> None:
+        if isinstance(full_label, Role):
+            self.organization = full_label.metadata.organization
+            self.role = full_label.metadata.label
+        else:
+            if DOUBLE_LABEL_REGEX.fullmatch(full_label) is None:
+                raise ValueError(
+                    f"Label does not match {DOUBLE_LABEL_REGEX} regex: {full_label}"
+                )
+            self.organization = full_label.split(".")[0]
+            self.role = full_label.split(".")[1]
+        self.full_label = str(full_label)
 
 
 class AttributesContainer:
@@ -87,7 +111,7 @@ class AttributesContainer:
 
 
 class MetadataSection(BaseModel):
-    name: SingleLabel
+    name: str
     created_at: Optional[str] = None
     last_modified: Optional[str] = None
 
@@ -337,7 +361,7 @@ class BaseRespoModel(BaseModel):
             )
             for org_permission in organization.permissions:
                 self.PERMS.add_item(
-                    org_permission.label_to_attribute_name(), org_permission.label
+                    org_permission.label_to_attribute_name(), str(org_permission.label)
                 )
         for role in self.roles:
             self.ROLES.add_item(role.metadata.full_label_to_attribute_name(), role)

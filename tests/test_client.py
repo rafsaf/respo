@@ -74,9 +74,9 @@ def test_respo_client_add_and_remove_role(get_general_model: BaseRespoModel):
     )
     assert client.roles() == []
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         client.add_role("book123.ERROR", respo_model=None, validate_input=False)
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         client.remove_role("book123.ERROR", respo_model=respo, validate_input=False)
 
     assert client.add_role("book123.not_exists", respo_model=None, validate_input=False)
@@ -93,9 +93,9 @@ def test_respo_client_add_and_remove_role(get_general_model: BaseRespoModel):
         "book123.not_exists", respo_model=None, validate_input=False
     )
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         client.add_role("not_exists", respo_model=None, validate_input=True)
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         client.remove_role("not_exists", respo_model=respo, validate_input=True)
 
     assert client.add_role(book_role, respo_model=respo, validate_input=True)

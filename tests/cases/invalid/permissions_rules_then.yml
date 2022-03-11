@@ -11,8 +11,7 @@ permissions:
       - name: name2
         label: label.read_all
     rules:
-      - name: R1
-        when: label.read_all
+      - when: label.read_all.next
         then:
           - label.read
           - label.read

@@ -3,48 +3,7 @@ from typing import Tuple
 import pytest
 from pydantic import ValidationError
 
-from respo.helpers import (
-    DoubleLabel,
-    TripleLabel,
-    string_contains_whitespace,
-    is_valid_lowercase,
-)
-
-test_strings = [
-    ("xxx", False),
-    ("xx x", True),
-    ("xx\nx", True),
-    ("xx\rx", True),
-    ("xx\tx", True),
-    (" xxx", True),
-    ("xxx ", True),
-]
-
-
-@pytest.mark.parametrize("case", test_strings)
-def teststring_contains_whitespace(case: Tuple[str, bool]):
-    assert string_contains_whitespace(case[0]) == case[1]
-
-
-lowercase_test_strings = [
-    ("xxx", True),
-    ("xx x", False),
-    ("xx\nx", False),
-    ("xx\rx", False),
-    ("xx\tx", False),
-    (" xxx", False),
-    ("xxx ", False),
-    ("xxX", False),
-    ("śćż", False),
-    ("早上好/早", False),
-    ("pp;&x", False),
-]
-
-
-@pytest.mark.parametrize("case", lowercase_test_strings)
-def test_is_valid_lowercase(case: Tuple[str, bool]):
-    assert is_valid_lowercase(case[0]) == case[1]
-
+from respo import TripleLabel, RoleLabel
 
 double_label_cases = [
     ("foo.bar.read", False),
@@ -63,12 +22,12 @@ double_label_cases = [
 @pytest.mark.parametrize("case", double_label_cases)
 def test_double_label(case: Tuple[str, bool]):
     if case[1] is False:
-        with pytest.raises(ValidationError):
-            DoubleLabel(full_label=case[0])
+        with pytest.raises(ValueError):
+            RoleLabel(full_label=case[0])
     else:
-        double_label = DoubleLabel(full_label=case[0])
-        assert double_label.metalabel == double_label.full_label.split(".")[0]
-        assert double_label.label == double_label.full_label.split(".")[1]
+        double_label = RoleLabel(full_label=case[0])
+        assert double_label.organization == double_label.full_label.split(".")[0]
+        assert double_label.role == double_label.full_label.split(".")[1]
         assert double_label.full_label == case[0]
 
 
@@ -89,7 +48,7 @@ triple_label_cases = [
 @pytest.mark.parametrize("case", triple_label_cases)
 def test_triple_label(case: Tuple[str, bool]):
     if case[1] is False:
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValueError):
             TripleLabel(full_label=case[0])
     else:
         triple_label = TripleLabel(full_label=case[0])

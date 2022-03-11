@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Union
 import ujson
 
 from respo.config import config
-from respo.respo_model import BaseRespoModel, Organization, Role, RespoError
+from respo.respo_model import BaseRespoModel, Organization, Role, RespoError, RoleLabel
 
 
 class RespoClient:
