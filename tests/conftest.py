@@ -1,34 +1,32 @@
-from pathlib import Path
+import pathlib
 
 import pytest
 import yaml
-from click.testing import CliRunner
-
-from respo import RespoModel, config
-from respo.cli import save_respo_model
+from click import testing
+import respo
+from respo import cli
 
 
 @pytest.fixture(autouse=True)
 def mock_env_variables_and_cleanup(tmpdir):
-    config.RESPO_AUTO_FOLDER_NAME = f"{tmpdir}/auto"
-    config.RESPO_FILE_NAME_RESPO_MODEL = f"{tmpdir}/respo_model.py"
+    respo.config.RESPO_AUTO_FOLDER_NAME = f"{tmpdir}/auto"
+    respo.config.RESPO_FILE_NAME_RESPO_MODEL = f"{tmpdir}/respo_model.py"
 
 
-def get_model(name: str) -> RespoModel:
-    yml_file = Path(name)
+def get_model(name: str) -> respo.RespoModel:
+    yml_file = pathlib.Path(name)
     data = yaml.safe_load(yml_file.read_text())
-    return RespoModel.parse_obj(data)
+    return respo.RespoModel.parse_obj(data)
 
 
 @pytest.fixture
 def get_general_model():
     model1 = get_model("tests/cases/general.yml")
 
-    save_respo_model(model1)
-    respo = RespoModel.get_respo_model()
-    yield respo
+    cli.save_respo_model(model1)
+    return respo.RespoModel.get_respo_model()
 
 
 @pytest.fixture()
 def runner():
-    return CliRunner()
+    return testing.CliRunner()

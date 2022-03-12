@@ -39,3 +39,7 @@ class RespoModel(respo.RespoModel):
         TEST_O__TEST__D: str
         TEST_O__TEST__E: str
         TEST_O__TEST__F: str
+
+    @staticmethod
+    def get_respo_model() -> "RespoModel":
+        return respo.RespoModel.get_respo_model()  # type: ignore

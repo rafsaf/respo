@@ -3,7 +3,7 @@ import copy
 import datetime
 import pickle
 import re
-from typing import Dict, List, Literal, Optional, Set, TypeVar, Union
+from typing import Dict, Generic, List, Literal, Optional, Set, TypeVar, Union
 
 import pydantic
 import ujson
@@ -85,6 +85,18 @@ class RoleLabel:
             self.organization = full_label.split(".")[0]
             self.role = full_label.split(".")[1]
         self.full_label = str(full_label)
+
+
+class OrganizationLabel:
+    def __init__(self, full_label: Union[str, "Organization"]) -> None:
+        if isinstance(full_label, Organization):
+            self.organization = full_label.metadata.label
+        else:
+            if SINGLE_LABEL_REGEX.fullmatch(full_label) is None:
+                raise ValueError(
+                    f"Label does not match {SINGLE_LABEL_REGEX} regex: {full_label}"
+                )
+            self.organization = str(full_label)
 
 
 class AttributesContainer:
@@ -368,18 +380,18 @@ class RespoModel(BaseModel):
             self.ROLES.add_item(role.metadata.full_label_to_attribute_name(), role)
 
     @staticmethod
-    def get_respo_model() -> "RespoModel":
+    def get_respo_model():
         if not settings.config.path_bin_file.exists():
             raise exceptions.RespoModelError(
                 f"Respo bin file does not exist in {settings.config.path_bin_file}."
                 " Use command: respo create [OPTIONS] FILENAME"
             )
         with open(settings.config.path_bin_file, "rb") as respo_model_file:
-            model = pickle.load(respo_model_file)
+            model: RespoModel = pickle.load(respo_model_file)
         return model
 
     @classmethod
-    def dict_label_to_resources(
+    def _resources_mapping(
         cls, permissions: List[Permission]
     ) -> Dict[str, List[PermissionResource]]:
         result_dict = {}
@@ -388,7 +400,7 @@ class RespoModel(BaseModel):
         return result_dict
 
     @classmethod
-    def dict_label_to_rules(
+    def _rules_mapping(
         cls, permissions: List[Permission]
     ) -> Dict[str, List[PermissionRule]]:
         result_dict = {}
@@ -434,7 +446,7 @@ class RespoModel(BaseModel):
         permissions: Optional[List[Permission]] = values.get("permissions")
         assert permissions is not None, GENERAL_ERROR_MESSAGE
 
-        label_to_resources = cls.dict_label_to_resources(permissions)
+        label_to_resources = cls._resources_mapping(permissions)
         for organization in organizations:
             BASE_ERR = (
                 f"Error in organizations section\n  "
@@ -469,7 +481,7 @@ class RespoModel(BaseModel):
     ):
         permissions: Optional[List[Permission]] = values.get("permissions")
         assert permissions is not None, GENERAL_ERROR_MESSAGE
-        label_to_rules = cls.dict_label_to_rules(permissions)
+        label_to_rules = cls._rules_mapping(permissions)
         while True:
             organizations_after_resolving: List[Organization] = []
             for old_organization in organizations:
@@ -562,7 +574,7 @@ class RespoModel(BaseModel):
     ):
         permissions: Optional[List[Permission]] = values.get("permissions")
         assert permissions is not None, GENERAL_ERROR_MESSAGE
-        label_to_resources = cls.dict_label_to_resources(permissions)
+        label_to_resources = cls._resources_mapping(permissions)
         for role in roles:
             BASE_ERR = (
                 f"Error in roles section\n  "
@@ -597,7 +609,7 @@ class RespoModel(BaseModel):
     def roles_resolve_complex_allow_deny_rules(cls, roles: List[Role], values: Dict):
         permissions: Optional[List[Permission]] = values.get("permissions")
         assert permissions is not None, GENERAL_ERROR_MESSAGE
-        label_to_rules = cls.dict_label_to_rules(permissions)
+        label_to_rules = cls._rules_mapping(permissions)
         while True:
             roles_after_resolving: List[Role] = []
             for old_role in roles:

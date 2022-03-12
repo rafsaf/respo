@@ -15,3 +15,7 @@ class RespoModel(respo.RespoModel):
 
     class PERMS:
         pass
+
+    @staticmethod
+    def get_respo_model() -> "RespoModel":
+        return respo.RespoModel.get_respo_model()  # type: ignore

@@ -61,7 +61,7 @@ def generate_respo_model_file(respo_model: core.RespoModel) -> None:
                     result_lst.append(f"        {name}: str\n")
                 else:
                     result_lst.append(f"        {name}: respo.{type_name}\n")
-
+        result_lst.append("\n")
         return "".join(result_lst)
 
     output_text_lst: List[str] = []
@@ -77,10 +77,13 @@ def generate_respo_model_file(respo_model: core.RespoModel) -> None:
     output_text_lst.append(f"import respo\n\n\n")
     output_text_lst.append("class RespoModel(respo.RespoModel):\n")
     output_text_lst.append(organization_definition)
-    output_text_lst.append("\n")
     output_text_lst.append(roles_definition)
-    output_text_lst.append("\n")
     output_text_lst.append(perms_definition)
+    output_text_lst.append("    @staticmethod\n")
+    output_text_lst.append('    def get_respo_model() -> "RespoModel":\n')
+    output_text_lst.append(
+        "        return respo.RespoModel.get_respo_model()  # type: ignore\n"
+    )
 
     with open(settings.config.RESPO_FILE_NAME_RESPO_MODEL, "w") as file:
         file.write("".join(output_text_lst))

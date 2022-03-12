@@ -91,17 +91,20 @@ class RespoClient:
     @staticmethod
     def validate_organization(
         organization_name: Union[str, core.Organization], respo_model: core.RespoModel
-    ) -> str:
+    ) -> core.OrganizationLabel:
         """Validates organization name for given RespoModel.
 
         Raises:
+            ValueError: organization_name is instance of str and doesn't match single
+            label regex.
             RespoClientError: organization_name does not exist in model.
         """
-        if not respo_model.organization_exists(str(organization_name)):
+        organization_label = core.OrganizationLabel(full_label=organization_name)
+        if not respo_model.organization_exists(organization_label.organization):
             raise exceptions.RespoClientError(
                 f"Organization not found in respo model: {organization_name}."
             )
-        return str(organization_name)
+        return organization_label
 
     def add_role(
         self,
@@ -223,6 +226,8 @@ class RespoClient:
             False: organization already exists in client.
 
         Raises:
+            ValueError: organization_name is instance of str and doesn't match single
+            label regex.
             TypeError: respo_model is None when at the same time
             validate_input is True.
             RespoClientError: organization_name does not exist in
@@ -237,19 +242,18 @@ class RespoClient:
             False
         """
         if validate_input and respo_model is not None:
-            organization_name = self.validate_organization(
+            organization_label = self.validate_organization(
                 organization_name=organization_name, respo_model=respo_model
             )
         elif validate_input and respo_model is None:
-
             raise TypeError("respo_model cannot be None when validate_input is True")
         else:
-            organization_name = str(organization_name)
+            organization_label = core.OrganizationLabel(full_label=organization_name)
 
-        if organization_name in self._value["organizations"]:
+        if organization_label.organization in self._value["organizations"]:
             return False
         else:
-            self._value["organizations"].append(organization_name)
+            self._value["organizations"].append(organization_label.organization)
             return True
 
     def remove_organization(
@@ -270,6 +274,8 @@ class RespoClient:
             False: organization does not exists in the client.
 
         Raises:
+            ValueError: organization_name is instance of str and doesn't match single
+            label regex.
             TypeError: respo_model is None when at the same time
             validate_input is True.
             RespoClientError: organization_name does not exist
@@ -284,16 +290,16 @@ class RespoClient:
             False
         """
         if validate_input and respo_model is not None:
-            organization_name = self.validate_organization(
+            organization_label = self.validate_organization(
                 organization_name=organization_name, respo_model=respo_model
             )
         elif validate_input and respo_model is None:
             raise TypeError("respo_model cannot be None when validate_input is True")
         else:
-            organization_name = str(organization_name)
+            organization_label = core.OrganizationLabel(full_label=organization_name)
 
-        if organization_name in self._value["organizations"]:
-            self._value["organizations"].remove(organization_name)
+        if organization_label.organization in self._value["organizations"]:
+            self._value["organizations"].remove(organization_label.organization)
 
             new_roles: List[str] = []
             for role in self._value["roles"]:
