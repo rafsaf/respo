@@ -101,19 +101,6 @@ def test_triple_label(case: Tuple[str, bool]):
         assert triple_label.full_label == case[0]
 
 
-def test_attributes_container():
-    item = respo.AttributesContainer()
-
-    with pytest.raises(ValueError):
-        item._add_item("lowercase", "value")
-
-    with pytest.raises(ValueError):
-        item._add_item("SOME_NAME", set())  # type: ignore
-
-    with pytest.raises(ValueError):
-        item == "some string"
-
-
 def test_organization_label(get_general_model: respo.RespoModel):
     organization_label1 = respo.OrganizationLabel("org")
     assert organization_label1.organization == "org"

@@ -38,18 +38,14 @@ def generate_respo_model_file(respo_model: core.RespoModel) -> None:
     to config.RESPO_FILE_NAME_RESPO_MODEL.
     """
 
-    def class_definition(item: core.AttributesContainer, class_name: str):
+    def class_definition(labels_container: core.LabelsContainer, class_name: str):
         result_lst = []
         result_lst.append(f"    class {class_name}:\n")
-        if not item.mapping:
+        if not labels_container.labels_list:
             result_lst.append("        pass\n")
         else:
-            for name, value in sorted(item.mapping.items()):
-                type_name = value.__class__.__name__
-                if type_name == "str":
-                    result_lst.append(f"        {name}: str\n")
-                else:
-                    result_lst.append(f"        {name}: respo.{type_name}\n")
+            for name in sorted(label for label in labels_container if label.isupper()):
+                result_lst.append(f"        {name}: str\n")
         result_lst.append("\n")
         return "".join(result_lst)
 
@@ -128,7 +124,7 @@ def create(file: io.TextIOWrapper, format: str):
         raise click.Abort()
     try:
         old_model = core.RespoModel.get_respo_model()
-    except exceptions.RespoModelError:
+    except (exceptions.RespoModelError, AttributeError):
         pass
     else:
         respo_model.metadata.created_at = old_model.metadata.created_at

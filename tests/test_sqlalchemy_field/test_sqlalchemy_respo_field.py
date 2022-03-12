@@ -51,7 +51,7 @@ async def test_respo_field_simple_create_and_change(session: AsyncSession):
 
 respo1 = RespoClient()
 respo2 = RespoClient()
-respo2.add_organization("xxxxx")
+respo2.add_organization("xxxxx", validate_input=False)
 
 
 @pytest.mark.parametrize(

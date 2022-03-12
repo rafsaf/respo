@@ -3,7 +3,7 @@ import copy
 import datetime
 import pickle
 import re
-from typing import Dict, List, Literal, Optional, Set, Union
+from typing import Dict, Iterator, List, Literal, Optional, Set, Union
 
 import pydantic
 import ujson
@@ -80,6 +80,9 @@ class PermissionLabel:
                 f"Label does not match {TRIPLE_LABEL_REGEX} regex: {full_label}"
             )
 
+    def to_role(self):
+        return f"{self.organization}.{self.metalabel}"
+
     def to_double_label(self):
         return f"{self.metalabel}.{self.label}"
 
@@ -145,13 +148,13 @@ class OrganizationLabel:
         return self.organization
 
 
-class AttributesContainer:
+class LabelsContainer:
     """Container for respo model attributes
 
     Stores human friendly dict with attrs in self.mapping that can be accessed via attributes.
 
     Examples:
-        >>> attrs_container = AttributesContainer()
+        >>> attrs_container = LabelsContainer()
         >>> attrs_container._add_item("invalid", {"foo": 5})
         ValueError raised
         >>> attrs_container._add_item("MY_KEY", {"foo": 5})
@@ -161,35 +164,23 @@ class AttributesContainer:
         {"foo": 5}
     """
 
-    def __init__(self) -> None:
-        self.mapping: Set[str] = set()
+    def __init__(self, labels_list: List[str]) -> None:
+        self.labels_list = labels_list
 
-    def _add_item(self, value: str) -> None:
-        if not value.isupper():
-            raise ValueError(f"Key must be uppercase: {value}")
-        self.mapping.add(value)
+    def _add_item(self, label: str) -> None:
+        self.__dict__[label.upper().replace(".", "__")] = label
+        self.labels_list.append(label)
 
-    def __iter__(self):
-        return iter(self.mapping)
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.labels_list)
 
-    def __contains__(self, key: str):
-        if not isinstance(key, str):
-            raise TypeError(f"Key must be a string: {key}")
-        if key in self.mapping:
-            return True
-
-    def __getattr__(self, name: str) -> str:
-        if name == "__setstate__":
-            return getattr(self, "__setstate__")
-        value = name.lower().replace("__", ".")
-        if value in self.mapping:
-            return value
-        raise AttributeError
+    def __contains__(self, key: str) -> bool:
+        return key in self.labels_list
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, AttributesContainer):
-            raise ValueError(f"Cannot compare to not a AttributesContainer: {other}")
-        return self.mapping == other.mapping
+        if not isinstance(other, LabelsContainer):
+            raise ValueError(f"Cannot compare to not a LabelsContainer: {other}")
+        return self.labels_list == other.labels_list
 
 
 class MetadataSection(BaseModel):
@@ -457,11 +448,11 @@ class RespoModel(BaseModel):
     permissions: List[Permission]
     organizations: List[Organization]
     roles: List[Role]
-    permission_to_role: Dict[str, Set[str]] = {}
-    permission_to_organization: Dict[str, Set[str]] = {}
-    ORGS: AttributesContainer = AttributesContainer()
-    ROLES: AttributesContainer = AttributesContainer()
-    PERMS: AttributesContainer = AttributesContainer()
+    roles_labels: Dict[str, List[str]] = {}
+    organization_labels: Dict[str, List[str]] = {}
+    ORGS: LabelsContainer = LabelsContainer([])
+    ROLES: LabelsContainer = LabelsContainer([])
+    PERMS: LabelsContainer = LabelsContainer([])
 
     class Config:
         validate_all = True
@@ -470,45 +461,14 @@ class RespoModel(BaseModel):
     def __init__(self, *args, **data) -> None:
         super().__init__(*args, **data)
         for organization in self.organizations:
-            self.ORGS._add_item(organization.metadata.label)
+            self.ORGS._add_item(str(organization.metadata.label))
             for org_permission in organization.permissions_grants:
-                self.PERMS._add_item(org_permission.label)
+                self.PERMS._add_item(str(org_permission.label))
         for role in self.roles:
-            self.ROLES._add_item(role.metadata.full_label)
-
-    def organization_exists(
-        self,
-        organization_name: Union[str, Organization, OrganizationLabel, SingleLabel],
-    ) -> bool:
-        """Checks if organization exists in model.
-
-        Can be instance of str or any Organization related class. This function won't raise
-        any exception even if organization_name has invalid format and/or makes no sense.
-        """
-        organization_name = str(organization_name)
-        for organization in self.organizations:
-            if organization_name == organization.metadata.label:
-                return True
-        return False
-
-    def role_exists(
-        self,
-        role_name: str,
-        organization_name: Union[str, Role, RoleLabel, DoubleDotLabel],
-    ) -> bool:
-        """Checks if role exists in model.
-
-        Can be instance of str or any Role related class. This function won't raise
-        any exception even if organization_name has invalid format and/or makes no sense.
-        """
-        organization_name = str(organization_name)
-        for role in self.roles:
-            if (
-                role.metadata.label == role_name
-                and role.metadata.organization == organization_name
-            ):
-                return True
-        return False
+            self.ROLES._add_item(str(role.metadata.full_label))
+        del self.__dict__["permissions"]
+        del self.__dict__["organizations"]
+        del self.__dict__["roles"]
 
     @staticmethod
     def get_respo_model(yml_file: bool = False) -> "RespoModel":
@@ -834,35 +794,34 @@ class RespoModel(BaseModel):
             roles.append(root_role)
         return roles
 
-    @pydantic.validator("permission_to_role")
-    def _create_permission_to_role_for_fast_checking_permissions(
-        cls, permission_to_role: Dict[str, Set[str]], values: Dict
-    ) -> Dict[str, Set[str]]:
+    @pydantic.validator("roles_labels")
+    def _create_roles_labels_for_fast_checking_permissions(
+        cls, roles_labels: Dict[str, List[str]], values: Dict
+    ) -> Dict[str, List[str]]:
         roles: Optional[List[Role]] = values.get("roles")
         assert roles is not None, GENERAL_ERROR_MESSAGE
 
-        permission_to_role = collections.defaultdict(set)
         for role in roles:
             for permission in role.permissions_grants:
-                permission_to_role[permission.label].add(
-                    f"{role.metadata.organization}.{role.metadata.label}"
-                )
-        return permission_to_role
+                triple_label = PermissionLabel(permission.label)
+                if triple_label.to_role() in roles_labels:
+                    roles_labels[triple_label.to_role()].append(triple_label.label)
+                else:
+                    roles_labels[triple_label.to_role()] = [triple_label.label]
+        return roles_labels
 
-    @pydantic.validator("permission_to_organization")
-    def _create_permission_to_organization_for_fast_checking_permissions(
-        cls,
-        permission_to_organization: Dict[str, Set[str]],
-        values: Dict,
-    ):
+    @pydantic.validator("roles_labels")
+    def _create_roles_labels_for_fast_checking_permissions(
+        cls, roles_labels: Dict[str, List[str]], values: Dict
+    ) -> Dict[str, List[str]]:
+        roles: Optional[List[Role]] = values.get("roles")
+        assert roles is not None, GENERAL_ERROR_MESSAGE
 
-        organizations: Optional[List[Organization]] = values.get("organizations")
-        assert organizations is not None, GENERAL_ERROR_MESSAGE
-
-        permission_to_organization = collections.defaultdict(set)
-        for organization in organizations:
-            for permission in organization.permissions_grants:
-                permission_to_organization[permission.label].add(
-                    organization.metadata.label
-                )
-        return permission_to_organization
+        for role in roles:
+            for permission in role.permissions_grants:
+                triple_label = PermissionLabel(permission.label)
+                if triple_label.to_role() in roles_labels:
+                    roles_labels[triple_label.to_role()].append(triple_label.label)
+                else:
+                    roles_labels[triple_label.to_role()] = [triple_label.label]
+        return roles_labels

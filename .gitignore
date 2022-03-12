@@ -18,3 +18,4 @@ htmlcov
 coverage.xml
 respo_model.py
 poetry.lock
+general.yml

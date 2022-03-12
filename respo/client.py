@@ -80,9 +80,7 @@ class RespoClient:
             RespoClientError: role_name does not exist in model.
         """
         role_label = core.RoleLabel(full_label=role_name)
-        if not respo_model.role_exists(
-            role_name=role_label.role, organization_name=role_label.organization
-        ):
+        if role_label.full_label not in respo_model.ROLES:
             raise exceptions.RespoClientError(
                 f"Role not found in respo model: {role_name}."
             )
@@ -100,7 +98,7 @@ class RespoClient:
             RespoClientError: organization_name does not exist in model.
         """
         organization_label = core.OrganizationLabel(full_label=organization_name)
-        if not respo_model.organization_exists(organization_label.organization):
+        if organization_label.organization not in respo_model.ORGS:
             raise exceptions.RespoClientError(
                 f"Organization not found in respo model: {organization_name}."
             )
@@ -334,13 +332,16 @@ class RespoClient:
                 )
             True
         """
-        core.PermissionLabel.check_full_label(permission_name)
+        permission_label = core.PermissionLabel(permission_name)
 
-        for role in self._value["roles"]:
-            if role in respo_model.permission_to_role[permission_name]:
-                return True
-        for organization in self._value["organizations"]:
-            if organization in respo_model.permission_to_organization[permission_name]:
-                return True
-
+        role_to_check = permission_label.to_role()
+        if not permission_label.organization in self._value["organizations"]:
+            return False
+        if role_to_check not in self._value["roles"]:
+            return False
+        if not role_to_check in respo_model.roles_labels:
+            self.remove_role(role_to_check, validate_input=False)
+            return False
+        if permission_label.label in respo_model.roles_labels[role_to_check]:
+            return True
         return False

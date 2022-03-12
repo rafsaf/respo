@@ -2,7 +2,7 @@
 
 from respo.client import RespoClient
 from respo.core import (
-    AttributesContainer,
+    LabelsContainer,
     Organization,
     OrganizationLabel,
     Permission,
