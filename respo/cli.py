@@ -74,7 +74,7 @@ def generate_respo_model_file(respo_model: core.RespoModel) -> None:
 
     perms_definition = class_definition(respo_model.PERMS, "PERMS")
 
-    output_text_lst.append(f"import respo\n\n\n")
+    output_text_lst.append("import respo\n\n\n")
     output_text_lst.append("class RespoModel(respo.RespoModel):\n")
     output_text_lst.append(organization_definition)
     output_text_lst.append(roles_definition)

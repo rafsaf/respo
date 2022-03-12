@@ -271,6 +271,10 @@ def test_respo_client_remove_organization_properly_removed(
     validate_input: bool,
 ):
     respo_client = respo.RespoClient()
+    respo_client.add_organization("some_other", validate_input=False)
+    respo_client.add_organization("one_more", validate_input=False)
+    respo_client.add_role("one_more.some_role", validate_input=False)
+
     assert respo_client.add_organization(
         organization_name=get_org_label,
         respo_model=get_respo_model,
@@ -287,8 +291,8 @@ def test_respo_client_remove_organization_properly_removed(
         respo_model=get_respo_model,
         validate_input=validate_input,
     )
-    assert not respo_client.organizations()
-    assert not respo_client.roles()
+    assert respo_client.organizations() == ["some_other", "one_more"]
+    assert respo_client.roles() == ["one_more.some_role"]
 
 
 def test_client_has_permission_organization_book123(

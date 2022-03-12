@@ -3,7 +3,7 @@ import copy
 import datetime
 import pickle
 import re
-from typing import Dict, Generic, List, Literal, Optional, Set, TypeVar, Union
+from typing import Dict, List, Literal, Optional, Set, TypeVar, Union
 
 import pydantic
 import ujson
