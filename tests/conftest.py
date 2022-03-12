@@ -4,7 +4,7 @@ import pytest
 import yaml
 from click.testing import CliRunner
 
-from respo import BaseRespoModel, config
+from respo import RespoModel, config
 from respo.cli import save_respo_model
 
 
@@ -14,10 +14,10 @@ def mock_env_variables_and_cleanup(tmpdir):
     config.RESPO_FILE_NAME_RESPO_MODEL = f"{tmpdir}/respo_model.py"
 
 
-def get_model(name: str) -> BaseRespoModel:
+def get_model(name: str) -> RespoModel:
     yml_file = Path(name)
     data = yaml.safe_load(yml_file.read_text())
-    return BaseRespoModel.parse_obj(data)
+    return RespoModel.parse_obj(data)
 
 
 @pytest.fixture
@@ -25,7 +25,7 @@ def get_general_model():
     model1 = get_model("tests/cases/general.yml")
 
     save_respo_model(model1)
-    respo = BaseRespoModel.get_respo_model()
+    respo = RespoModel.get_respo_model()
     yield respo
 
 

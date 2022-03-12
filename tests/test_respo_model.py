@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from respo import RoleLabel, TripleLabel
 from respo.cli import app
-from respo.respo_model import AttributesContainer
+from respo.core import AttributesContainer
 from tests.conftest import get_model
 
 valid_files = [file for file in os.scandir("./tests/cases/valid")]
@@ -31,9 +31,9 @@ def test_respo_model_for_invalid_cases(file: os.DirEntry, runner: CliRunner):
         get_model(file.path)
     except ValidationError as exc:
         assert exc.errors()[0]["type"] in [
-            "value_error.respo",
             "value_error.str.regex",
             "value_error.const",
+            "value_error.respomodel",
         ]
 
     result = runner.invoke(app, ["create", file.path])

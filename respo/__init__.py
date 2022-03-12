@@ -1,18 +1,16 @@
-"""
-File based RBAC in Python made easy.
-"""
+"""File based RBAC in Python made easy."""
 
 from respo.client import RespoClient
-from respo.config import config
-from respo.respo_model import (
-    BaseRespoModel,
+from respo.core import (
     Organization,
     Permission,
-    RespoError,
+    RespoModel,
     Role,
     RoleLabel,
     TripleLabel,
 )
+from respo.exceptions import RespoModelError
+from respo.settings import config
 from respo.version import VERSION
 
 __version__ = VERSION

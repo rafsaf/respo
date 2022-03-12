@@ -1,7 +1,7 @@
 import pytest
 from click.testing import CliRunner
 
-from respo import BaseRespoModel, config
+from respo import RespoModel, config
 from respo.cli import app, bad, good, save_respo_model
 
 from .conftest import get_model
@@ -10,7 +10,7 @@ from .conftest import get_model
 def test_model_is_equal_after_dumping():
     model1 = get_model("tests/cases/general.yml")
     save_respo_model(model1)
-    model2 = BaseRespoModel.get_respo_model()
+    model2 = RespoModel.get_respo_model()
     assert model1 == model2
 
 
@@ -96,9 +96,9 @@ def test_respo_create_success_valid_yml_file(runner: CliRunner):
 
 def test_respo_create_success_valid_yml_file_2x_modify_ok(runner: CliRunner):
     result = runner.invoke(app, ["create", "tests/cases/general.yml"])
-    model1 = BaseRespoModel.get_respo_model()
+    model1 = RespoModel.get_respo_model()
     result = runner.invoke(app, ["create", "tests/cases/general.yml"])
-    model2 = BaseRespoModel.get_respo_model()
+    model2 = RespoModel.get_respo_model()
     assert model1.metadata.created_at == model2.metadata.created_at
     assert not model1.metadata.last_modified == model2.metadata.last_modified
     assert result.exit_code == 0

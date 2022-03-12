@@ -1,9 +1,9 @@
-from pathlib import Path
+import pathlib
 
-from pydantic import BaseSettings
+import pydantic
 
 
-class Config(BaseSettings):
+class Config(pydantic.BaseSettings):
     """Config for respo based on evironment variables.
 
     Args:
@@ -25,15 +25,19 @@ class Config(BaseSettings):
 
     @property
     def path_bin_file(self):
-        return Path(f"{self.RESPO_AUTO_FOLDER_NAME}/{self.RESPO_AUTO_BINARY_FILE_NAME}")
+        return pathlib.Path(
+            f"{self.RESPO_AUTO_FOLDER_NAME}/{self.RESPO_AUTO_BINARY_FILE_NAME}"
+        )
 
     @property
     def path_yml_file(self):
-        return Path(f"{self.RESPO_AUTO_FOLDER_NAME}/{self.RESPO_AUTO_YML_FILE_NAME}")
+        return pathlib.Path(
+            f"{self.RESPO_AUTO_FOLDER_NAME}/{self.RESPO_AUTO_YML_FILE_NAME}"
+        )
 
     @property
     def path_python_file(self):
-        return Path(self.RESPO_FILE_NAME_RESPO_MODEL)
+        return pathlib.Path(self.RESPO_FILE_NAME_RESPO_MODEL)
 
 
 config = Config()

@@ -3,10 +3,10 @@ Auto generated using respo create command
 Docs: https://rafsaf.github.io/respo/
 """
 
-from respo import BaseRespoModel, Organization, Role
+from respo import Organization, RespoModel, Role
 
 
-class RespoModel(BaseRespoModel):
+class RespoModel(RespoModel):
     class ORGS:
         DEFAULT: Organization
 
