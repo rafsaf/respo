@@ -117,7 +117,7 @@ class ColumnMixRespoField(Column, MutableRespoClient):
 _SQLAlchemyRespoField = MutableRespoClient.as_mutable(TEXTRespoField)
 
 SQLAlchemyRespoColumn: ColumnMixRespoField = Column(
-    _SQLAlchemyRespoField,  # type: ignore
+    _SQLAlchemyRespoField,
     nullable=False,
     server_default="",
-)
+)  # type: ignore

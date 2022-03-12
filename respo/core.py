@@ -100,15 +100,16 @@ class RoleLabel:
 
     def __init__(self, full_label: Union[str, "Role"]) -> None:
         if isinstance(full_label, Role):
-            self.organization = full_label.metadata.organization
-            self.role = full_label.metadata.label
+            self.organization = str(full_label.metadata.organization)
+            self.role = str(full_label.metadata.label)
         else:
             if DOUBLE_LABEL_REGEX.fullmatch(full_label) is None:
                 raise ValueError(
                     f"Label does not match {DOUBLE_LABEL_REGEX} regex: {full_label}"
                 )
-            self.organization = full_label.split(".")[0]
-            self.role = full_label.split(".")[1]
+            full_label_split = full_label.split(".")
+            self.organization = full_label_split[0]
+            self.role = full_label_split[1]
         self.full_label = str(full_label)
 
     def __str__(self):
@@ -131,13 +132,14 @@ class OrganizationLabel:
 
     def __init__(self, full_label: Union[str, "Organization"]) -> None:
         if isinstance(full_label, Organization):
-            self.organization = full_label.metadata.label
+            self.organization = str(full_label.metadata.label)
         else:
             if SINGLE_LABEL_REGEX.fullmatch(full_label) is None:
                 raise ValueError(
                     f"Label does not match {SINGLE_LABEL_REGEX} regex: {full_label}"
                 )
-            self.organization = str(full_label)
+            self.organization = full_label
+        self.full_label = str(full_label)
 
     def __str__(self):
         return self.organization
@@ -160,20 +162,28 @@ class AttributesContainer:
     """
 
     def __init__(self) -> None:
-        self.mapping: Dict[str, Union[str, Organization, Role]] = {}
+        self.mapping: Set[str] = set()
 
-    def _add_item(self, key: str, value: Union[str, "Organization", "Role"]) -> None:
-        if not key.isupper():
-            raise ValueError(f"Key must be uppercase: {key}")
-        if not isinstance(value, (str, Organization, Role)):
-            raise ValueError(
-                f"Invalid type of value (possible: str, Organization, Role): {value}"
-            )
-        self.mapping[key] = value
+    def _add_item(self, value: str) -> None:
+        if not value.isupper():
+            raise ValueError(f"Key must be uppercase: {value}")
+        self.mapping.add(value)
 
-    def __getattr__(self, name: str) -> Union[str, "Organization", "Role"]:
-        if name.isupper() and name in self.mapping:
-            return self.mapping[name]
+    def __iter__(self):
+        return iter(self.mapping)
+
+    def __contains__(self, key: str):
+        if not isinstance(key, str):
+            raise TypeError(f"Key must be a string: {key}")
+        if key in self.mapping:
+            return True
+
+    def __getattr__(self, name: str) -> str:
+        if name == "__setstate__":
+            return getattr(self, "__setstate__")
+        value = name.lower().replace("__", ".")
+        if value in self.mapping:
+            return value
         raise AttributeError
 
     def __eq__(self, other: object) -> bool:
@@ -378,7 +388,12 @@ class OrganizationPermissionGrant(BaseModel):
 
 class Organization(BaseModel):
     metadata: OrganizationMetadata
-    permissions: List[OrganizationPermissionGrant]
+    permissions_grants: List[OrganizationPermissionGrant] = pydantic.Field(
+        alias="permissions"
+    )
+
+    class Config:
+        allow_population_by_field_name = True
 
     def __str__(self) -> str:
         return self.metadata.label
@@ -403,7 +418,7 @@ class RolePermissionGrant(BaseModel):
 
 class Role(BaseModel):
     metadata: RoleMetadata
-    permissions: List[RolePermissionGrant]
+    permissions_grants: List[RolePermissionGrant] = pydantic.Field(alias="permissions")
 
     def __str__(self) -> str:
         return self.metadata.full_label
@@ -455,15 +470,11 @@ class RespoModel(BaseModel):
     def __init__(self, *args, **data) -> None:
         super().__init__(*args, **data)
         for organization in self.organizations:
-            self.ORGS._add_item(
-                organization.metadata.label_to_attribute_name(), organization
-            )
-            for org_permission in organization.permissions:
-                self.PERMS._add_item(
-                    org_permission.label_to_attribute_name(), str(org_permission.label)
-                )
+            self.ORGS._add_item(organization.metadata.label)
+            for org_permission in organization.permissions_grants:
+                self.PERMS._add_item(org_permission.label)
         for role in self.roles:
-            self.ROLES._add_item(role.metadata.full_label_to_attribute_name(), role)
+            self.ROLES._add_item(role.metadata.full_label)
 
     def organization_exists(
         self,
@@ -518,8 +529,8 @@ class RespoModel(BaseModel):
                     " Use command: respo create [OPTIONS] FILENAME"
                 )
             with open(settings.config.path_yml_file, "rb") as respo_model_file:
-                model: RespoModel = yaml.load(respo_model_file, yaml.Loader)
-            return model
+                return yaml.load(respo_model_file, yaml.Loader)
+
         else:
             if not settings.config.path_bin_file.exists():
                 raise exceptions.RespoModelError(
@@ -527,14 +538,13 @@ class RespoModel(BaseModel):
                     " Use command: respo create [OPTIONS] FILENAME"
                 )
             with open(settings.config.path_bin_file, "rb") as respo_model_file:
-                model: RespoModel = pickle.load(respo_model_file)
-            return model
+                return pickle.load(respo_model_file)
 
     @classmethod
     def _resources_mapping(
         cls, permissions: List[Permission]
     ) -> Dict[str, List[PermissionResource]]:
-        result_dict = {}
+        result_dict: Dict[str, List[PermissionResource]] = {}
         for permission in permissions:
             result_dict[permission.metadata.label] = permission.resources
         return result_dict
@@ -543,7 +553,7 @@ class RespoModel(BaseModel):
     def _rules_mapping(
         cls, permissions: List[Permission]
     ) -> Dict[str, List[PermissionRule]]:
-        result_dict = {}
+        result_dict: Dict[str, List[PermissionRule]] = {}
         for permission in permissions:
             result_dict[permission.metadata.label] = permission.rules
         return result_dict
@@ -592,7 +602,7 @@ class RespoModel(BaseModel):
                 f"Error in organizations section\n  "
                 f"Organization '{organization.metadata.label}' permissions are invalid.\n  "
             )
-            for organization_permission in organization.permissions:
+            for organization_permission in organization.permissions_grants:
                 PERM_ERR = f"Permission with label '{organization_permission.label}' is invalid\n  "
                 triple_label = PermissionLabel(full_label=organization_permission.label)
                 if triple_label.organization != organization.metadata.label:
@@ -626,7 +636,7 @@ class RespoModel(BaseModel):
             organizations_after_resolving: List[Organization] = []
             for old_organization in organizations:
                 organization = copy.deepcopy(old_organization)
-                for organization_permission in organization.permissions:
+                for organization_permission in organization.permissions_grants:
                     triple_label = PermissionLabel(
                         full_label=organization_permission.label
                     )
@@ -641,8 +651,8 @@ class RespoModel(BaseModel):
                                 type=organization_permission.type,
                                 label=new_label,
                             )
-                            if grant not in organization.permissions:
-                                organization.permissions.append(grant)
+                            if grant not in organization.permissions_grants:
+                                organization.permissions_grants.append(grant)
                 organizations_after_resolving.append(organization)
 
             if organizations == organizations_after_resolving:
@@ -660,7 +670,7 @@ class RespoModel(BaseModel):
             result_permissions: List[OrganizationPermissionGrant] = []
             allow_set: Set[str] = set()
             deny_set: Set[str] = set()
-            for organization_permission in organization.permissions:
+            for organization_permission in organization.permissions_grants:
                 if organization_permission.type == "allow":
                     allow_set.add(organization_permission.label)
                 else:
@@ -672,7 +682,7 @@ class RespoModel(BaseModel):
                         type="allow", label=TripleDotLabel(label)
                     )
                 )
-            organization.permissions = result_permissions
+            organization.permissions_grants = result_permissions
             new_organizations.append(organization)
         return organizations
 
@@ -722,7 +732,7 @@ class RespoModel(BaseModel):
                 f"Error in roles section\n  "
                 f"Role '{role.metadata.label}' permissions are invalid.\n  "
             )
-            for role_permission in role.permissions:
+            for role_permission in role.permissions_grants:
                 PERM_ERR = (
                     f"Permission with label '{role_permission.label}' is invalid\n  "
                 )
@@ -756,7 +766,7 @@ class RespoModel(BaseModel):
             roles_after_resolving: List[Role] = []
             for old_role in roles:
                 role = copy.deepcopy(old_role)
-                for role_permission in role.permissions:
+                for role_permission in role.permissions_grants:
                     triple_label = PermissionLabel(full_label=role_permission.label)
                     for rule in label_to_rules[triple_label.metalabel]:
                         if rule.when != triple_label.to_double_label():
@@ -767,8 +777,8 @@ class RespoModel(BaseModel):
                                 type=role_permission.type,
                                 label=TripleDotLabel(new_label),
                             )
-                            if grant not in role.permissions:
-                                role.permissions.append(grant)
+                            if grant not in role.permissions_grants:
+                                role.permissions_grants.append(grant)
                 roles_after_resolving.append(role)
             if roles == roles_after_resolving:
                 # no more nested rules will be found
@@ -785,7 +795,7 @@ class RespoModel(BaseModel):
             result_permissions: List[RolePermissionGrant] = []
             allow_set: Set[str] = set()
             deny_set: Set[str] = set()
-            for role_permission in role.permissions:
+            for role_permission in role.permissions_grants:
                 if role_permission.type == "allow":
                     allow_set.add(role_permission.label)
                 else:
@@ -795,7 +805,7 @@ class RespoModel(BaseModel):
                 result_permissions.append(
                     RolePermissionGrant(type="allow", label=TripleDotLabel(label))
                 )
-            role.permissions = result_permissions
+            role.permissions_grants = result_permissions
             new_roles.append(role)
         return roles
 
@@ -814,7 +824,7 @@ class RespoModel(BaseModel):
             root_role = Role(metadata=role_metadata, permissions=[])
             for permission in permissions:
                 for resource in permission.resources:
-                    root_role.permissions.append(
+                    root_role.permissions_grants.append(
                         RolePermissionGrant(
                             label=TripleDotLabel(
                                 f"{organization.metadata.label}.{resource.label}"
@@ -833,7 +843,7 @@ class RespoModel(BaseModel):
 
         permission_to_role = collections.defaultdict(set)
         for role in roles:
-            for permission in role.permissions:
+            for permission in role.permissions_grants:
                 permission_to_role[permission.label].add(
                     f"{role.metadata.organization}.{role.metadata.label}"
                 )
@@ -851,7 +861,7 @@ class RespoModel(BaseModel):
 
         permission_to_organization = collections.defaultdict(set)
         for organization in organizations:
-            for permission in organization.permissions:
+            for permission in organization.permissions_grants:
                 permission_to_organization[permission.label].add(
                     organization.metadata.label
                 )
