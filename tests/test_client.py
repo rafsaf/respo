@@ -465,3 +465,44 @@ def test_client_has_permission_role_admin_role_organization_default(
     assert not client.has_permission("default.book.buy_all", respo_model)
     assert not client.has_permission("default.book.buy", respo_model)
     assert not client.has_permission("default.book.sell", respo_model)
+
+
+def test_client_has_permission_organization_test(
+    get_general_model: respo.RespoModel,
+):
+    respo_model = get_general_model
+    client = respo.RespoClient()
+    assert client.add_organization("test_o", respo_model, validate_input=True)
+
+    assert not client.has_permission("book123.user.read_basic", respo_model)
+    assert not client.has_permission("book123.user.all", respo_model)
+    assert not client.has_permission("book123.user.read_all", respo_model)
+    assert not client.has_permission("book123.user.read_all_better", respo_model)
+    assert not client.has_permission("book123.user.update", respo_model)
+    assert not client.has_permission("book123.user.delete", respo_model)
+
+    assert not client.has_permission("book123.book.list", respo_model)
+    assert not client.has_permission("book123.book.read", respo_model)
+    assert not client.has_permission("book123.book.buy_all", respo_model)
+    assert not client.has_permission("book123.book.buy", respo_model)
+    assert not client.has_permission("book123.book.sell", respo_model)
+
+    assert not client.has_permission("default.user.read_basic", respo_model)
+    assert not client.has_permission("default.user.all", respo_model)
+    assert not client.has_permission("default.user.read_all", respo_model)
+    assert not client.has_permission("default.user.read_all_better", respo_model)
+    assert not client.has_permission("default.user.update", respo_model)
+    assert not client.has_permission("default.user.delete", respo_model)
+
+    assert not client.has_permission("default.book.list", respo_model)
+    assert not client.has_permission("default.book.read", respo_model)
+    assert not client.has_permission("default.book.buy_all", respo_model)
+    assert not client.has_permission("default.book.buy", respo_model)
+    assert not client.has_permission("default.book.sell", respo_model)
+
+    assert client.has_permission("test_o.test.a", respo_model)
+    assert client.has_permission("test_o.test.b", respo_model)
+    assert client.has_permission("test_o.test.c", respo_model)
+    assert client.has_permission("test_o.test.d", respo_model)
+    assert client.has_permission("test_o.test.e", respo_model)
+    assert client.has_permission("test_o.test.f", respo_model)

@@ -6,10 +6,10 @@ from respo.core import (
     Organization,
     OrganizationLabel,
     Permission,
+    PermissionLabel,
     RespoModel,
     Role,
     RoleLabel,
-    TripleLabel,
 )
 from respo.exceptions import RespoClientError, RespoModelError
 from respo.settings import config

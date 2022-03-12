@@ -9,6 +9,15 @@ import respo
 from respo import cli
 from tests import conftest
 
+
+def test_respo_model_get_respo_model_throw_errors():
+    respo.config.RESPO_AUTO_FOLDER_NAME = "/12309-8)A(S*D)_A(S*D)_(A*DS/asdasdasd"
+    with pytest.raises(respo.RespoModelError):
+        respo.RespoModel.get_respo_model(yml_file=False)
+    with pytest.raises(respo.RespoModelError):
+        respo.RespoModel.get_respo_model(yml_file=True)
+
+
 valid_files = [file for file in os.scandir("./tests/cases/valid")]
 
 
@@ -83,9 +92,9 @@ triple_label_cases = [
 def test_triple_label(case: Tuple[str, bool]):
     if case[1] is False:
         with pytest.raises(ValueError):
-            respo.TripleLabel(full_label=case[0])
+            respo.PermissionLabel(full_label=case[0])
     else:
-        triple_label = respo.TripleLabel(full_label=case[0])
+        triple_label = respo.PermissionLabel(full_label=case[0])
         assert triple_label.metalabel == triple_label.full_label.split(".")[1]
         assert triple_label.label == triple_label.full_label.split(".")[2]
         assert triple_label.organization == triple_label.full_label.split(".")[0]
@@ -96,10 +105,32 @@ def test_attributes_container():
     item = respo.AttributesContainer()
 
     with pytest.raises(ValueError):
-        item.add_item("lowercase", "value")
+        item._add_item("lowercase", "value")
 
     with pytest.raises(ValueError):
-        item.add_item("SOME_NAME", set())  # type: ignore
+        item._add_item("SOME_NAME", set())  # type: ignore
 
     with pytest.raises(ValueError):
         item == "some string"
+
+
+def test_organization_label(get_general_model: respo.RespoModel):
+    organization_label1 = respo.OrganizationLabel("org")
+    assert organization_label1.organization == "org"
+    assert str(organization_label1) == "org"
+    organization_label2 = respo.OrganizationLabel(get_general_model.ORGS.DEFAULT)  # type: ignore
+    assert organization_label2.organization == "default"
+    assert str(organization_label2) == "default"
+
+
+def test_role_label(get_general_model: respo.RespoModel):
+    role_label1 = respo.RoleLabel("org.role")
+    assert role_label1.organization == "org"
+    assert role_label1.full_label == "org.role"
+    assert role_label1.role == "role"
+    assert str(role_label1) == "org.role"
+    role_label2 = respo.RoleLabel(get_general_model.ROLES.DEFAULT__ROOT)  # type: ignore
+    assert role_label2.organization == "default"
+    assert role_label2.full_label == "default.root"
+    assert role_label2.role == "root"
+    assert str(role_label2) == "default.root"

@@ -334,16 +334,13 @@ class RespoClient:
                 )
             True
         """
-        core.TripleLabel.check_full_label(permission_name)
+        core.PermissionLabel.check_full_label(permission_name)
 
         for role in self._value["roles"]:
-            if role in respo_model.permission_to_role_dict[permission_name]:
+            if role in respo_model.permission_to_role[permission_name]:
                 return True
         for organization in self._value["organizations"]:
-            if (
-                organization
-                in respo_model.permission_to_organization_dict[permission_name]
-            ):
+            if organization in respo_model.permission_to_organization[permission_name]:
                 return True
 
         return False

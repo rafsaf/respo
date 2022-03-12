@@ -20,12 +20,12 @@ def get_model(name: str) -> respo.RespoModel:
     return respo.RespoModel.parse_obj(data)
 
 
-@pytest.fixture
-def get_general_model():
+@pytest.fixture(params=[True, False])
+def get_general_model(request):
     model1 = get_model("tests/cases/general.yml")
 
     cli.save_respo_model(model1)
-    return respo.RespoModel.get_respo_model()
+    return respo.RespoModel.get_respo_model(yml_file=request.param)
 
 
 @pytest.fixture()

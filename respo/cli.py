@@ -27,18 +27,7 @@ def save_respo_model(model: core.RespoModel) -> None:
         pickle.dump(model, file)
 
     with open(settings.config.path_yml_file, mode="w") as file:  # type: ignore
-        yaml.dump(
-            model.dict(
-                exclude={
-                    "permission_to_organization_dict",
-                    "permission_to_role_dict",
-                    "PERMS",
-                    "ORGS",
-                    "ROLES",
-                }
-            ),
-            file,
-        )
+        yaml.dump(model, file)
 
 
 def generate_respo_model_file(respo_model: core.RespoModel) -> None:
