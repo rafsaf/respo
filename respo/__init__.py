@@ -9,7 +9,7 @@ from respo.core import (
     RoleLabel,
     TripleLabel,
 )
-from respo.exceptions import RespoModelError
+from respo.exceptions import RespoModelError, RespoClientError
 from respo.settings import config
 from respo.version import VERSION
 

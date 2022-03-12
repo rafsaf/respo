@@ -12,13 +12,15 @@ class RespoClient:
     has_permission() for checking them using respo.RespoModel instance.
 
     Args:
-        json_string: json serialized representation of dict with roles and organizations.
-        At initialization deserialized using ujson.
+        json_string: json serialized representation of dict with roles and
+        organizations. At initialization deserialized using ujson.
 
     Examples:
         >>> RespoClient(None).dict()
         {"organizations": [], "roles": []}
-        >>> RespoClient('{"organizations":["test_org_x"],"roles":["test_org_x.test_role_y"]}').dict()
+        >>> RespoClient(
+                '{"organizations":["test_org_x"],"roles":["test_org_x.test_role_y"]}'
+            ).dict()
         {"organizations": ["test_org_x"], "roles": ["test_org_x.test_role_y"]}
         >>> str(RespoClient())
         '{"organizations":[],"roles":[]}'
@@ -73,7 +75,8 @@ class RespoClient:
         """Validates role name for given RespoModel.
 
         Raises:
-            ValueError: role_name is instance of str and doesn't match double label regex.
+            ValueError: role_name is instance of str and doesn't match double
+            label regex.
             RespoClientError: role_name does not exist in model.
         """
         role_label = core.RoleLabel(full_label=role_name)
@@ -95,7 +98,7 @@ class RespoClient:
             RespoClientError: organization_name does not exist in model.
         """
         if not respo_model.organization_exists(str(organization_name)):
-            raise exceptions.RespoModelError(
+            raise exceptions.RespoClientError(
                 f"Organization not found in respo model: {organization_name}."
             )
         return str(organization_name)
@@ -118,14 +121,21 @@ class RespoClient:
             False: role already exists in the client.
 
         Raises:
-            ValueError: role_name is instance of str and doesn't match double label regex.
-            TypeError: respo_model is None when at the same time when validate_input is True.
-            RespoClientError: role_name does not exist in the model (only with validation).
+            ValueError: role_name is instance of str and doesn't match double
+            label regex.
+            TypeError: respo_model is None when at the same time when
+            validate_input is True.
+            RespoClientError: role_name does not exist in the
+            model (only with validation).
 
         Examples:
             >>> respo_client.add_role("default.sample_role")
             True
-            >>> respo_client.add_role(respo_model.ROLES.DEFAULT__SAMPLE_ROLE, respo_model, validate_input=False)
+            >>> respo_client.add_role(
+                    respo_model.ROLES.DEFAULT__SAMPLE_ROLE,
+                    respo_model,
+                    validate_input=False,
+                )
             False
         """
         if validate_input and respo_model is not None:
@@ -164,14 +174,21 @@ class RespoClient:
             False: role does not exists in the client.
 
         Raises:
-            ValueError: role_name is instance of str and doesn't match double label regex.
-            TypeError: respo_model is None when at the same time validate_input is True.
-            RespoClientError: role_name does not exist in the model (only with validation).
+            ValueError: role_name is instance of str and doesn't match double
+            label regex.
+            TypeError: respo_model is None when at the same time
+            validate_input is True.
+            RespoClientError: role_name does not exist in the
+            model (only with validation).
 
         Examples:
             >>> respo_client.remove_role("default.sample_role")
             True
-            >>> respo_client.remove_role(respo_model.ROLES.DEFAULT__SAMPLE_ROLE, respo_model, validate_input=False)
+            >>> respo_client.remove_role(
+                    respo_model.ROLES.DEFAULT__SAMPLE_ROLE,
+                    respo_model,
+                    validate_input=False,
+                )
             False
         """
         if validate_input and respo_model is not None:
@@ -206,13 +223,17 @@ class RespoClient:
             False: organization already exists in client.
 
         Raises:
-            TypeError: respo_model is None when at the same time validate_input is True.
-            RespoClientError: organization_name does not exist in the model (only with validation).
+            TypeError: respo_model is None when at the same time
+            validate_input is True.
+            RespoClientError: organization_name does not exist in
+            the model (only with validation).
 
         Examples:
             >>> respo_client.add_organization("default")
             True
-            >>> respo_client.add_organization(respo_model.ORGS.DEFAULT, respo_model, validate_input=False)
+            >>> respo_client.add_organization(
+                    respo_model.ORGS.DEFAULT, respo_model, validate_input=False
+                )
             False
         """
         if validate_input and respo_model is not None:
@@ -220,6 +241,7 @@ class RespoClient:
                 organization_name=organization_name, respo_model=respo_model
             )
         elif validate_input and respo_model is None:
+
             raise TypeError("respo_model cannot be None when validate_input is True")
         else:
             organization_name = str(organization_name)
@@ -236,7 +258,7 @@ class RespoClient:
         respo_model: Optional[core.RespoModel] = None,
         validate_input: bool = settings.config.RESPO_CHECK_FORCE,
     ) -> bool:
-        """Removes organization and all its roles from this client after optional validation.
+        """Removes organization and all its roles after optional validation.
 
         Removes also all roles related to organization.
         If validate_input is False, there will be no safe checks. It defaults to
@@ -248,13 +270,17 @@ class RespoClient:
             False: organization does not exists in the client.
 
         Raises:
-            TypeError: respo_model is None when at the same time validate_input is True.
-            RespoClientError: organization_name does not exist the in model (only with validation).
+            TypeError: respo_model is None when at the same time
+            validate_input is True.
+            RespoClientError: organization_name does not exist
+            the in model (only with validation).
 
         Examples:
             >>> respo_client.remove_organization("default")
             True
-            >>> respo_client.remove_organization(respo_model.ORGS.DEFAULT, respo_model, validate_input=False)
+            >>> respo_client.remove_organization(
+                    respo_model.ORGS.DEFAULT, respo_model, validate_input=False
+                )
             False
         """
         if validate_input and respo_model is not None:
@@ -283,9 +309,9 @@ class RespoClient:
     ) -> bool:
         """Checks if *this* client does have specific permission.
 
-        Under the hood searches through prepared as pickled file dicts to speed this up.
-        (after resolving the complex nested rules logic etc.). For very large self._value
-        this can be pretty slow anyway.
+        Under the hood searches through prepared as pickled file dicts to
+        speed this up (after resolving the complex nested rules logic etc).
+        For very large self._value this can be pretty slow anyway.
 
         Return:
             True: client has permission.
@@ -297,7 +323,9 @@ class RespoClient:
         Examples:
             >>> respo_client.has_permission("default.users.read", respo_model)
             True
-            >>> respo_client.has_permission(respo_model.PERMS.DEFAULT__USERS__READ_ALL, respo_model)
+            >>> respo_client.has_permission(
+                    respo_model.PERMS.DEFAULT__USERS__READ_ALL, respo_model
+                )
             True
         """
         core.TripleLabel.check_full_label(permission_name)
@@ -311,4 +339,5 @@ class RespoClient:
                 in respo_model.permission_to_organization_dict[permission_name]
             ):
                 return True
+
         return False

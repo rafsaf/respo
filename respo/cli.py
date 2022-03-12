@@ -14,10 +14,10 @@ from respo import core, exceptions, settings
 
 
 def save_respo_model(model: core.RespoModel) -> None:
-    """Dumps respo model into bin and yml format.
+    """Dumps respo model into bin and yml format files.
 
     Pickle and yml files are generated and saved to paths specified
-    in respo.config. This behaviour may be overwritten using ENV variables.
+    in settings. This behaviour may be overwritten using environment variables.
     """
     pathlib.Path(settings.config.RESPO_AUTO_FOLDER_NAME).mkdir(
         parents=True, exist_ok=True
@@ -42,13 +42,12 @@ def save_respo_model(model: core.RespoModel) -> None:
 
 
 def generate_respo_model_file(respo_model: core.RespoModel) -> None:
-    """Generates python file from respo_model.
+    """Generates python file with class RespoModel.
 
     Generated file contains class definition that inheritates from
     RespoModel, but with additional typing annotations. It is written
     to config.RESPO_FILE_NAME_RESPO_MODEL.
     """
-    imports: List[str] = ["RespoModel"]
 
     def class_definition(item: core.AttributesContainer, class_name: str):
         result_lst = []
@@ -57,7 +56,11 @@ def generate_respo_model_file(respo_model: core.RespoModel) -> None:
             result_lst.append("        pass\n")
         else:
             for name, value in sorted(item.mapping.items()):
-                result_lst.append(f"        {name}: {value.__class__.__name__}\n")
+                type_name = value.__class__.__name__
+                if type_name == "str":
+                    result_lst.append(f"        {name}: str\n")
+                else:
+                    result_lst.append(f"        {name}: respo.{type_name}\n")
 
         return "".join(result_lst)
 
@@ -66,17 +69,13 @@ def generate_respo_model_file(respo_model: core.RespoModel) -> None:
     output_text_lst.append('Docs: https://rafsaf.github.io/respo/\n"""\n\n')
 
     organization_definition = class_definition(respo_model.ORGS, "ORGS")
-    if not organization_definition.endswith("pass\n"):
-        imports.append("Organization")
 
     roles_definition = class_definition(respo_model.ROLES, "ROLES")
-    if not roles_definition.endswith("pass\n"):
-        imports.append("Role")
 
     perms_definition = class_definition(respo_model.PERMS, "PERMS")
 
-    output_text_lst.append(f"from respo import {', '.join(imports)}\n\n\n")
-    output_text_lst.append("class RespoModel(RespoModel):\n")
+    output_text_lst.append(f"import respo\n\n\n")
+    output_text_lst.append("class RespoModel(respo.RespoModel):\n")
     output_text_lst.append(organization_definition)
     output_text_lst.append("\n")
     output_text_lst.append(roles_definition)
@@ -108,8 +107,8 @@ def app():
 )
 @app.command()
 def create(file: io.TextIOWrapper, format: str):
-    """
-    Parse FILENAME with declared respo resource policies.
+    """Parses FILENAME with declared respo resource policies.
+
     Creates pickled model representation by default in .respo_cache folder
     and python file with generated model in respo_model.py to improve
     typing support for end user.

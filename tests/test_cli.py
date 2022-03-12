@@ -4,7 +4,7 @@ from click.testing import CliRunner
 from respo import RespoModel, config
 from respo.cli import app, bad, good, save_respo_model
 
-from .conftest import get_model
+from tests.conftest import get_model
 
 
 def test_model_is_equal_after_dumping():

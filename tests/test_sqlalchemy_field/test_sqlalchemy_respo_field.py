@@ -84,7 +84,6 @@ async def test_respo_field_handles_methods(
 
     assert not obj.respo_field.remove_organization("xyz", validate_input=False)
     assert obj.respo_field.remove_organization("test_org", validate_input=False)
-    assert obj.respo_field.remove_role("test_org.test_role", validate_input=False)
     assert not obj.respo_field.remove_role("test_org.test_role", validate_input=False)
     session.add(new_obj)
     await session.commit()

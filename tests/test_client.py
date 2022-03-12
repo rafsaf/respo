@@ -50,15 +50,12 @@ def test_respo_client_add_and_remove_role(get_general_model: respo.RespoModel):
     respo_model = get_general_model
     client = respo.RespoClient()
 
-    with pytest.raises(respo.RespoModelError):
-        assert client.add_role(
-            "book123.not_exists", respo_model=None, validate_input=False
-        )
-    assert client.add_organization(
-        "book123", respo_model=respo_model, validate_input=False
-    )
     assert client.add_role("book123.not_exists", respo_model=None, validate_input=False)
+    assert not client.add_role(
+        "book123.not_exists", respo_model=None, validate_input=False
+    )
     assert client.roles() == ["book123.not_exists"]
+    assert client.organizations() == ["book123"]
     assert not client.add_role(
         "book123.not_exists", respo_model=respo_model, validate_input=False
     )
@@ -79,29 +76,25 @@ def test_respo_client_add_and_remove_role(get_general_model: respo.RespoModel):
         )
 
     assert client.add_role("book123.not_exists", respo_model=None, validate_input=False)
-    with pytest.raises(respo.RespoModelError):
+    with pytest.raises(respo.RespoClientError):
         client.add_role(
             "book123.not_exists", respo_model=respo_model, validate_input=True
         )
-    with pytest.raises(respo.RespoModelError):
+    with pytest.raises(TypeError):
         client.add_role("book123.not_exists", respo_model=None, validate_input=True)
-    with pytest.raises(respo.RespoModelError):
+    with pytest.raises(respo.RespoClientError):
         client.remove_role(
             "book123.not_exists", respo_model=respo_model, validate_input=True
         )
-    with pytest.raises(respo.RespoModelError):
-        client.remove_role("book123.not_exists", respo_model=None, validate_input=True)
     assert client.roles() == ["book123.not_exists"]
     assert client.remove_role(
         "book123.not_exists", respo_model=None, validate_input=False
     )
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         client.add_role("not_exists", respo_model=None, validate_input=True)
     with pytest.raises(ValueError):
         client.remove_role("not_exists", respo_model=respo_model, validate_input=True)
-
-    assert client.add_organization("default", validate_input=False)
 
     assert client.add_role(
         respo_model.ROLES.DEFAULT__SUPERUSER,  # type: ignore
@@ -118,10 +111,6 @@ def test_respo_client_add_and_remove_role(get_general_model: respo.RespoModel):
 def test_respo_client_add_and_remove_organization(get_general_model: respo.RespoModel):
     respo_model = get_general_model
     client = respo.RespoClient()
-    book_org: respo.Organization = None  # type: ignore
-    for role in respo_model.organizations:
-        if role.metadata.label == "book123":
-            book_org = role
 
     assert client.add_organization("book1234", respo_model=None, validate_input=False)
     assert not client.add_organization(
@@ -136,24 +125,18 @@ def test_respo_client_add_and_remove_organization(get_general_model: respo.Respo
         "book1234", validate_input=False, respo_model=None
     )
 
-    with pytest.raises(respo.RespoModelError):
+    with pytest.raises(TypeError):
         client.add_organization("book1234", respo_model=None, validate_input=True)
-    with pytest.raises(respo.RespoModelError):
+    with pytest.raises(respo.RespoClientError):
         client.add_organization(
             "book1234", respo_model=respo_model, validate_input=True
         )
-    with pytest.raises(respo.RespoModelError):
-        client.remove_organization(
-            "book1234", respo_model=respo_model, validate_input=True
-        )
-    with pytest.raises(respo.RespoModelError):
-        client.remove_organization("book1234", respo_model=None, validate_input=True)
 
     assert client.add_organization(
-        book_org, respo_model=respo_model, validate_input=True
+        respo_model.ORGS.BOOK123, respo_model=respo_model, validate_input=True  # type: ignore
     )
     assert client.remove_organization(
-        book_org, respo_model=respo_model, validate_input=True
+        respo_model.ORGS.BOOK123, respo_model=respo_model, validate_input=True  # type: ignore
     )
     assert client.organizations() == []
 

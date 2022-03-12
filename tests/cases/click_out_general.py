@@ -3,26 +3,26 @@ Auto generated using respo create command
 Docs: https://rafsaf.github.io/respo/
 """
 
-from respo import Organization, RespoModel, Role
+import respo
 
 
-class RespoModel(RespoModel):
+class RespoModel(respo.RespoModel):
     class ORGS:
-        BOOK123: Organization
-        DEFAULT: Organization
-        DEFAULT_DENY: Organization
-        TEST_O: Organization
+        BOOK123: respo.Organization
+        DEFAULT: respo.Organization
+        DEFAULT_DENY: respo.Organization
+        TEST_O: respo.Organization
 
     class ROLES:
-        BOOK123__ADMIN_ROLE: Role
-        BOOK123__CLIENT: Role
-        BOOK123__ROOT: Role
-        BOOK123__SUPERUSER_BOOK: Role
-        DEFAULT_DENY__ROOT: Role
-        DEFAULT__ROOT: Role
-        DEFAULT__SUPERUSER: Role
-        DEFAULT__TEST_ROLE: Role
-        TEST_O__ROOT: Role
+        BOOK123__ADMIN_ROLE: respo.Role
+        BOOK123__CLIENT: respo.Role
+        BOOK123__ROOT: respo.Role
+        BOOK123__SUPERUSER_BOOK: respo.Role
+        DEFAULT_DENY__ROOT: respo.Role
+        DEFAULT__ROOT: respo.Role
+        DEFAULT__SUPERUSER: respo.Role
+        DEFAULT__TEST_ROLE: respo.Role
+        TEST_O__ROOT: respo.Role
 
     class PERMS:
         BOOK123__BOOK__BUY: str

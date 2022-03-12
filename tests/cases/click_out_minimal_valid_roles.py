@@ -3,16 +3,16 @@ Auto generated using respo create command
 Docs: https://rafsaf.github.io/respo/
 """
 
-from respo import Organization, RespoModel, Role
+import respo
 
 
-class RespoModel(RespoModel):
+class RespoModel(respo.RespoModel):
     class ORGS:
-        DEFAULT: Organization
+        DEFAULT: respo.Organization
 
     class ROLES:
-        DEFAULT__ROOT: Role
-        DEFAULT__USER: Role
+        DEFAULT__ROOT: respo.Role
+        DEFAULT__USER: respo.Role
 
     class PERMS:
         pass
