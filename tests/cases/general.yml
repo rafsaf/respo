@@ -9,7 +9,7 @@ permissions:
   - book.sell
   - book.buy
 
-rules:
+principles:
   - when: book.list
     then: [book.read]
 
@@ -19,12 +19,13 @@ rules:
     then: [user.read_all]
 
 roles:
-  - label: default
+  - name: default
+    extend:
     permissions:
       - user.read_all_better
       - book.list
 
-  - label: admin
+  - name: admin
     permissions:
       - book.all
       - user.read_all
