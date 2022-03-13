@@ -1,12 +1,10 @@
-from typing import Optional, Union
+from typing import Optional, TypeVar, TYPE_CHECKING
 
 from sqlalchemy import Column
 from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.types import TEXT, TypeDecorator
 
-from respo.client import RespoClient
-from respo.core import Organization, RespoModel, Role
-from respo.settings import config
+from respo import core, settings, client
 
 
 class TEXTRespoField(TypeDecorator):
@@ -16,8 +14,10 @@ class TEXTRespoField(TypeDecorator):
     cache_ok = True
 
     def process_bind_param(
-        self, value: Optional[RespoClient], dialect
+        self, value: Optional[client.RespoClient], dialect
     ) -> Optional[str]:
+        print(value)
+        print(type(value))
         if value is None:  # pragma: no cover
             return value
         return str(value)
@@ -25,49 +25,25 @@ class TEXTRespoField(TypeDecorator):
     def process_result_value(
         self, value: Optional[str], dialect
     ) -> Optional["MutableRespoClient"]:
-        if value is None:  # pragma: no cover
-            return value
-        return MutableRespoClient(json_string=value)
+        return MutableRespoClient(roles_str=value)
 
 
-class MutableRespoClient(Mutable, RespoClient):
+class MutableRespoClient(Mutable, client.RespoClient):
     """Mutable Field for RespoClient"""
 
     @classmethod
     def coerce(cls, key, value):
         if isinstance(value, cls):
             return value
-        elif isinstance(value, RespoClient):
+        elif isinstance(value, client.RespoClient):
             return cls(str(value))
         raise ValueError("Field must be instance of RespoClient or MutableRespoClient")
 
-    def add_organization(
-        self,
-        organization_name: Union[str, Organization],
-        respo_model: Optional[RespoModel] = None,
-        validate_input: bool = config.RESPO_CHECK_FORCE,
-    ) -> bool:
-        res = super().add_organization(organization_name, respo_model, validate_input)
-        self.changed()
-        return res
-
-    def remove_organization(
-        self,
-        organization_name: Union[str, Organization],
-        respo_model: Optional[RespoModel] = None,
-        validate_input: bool = config.RESPO_CHECK_FORCE,
-    ) -> bool:
-        res = super().remove_organization(
-            organization_name, respo_model, validate_input
-        )
-        self.changed()
-        return res
-
     def add_role(
         self,
-        role_name: Union[str, Role],
-        respo_model: Optional[RespoModel] = None,
-        validate_input: bool = config.RESPO_CHECK_FORCE,
+        role_name: str,
+        respo_model: Optional[core.RespoModel] = None,
+        validate_input: bool = settings.config.RESPO_CHECK_FORCE,
     ) -> bool:
         res = super().add_role(role_name, respo_model, validate_input)
         self.changed()
@@ -75,16 +51,16 @@ class MutableRespoClient(Mutable, RespoClient):
 
     def remove_role(
         self,
-        role_name: Union[str, Role],
-        respo_model: Optional[RespoModel] = None,
-        validate_input: bool = config.RESPO_CHECK_FORCE,
+        role_name: str,
+        respo_model: Optional[core.RespoModel] = None,
+        validate_input: bool = settings.config.RESPO_CHECK_FORCE,
     ) -> bool:
         res = super().remove_role(role_name, respo_model, validate_input)
         self.changed()
         return res
 
 
-class ColumnMixRespoField(Column, MutableRespoClient):
+class ColumnMixRespoField(Column, MutableRespoClient, str):
     """SQLAlchemy field that represent RespoClient instance, based on TextField.
 
     It is serialized and deserialized from str to RespoClient and reverse back and forth
@@ -116,8 +92,8 @@ class ColumnMixRespoField(Column, MutableRespoClient):
 
 _SQLAlchemyRespoField = MutableRespoClient.as_mutable(TEXTRespoField)
 
-SQLAlchemyRespoColumn: ColumnMixRespoField = Column(
+SQLAlchemyRespoColumn = Column(
     _SQLAlchemyRespoField,
     nullable=False,
     server_default="",
-)  # type: ignore
+)

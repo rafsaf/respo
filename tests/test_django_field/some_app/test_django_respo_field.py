@@ -10,7 +10,7 @@ def test_simple_model_creation_and_save():
     model = TheModel(respo_field=respo_client)
     model.save()
     model: TheModel = TheModel.objects.get(respo_field=respo_client)
-    assert model.respo_field.dict() == respo_client.dict()
+    assert model.respo_field.roles == respo_client.roles
 
 
 @pytest.mark.django_db
@@ -18,12 +18,10 @@ def test_field_properly_saved():
     respo_client = respo.RespoClient()
     model = TheModel(respo_field=respo_client)
     model.save()
-    assert model.respo_field.add_organization("xxx123", validate_input=False)
-    assert model.respo_field.add_role("xxx123.role", validate_input=False)
+    assert model.respo_field.add_role("xxx123", validate_input=False)
     model.save()
     model: TheModel = TheModel.objects.get(pk=1)
-    assert model.respo_field.organizations() == ["xxx123"]
-    assert model.respo_field.roles() == ["xxx123.role"]
+    assert model.respo_field.roles == ["xxx123"]
 
 
 @pytest.mark.django_db
@@ -31,7 +29,6 @@ def test_field_query():
     respo_client = respo.RespoClient()
     model = TheModel(respo_field=respo_client)
     model.save()
-    assert model.respo_field.add_organization("xxx123", validate_input=False)
-    assert model.respo_field.add_role("xxx123.role", validate_input=False)
+    assert model.respo_field.add_role("xxx123", validate_input=False)
     model.save()
     assert TheModel.objects.filter(respo_field__icontains="xx123").count()

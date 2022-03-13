@@ -1,5 +1,5 @@
 permissions:
-    - user.read
+  - user.read
   - user.read_all
 
 principles:
@@ -7,6 +7,6 @@ principles:
     then: [user.read]
 
 roles:
-  - name: role
+  - name: role;""
     permissions:
       - user.read_all

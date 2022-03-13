@@ -4,18 +4,18 @@ Docs: https://rafsaf.github.io/respo/
 """
 
 import respo
+import typing
 
 
 class RespoModel(respo.RespoModel):
-    class ORGS:
-        pass
+    if typing.TYPE_CHECKING:
 
-    class ROLES:
-        pass
+        class ROLES:
+            pass
 
-    class PERMS:
-        pass
+        class PERMS:
+            pass
 
-    @staticmethod
-    def get_respo_model() -> "RespoModel":
-        return respo.RespoModel.get_respo_model()  # type: ignore
+        @staticmethod
+        def get_respo_model() -> "RespoModel":
+            return respo.RespoModel.get_respo_model()  # type: ignore

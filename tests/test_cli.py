@@ -5,11 +5,17 @@ import respo
 from respo import cli
 from tests import conftest
 
+from pprint import pprint
+
 
 def test_model_is_equal_after_dumping():
     model1 = conftest.get_model("tests/cases/general.yml")
+    pprint(model1)
     cli.save_respo_model(model1)
     model2 = respo.RespoModel.get_respo_model()
+    pprint("")
+    pprint("")
+    pprint(model2)
     assert model1 == model2
 
 
@@ -77,18 +83,10 @@ def test_respo_create_fail_when_yaml_sytax_valid_but_invalid_model(
     runner: testing.CliRunner,
 ):
     result = runner.invoke(
-        cli.app, ["create", "tests/cases/invalid/metadata_created_at.yml"]
+        cli.app, ["create", "tests/cases/invalid/permission_regex.yml"]
     )
     assert result.exit_code == 1
     assert "Could not validate respo model" in result.stdout
-
-
-def test_respo_create_fail_when_json_sytax_invalid(runner: testing.CliRunner):
-    result = runner.invoke(
-        cli.app, ["create", "tests/cases/other/invalid_json", "--format", "json"]
-    )
-    assert result.exit_code == 1
-    assert "Could not process file" in result.stdout
 
 
 def test_respo_create_success_valid_yml_file(runner: testing.CliRunner):
@@ -102,15 +100,5 @@ def test_respo_create_success_valid_yml_file_2x_modify_ok(runner: testing.CliRun
     model1 = respo.RespoModel.get_respo_model()
     result = runner.invoke(cli.app, ["create", "tests/cases/general.yml"])
     model2 = respo.RespoModel.get_respo_model()
-    assert model1.metadata.created_at == model2.metadata.created_at
-    assert not model1.metadata.last_modified == model2.metadata.last_modified
-    assert result.exit_code == 0
-    assert "Success!" in result.stdout
-
-
-def test_respo_create_success_valid_json_file(runner: testing.CliRunner):
-    result = runner.invoke(
-        cli.app, ["create", "tests/cases/general.json", "--format", "json"]
-    )
     assert result.exit_code == 0
     assert "Success!" in result.stdout

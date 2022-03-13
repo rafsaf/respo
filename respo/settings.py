@@ -22,6 +22,7 @@ class Config(pydantic.BaseSettings):
     RESPO_DEFAULT_EXPORT_FILE: str = "generated_respo_model"
     RESPO_CHECK_FORCE: bool = True
     RESPO_FILE_NAME_RESPO_MODEL: str = "respo_model.py"
+    RESPO_FILE_NAME_RESPO_MODEL_JSON: str = "respo_model_preview.json"
 
     @property
     def path_bin_file(self):
@@ -38,6 +39,10 @@ class Config(pydantic.BaseSettings):
     @property
     def path_python_file(self):
         return pathlib.Path(self.RESPO_FILE_NAME_RESPO_MODEL)
+
+    @property
+    def path_json_file(self):
+        return pathlib.Path(self.RESPO_FILE_NAME_RESPO_MODEL_JSON)
 
 
 config = Config()

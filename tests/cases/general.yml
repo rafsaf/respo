@@ -1,7 +1,7 @@
 permissions:
   - user.read_basic
   - user.read_all
-  - user.read_all_admin
+  - user.read_all_better
   - user.update
 
   - book.list
@@ -20,14 +20,21 @@ principles:
 
 roles:
   - name: default
-    extend:
     permissions:
-      - user.read_all_better
+      - user.read_all
       - book.list
 
   - name: admin
+    include: [default]
     permissions:
-      - book.all
-      - user.read_all
+      - user.read_all_better
+
+  - name: pro_user
+    include: [default]
+    permissions:
+      - book.sell
+
+  - name: superadmin
+    include: [admin, pro_user]
+    permissions:
       - user.update
-      - user.delete

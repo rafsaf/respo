@@ -48,76 +48,56 @@ def test_respo_model_for_invalid_cases(file: os.DirEntry, runner: testing.CliRun
     assert "Could not validate respo model" in result.stdout
 
 
-double_label_cases = [
-    ("foo.bar.read", False),
-    ("bar.read ", False),
-    (" bar.read", False),
-    ("bar .read", False),
+role_label_cases = [
+    ("foobar.read", False),
+    ("barread ", False),
+    (" barread", False),
+    ("bar#$read@", False),
+    ("bar44ź3read", False),
+    ("bar read", False),
     ("bar. read", False),
-    ("bar.read.x", False),
-    ("bar.read.", False),
-    (".bar.read", False),
-    ("bar.read", True),
-    ("bar2.read_5", True),
+    ("barread.x", False),
+    ("barread.", False),
+    (".barread", False),
+    ("barread", True),
+    ("bar2_read_5", True),
 ]
 
 
-@pytest.mark.parametrize("case", double_label_cases)
-def test_double_label(case: Tuple[str, bool]):
+@pytest.mark.parametrize("case", role_label_cases)
+def test_role_label(case: Tuple[str, bool]):
     if case[1] is False:
         with pytest.raises(ValueError):
-            respo.RoleLabel(full_label=case[0])
+            respo.RoleLabel(role_name=case[0])
     else:
-        double_label = respo.RoleLabel(full_label=case[0])
-        assert double_label.organization == double_label.full_label.split(".")[0]
-        assert double_label.role == double_label.full_label.split(".")[1]
-        assert double_label.full_label == case[0]
+        double_label = respo.RoleLabel(role_name=case[0])
+        assert double_label.role_label == case[0]
 
 
-triple_label_cases = [
-    ("bar.read", False),
+permission_label_cases = [
+    ("bar_read", False),
     ("foo.bar.read ", False),
-    (" foo.bar.read", False),
-    ("foo.bar .read", False),
-    ("foo.bar. read", False),
+    (" bar.read", False),
+    ("foo.bar ", False),
+    ("foXo.bar ", False),
+    ("fożźo.bar ", False),
+    ("foo.b^&r ", False),
+    ("foo.bar.", False),
     ("foo.bar.read.x", False),
-    ("foo .bar.read.", False),
-    ("foo.foo2.bar.read", False),
-    ("foo.bar.read", True),
-    ("foo1.bar2.read_2", True),
+    ("foo .bar", False),
+    ("foo.foo2X", False),
+    ("foo.bar", True),
+    ("foo1.bar2", True),
 ]
 
 
-@pytest.mark.parametrize("case", triple_label_cases)
-def test_triple_label(case: Tuple[str, bool]):
+@pytest.mark.parametrize("case", permission_label_cases)
+def test_permission_label(case: Tuple[str, bool]):
     if case[1] is False:
         with pytest.raises(ValueError):
-            respo.PermissionLabel(full_label=case[0])
+            respo.PermissionLabel(permission_name=case[0])
     else:
-        triple_label = respo.PermissionLabel(full_label=case[0])
-        assert triple_label.metalabel == triple_label.full_label.split(".")[1]
-        assert triple_label.label == triple_label.full_label.split(".")[2]
-        assert triple_label.organization == triple_label.full_label.split(".")[0]
-        assert triple_label.full_label == case[0]
-
-
-def test_organization_label(get_general_model: respo.RespoModel):
-    organization_label1 = respo.OrganizationLabel("org")
-    assert organization_label1.organization == "org"
-    assert str(organization_label1) == "org"
-    organization_label2 = respo.OrganizationLabel(get_general_model.ORGS.DEFAULT)  # type: ignore
-    assert organization_label2.organization == "default"
-    assert str(organization_label2) == "default"
-
-
-def test_role_label(get_general_model: respo.RespoModel):
-    role_label1 = respo.RoleLabel("org.role")
-    assert role_label1.organization == "org"
-    assert role_label1.full_label == "org.role"
-    assert role_label1.role == "role"
-    assert str(role_label1) == "org.role"
-    role_label2 = respo.RoleLabel(get_general_model.ROLES.DEFAULT__ROOT)  # type: ignore
-    assert role_label2.organization == "default"
-    assert role_label2.full_label == "default.root"
-    assert role_label2.role == "root"
-    assert str(role_label2) == "default.root"
+        triple_label = respo.PermissionLabel(permission_name=case[0])
+        assert triple_label.collection == case[0].split(".")[0]
+        assert triple_label.label == case[0].split(".")[1]
+        assert triple_label.permission_name == case[0]

@@ -1,6 +1,4 @@
-from typing import Dict, List, Optional, Union
-
-import ujson
+from typing import List, Optional
 
 from respo import core, exceptions, settings
 
@@ -12,7 +10,7 @@ class RespoClient:
     has_permission() for checking them using respo.RespoModel instance.
 
     Args:
-        json_string: json serialized representation of dict with roles and
+        roles_str: json serialized representation of dict with roles and
         organizations. At initialization deserialized using ujson.
 
     Examples:
@@ -28,85 +26,34 @@ class RespoClient:
         ValueError raised
     """
 
-    def __init__(self, json_string: Optional[str] = "") -> None:
-        self._value: Dict[str, List[str]] = {}
-        self._json_string: str = json_string or ""
-        if self._json_string == "":
-            self._value = {"organizations": [], "roles": []}
+    def __init__(self, roles_str: Optional[str] = "") -> None:
+        if not roles_str:
+            self.roles: List[str] = []
         else:
-            self._value = ujson.loads(self._json_string)
+            self.roles: List[str] = roles_str.split(",")
 
     def __str__(self) -> str:
-        return ujson.dumps(self._value)
-
-    def dict(self) -> Dict[str, List[str]]:
-        """Returns dict representation of instance.
-
-        Examples:
-            >>> RespoClient().dict()
-            {"organizations": [], "roles": []}
-        """
-        return self._value
-
-    def roles(self) -> List[str]:
-        """Lists instance `roles`.
-
-        Examples:
-            >>> respo_client.roles()
-            []
-            ["o1.some_role", "organization_default.admin", "default.root"]
-        """
-        return self._value["roles"]
-
-    def organizations(self) -> List[str]:
-        """Lists instance `organizations`.
-
-        Examples:
-            >>> respo_client.roles()
-            []
-            ["o1", "organization_default", "default"]
-        """
-        return self._value["organizations"]
+        return ",".join(self.roles)
 
     @staticmethod
-    def validate_role(
-        role_name: Union[str, core.Role], respo_model: core.RespoModel
-    ) -> core.RoleLabel:
+    def validate_role(role_name: str, respo_model: core.RespoModel) -> core.RoleLabel:
         """Validates role name for given RespoModel.
 
         Raises:
-            ValueError: role_name is instance of str and doesn't match double
+            ValueError: role_name is instance of str and doesn't match single
             label regex.
             RespoClientError: role_name does not exist in model.
         """
-        role_label = core.RoleLabel(full_label=role_name)
-        if role_label.full_label not in respo_model.ROLES:
+        role_label = core.RoleLabel(role_name=role_name)
+        if role_label.role_label not in respo_model.ROLES:
             raise exceptions.RespoClientError(
                 f"Role not found in respo model: {role_name}."
             )
         return role_label
 
-    @staticmethod
-    def validate_organization(
-        organization_name: Union[str, core.Organization], respo_model: core.RespoModel
-    ) -> core.OrganizationLabel:
-        """Validates organization name for given RespoModel.
-
-        Raises:
-            ValueError: organization_name is instance of str and doesn't match single
-            label regex.
-            RespoClientError: organization_name does not exist in model.
-        """
-        organization_label = core.OrganizationLabel(full_label=organization_name)
-        if organization_label.organization not in respo_model.ORGS:
-            raise exceptions.RespoClientError(
-                f"Organization not found in respo model: {organization_name}."
-            )
-        return organization_label
-
     def add_role(
         self,
-        role_name: Union[str, core.Role],
+        role_name: str,
         respo_model: Optional[core.RespoModel] = None,
         validate_input: bool = settings.config.RESPO_CHECK_FORCE,
     ) -> bool:
@@ -146,21 +93,17 @@ class RespoClient:
         elif validate_input and respo_model is None:
             raise TypeError("respo_model cannot be None when validate_input is True")
         else:
-            role_label = core.RoleLabel(full_label=role_name)
+            role_label = core.RoleLabel(role_name=role_name)
 
-        if role_label.organization not in self._value["organizations"]:
-            self.add_organization(
-                role_label.organization, respo_model=None, validate_input=False
-            )
-        if role_label.full_label in self._value["roles"]:
+        if role_label.role_label in self.roles:
             return False
         else:
-            self._value["roles"].append(role_label.full_label)
+            self.roles.append(role_label.role_label)
             return True
 
     def remove_role(
         self,
-        role_name: Union[str, core.Role],
+        role_name: str,
         respo_model: Optional[core.RespoModel] = None,
         validate_input: bool = settings.config.RESPO_CHECK_FORCE,
     ) -> bool:
@@ -199,111 +142,10 @@ class RespoClient:
         elif validate_input and respo_model is None:
             raise TypeError("respo_model cannot be None when validate_input is True")
         else:
-            role_label = core.RoleLabel(full_label=role_name)
+            role_label = core.RoleLabel(role_name=role_name)
 
-        if role_label.full_label in self._value["roles"]:
-            self._value["roles"].remove(role_label.full_label)
-            return True
-        else:
-            return False
-
-    def add_organization(
-        self,
-        organization_name: Union[str, core.Organization],
-        respo_model: Optional[core.RespoModel] = None,
-        validate_input: bool = settings.config.RESPO_CHECK_FORCE,
-    ) -> bool:
-        """Adds organization to this client instance after optional validation.
-
-        If validate_input is False, there will be no safe checks. It defaults to
-        respo.config.RESPO_CHECK_FORCE and can be changed directly or using
-        environment variable RESPO_CHECK_FORCE.
-
-        Return:
-            True: organization was added.
-            False: organization already exists in client.
-
-        Raises:
-            ValueError: organization_name is instance of str and doesn't match single
-            label regex.
-            TypeError: respo_model is None when at the same time
-            validate_input is True.
-            RespoClientError: organization_name does not exist in
-            the model (only with validation).
-
-        Examples:
-            >>> respo_client.add_organization("default")
-            True
-            >>> respo_client.add_organization(
-                    respo_model.ORGS.DEFAULT, respo_model, validate_input=False
-                )
-            False
-        """
-        if validate_input and respo_model is not None:
-            organization_label = self.validate_organization(
-                organization_name=organization_name, respo_model=respo_model
-            )
-        elif validate_input and respo_model is None:
-            raise TypeError("respo_model cannot be None when validate_input is True")
-        else:
-            organization_label = core.OrganizationLabel(full_label=organization_name)
-
-        if organization_label.organization in self._value["organizations"]:
-            return False
-        else:
-            self._value["organizations"].append(organization_label.organization)
-            return True
-
-    def remove_organization(
-        self,
-        organization_name: Union[str, core.Organization],
-        respo_model: Optional[core.RespoModel] = None,
-        validate_input: bool = settings.config.RESPO_CHECK_FORCE,
-    ) -> bool:
-        """Removes organization and all its roles after optional validation.
-
-        Removes also all roles related to organization.
-        If validate_input is False, there will be no safe checks. It defaults to
-        respo.config.RESPO_CHECK_FORCE and can be changed directly or using
-        environment variable RESPO_CHECK_FORCE.
-
-        Return:
-            True: organization was removed.
-            False: organization does not exists in the client.
-
-        Raises:
-            ValueError: organization_name is instance of str and doesn't match single
-            label regex.
-            TypeError: respo_model is None when at the same time
-            validate_input is True.
-            RespoClientError: organization_name does not exist
-            the in model (only with validation).
-
-        Examples:
-            >>> respo_client.remove_organization("default")
-            True
-            >>> respo_client.remove_organization(
-                    respo_model.ORGS.DEFAULT, respo_model, validate_input=False
-                )
-            False
-        """
-        if validate_input and respo_model is not None:
-            organization_label = self.validate_organization(
-                organization_name=organization_name, respo_model=respo_model
-            )
-        elif validate_input and respo_model is None:
-            raise TypeError("respo_model cannot be None when validate_input is True")
-        else:
-            organization_label = core.OrganizationLabel(full_label=organization_name)
-
-        if organization_label.organization in self._value["organizations"]:
-            self._value["organizations"].remove(organization_label.organization)
-
-            new_roles: List[str] = []
-            for role in self._value["roles"]:
-                if not role.startswith(f"{organization_name}."):
-                    new_roles.append(role)
-            self._value["roles"] = new_roles
+        if role_label.role_label in self.roles:
+            self.roles.remove(role_label.role_label)
             return True
         else:
             return False
@@ -333,15 +175,7 @@ class RespoClient:
             True
         """
         permission_label = core.PermissionLabel(permission_name)
-
-        role_to_check = permission_label.to_role()
-        if not permission_label.organization in self._value["organizations"]:
-            return False
-        if role_to_check not in self._value["roles"]:
-            return False
-        if not role_to_check in respo_model.roles_labels:
-            self.remove_role(role_to_check, validate_input=False)
-            return False
-        if permission_label.label in respo_model.roles_labels[role_to_check]:
-            return True
+        for role in self.roles:
+            if permission_label.permission_name in respo_model.ROLES.permissions(role):
+                return True
         return False

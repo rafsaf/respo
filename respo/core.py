@@ -1,48 +1,24 @@
-import collections
-import copy
-import datetime
 import pickle
 import re
-from typing import Dict, Iterator, List, Literal, Optional, Set, Union
+from typing import Dict, Iterator, List, Optional, Set
 
 import pydantic
-import ujson
 import yaml
 
 from respo import exceptions, settings
 
-GENERAL_ERROR_MESSAGE = "Raised directly by above exception"
-
-SINGLE_LABEL_REGEX = re.compile(r"^[a-z_0-9]*$")
-DOUBLE_LABEL_REGEX = re.compile(r"^[a-z_0-9]*\.[a-z_0-9]*$")
+SINGLE_LABEL_REGEX = re.compile(r"^[a-z_0-9]{1,}$")
+DOUBLE_LABEL_REGEX = re.compile(r"^[a-z_0-9]{1,}\.[a-z_0-9]{1,}$")
 
 
-class LabelConstrainedStr(pydantic.ConstrainedStr):
-    @classmethod
-    def validate(cls, value: str) -> str:
-        if cls.regex:
-            if cls.regex.fullmatch(value) is None:
-                raise pydantic.errors.StrRegexError(pattern=cls.regex.pattern)
-
-        return value
-
-
-class SingleLabel(LabelConstrainedStr):
+class SingleLabel(pydantic.ConstrainedStr):
     regex = SINGLE_LABEL_REGEX
-    min_length = 1
     max_length = 128
 
 
-class DoubleDotLabel(LabelConstrainedStr):
+class DoubleDotLabel(pydantic.ConstrainedStr):
     regex = DOUBLE_LABEL_REGEX
-    min_length = 3
     max_length = 128
-
-
-class BaseModel(pydantic.BaseModel):
-    class Config:
-        json_loads = ujson.loads
-        json_dumps = ujson.dumps
 
 
 class PermissionLabel:
@@ -57,15 +33,18 @@ class PermissionLabel:
         ValueError
     """
 
-    def __init__(self, full_label: str) -> None:
-        if DOUBLE_LABEL_REGEX.fullmatch(full_label) is None:
+    def __init__(self, permission_name: str) -> None:
+        if DOUBLE_LABEL_REGEX.fullmatch(permission_name) is None:
             raise ValueError(
-                f"Permission does not match {DOUBLE_LABEL_REGEX} regex: {full_label}"
+                f"Permission does not match {DOUBLE_LABEL_REGEX} regex: {permission_name}"
             )
-        full_label_split = full_label.split(".")
-        self.full_label = full_label
-        self.collection = full_label_split[0]
-        self.label = full_label_split[1]
+        permission_name_split = permission_name.split(".")
+        self.collection = permission_name_split[0]
+        self.label = permission_name_split[1]
+        self.permission_name = permission_name
+
+    def __str__(self):
+        return self.permission_name
 
 
 class RoleLabel:
@@ -82,51 +61,15 @@ class RoleLabel:
         ValueError
     """
 
-    def __init__(self, full_label: Union[str, "Role"]) -> None:
-        if isinstance(full_label, Role):
-            self.organization = str(full_label.metadata.organization)
-            self.role = str(full_label.metadata.label)
-        else:
-            if DOUBLE_LABEL_REGEX.fullmatch(full_label) is None:
-                raise ValueError(
-                    f"Label does not match {DOUBLE_LABEL_REGEX} regex: {full_label}"
-                )
-            full_label_split = full_label.split(".")
-            self.organization = full_label_split[0]
-            self.role = full_label_split[1]
-        self.full_label = str(full_label)
+    def __init__(self, role_name: str) -> None:
+        if SINGLE_LABEL_REGEX.fullmatch(role_name) is None:
+            raise ValueError(
+                f"Role does not match {SINGLE_LABEL_REGEX} regex: {role_name}"
+            )
+        self.role_label = role_name
 
     def __str__(self):
-        return self.full_label
-
-
-class OrganizationLabel:
-    """Helper class for single (organization) labels validation
-
-    For Organization there is no validation step as it is already validated.
-
-    Examples:
-        >>> PermissionLabel("organization")
-        OK
-        >>> PermissionLabel(respo_model.ROLES.DEFAULT)
-        OK
-        >>> PermissionLabel("x.y")
-        ValueError
-    """
-
-    def __init__(self, full_label: Union[str, "Organization"]) -> None:
-        if isinstance(full_label, Organization):
-            self.organization = str(full_label.metadata.label)
-        else:
-            if SINGLE_LABEL_REGEX.fullmatch(full_label) is None:
-                raise ValueError(
-                    f"Label does not match {SINGLE_LABEL_REGEX} regex: {full_label}"
-                )
-            self.organization = full_label
-        self.full_label = str(full_label)
-
-    def __str__(self):
-        return self.organization
+        return self.role_label
 
 
 class LabelsContainer:
@@ -145,197 +88,65 @@ class LabelsContainer:
         {"foo": 5}
     """
 
-    def __init__(self, labels_list: List[str]) -> None:
-        self.labels_list = labels_list
+    def __init__(self, respo_model: "RespoModel") -> None:
+        self.respo_model: RespoModel = respo_model
 
     def _add_item(self, label: str) -> None:
         self.__dict__[label.upper().replace(".", "__")] = label
-        self.labels_list.append(label)
 
+
+class PERMSContainer(LabelsContainer):
     def __iter__(self) -> Iterator[str]:
-        return iter(self.labels_list)
+        return iter(self.respo_model.permissions)
 
     def __contains__(self, key: str) -> bool:
-        return key in self.labels_list
+        return key in self.respo_model.permissions
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, LabelsContainer):
-            raise ValueError(f"Cannot compare to not a LabelsContainer: {other}")
-        return self.labels_list == other.labels_list
+    def __len__(self):
+        return len(self.respo_model.permissions)
 
-
-class MetadataSection(BaseModel):
-    name: str
-    created_at: Optional[str] = None
-    last_modified: Optional[str] = None
-
-    @pydantic.validator("created_at")
-    def _check_created_at(cls, created_at: str) -> str:
-        if created_at is None:
-            now = datetime.datetime.utcnow()
-            return now.isoformat()
-        else:
-            try:
-                datetime.datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%S.%f")
-            except (ValueError, TypeError):
-                raise exceptions.RespoModelError(
-                    "'metadata.created_at' is invalid, place valid ISO format (UTC) or "
-                    "leave this field empty so it will be filled\n  "
-                )
-            return created_at
-
-    @pydantic.validator("last_modified")
-    def _update_last_modified(cls, _) -> str:
-        return datetime.datetime.utcnow().isoformat()
-
-    class Config:
-        validate_all = True
+    def __eq__(self, other: object):
+        if not isinstance(other, PERMSContainer):
+            raise ValueError(f"Cannot comapre to other instance: {other}")
+        return self.respo_model.permissions == other.respo_model.permissions
 
 
-class PermissionMetadata(BaseModel):
-    label: SingleLabel
+class ROLESContainer(LabelsContainer):
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.respo_model.roles_permissions)
 
+    def __contains__(self, key: str) -> bool:
+        return key in self.respo_model.roles_permissions
 
-class PermissionResource(BaseModel):
-    label: DoubleDotLabel
-
-
-class Permission(BaseModel):
-    metadata: PermissionMetadata
-    resources: List[PermissionResource]
-    rules: List[PermissionRule]
-
-    @pydantic.validator("rules")
-    def _rules_are_valid(cls, rules: List[PermissionRule], values: Dict):
-        resources_list: Optional[List[PermissionResource]] = values.get("resources")
-        assert resources_list is not None, GENERAL_ERROR_MESSAGE
-
-        resources_labels: Set[str] = set(
-            [resource.label for resource in resources_list]
-        )
-        metadata: Optional[PermissionMetadata] = values.get("metadata")
-        assert metadata is not None, GENERAL_ERROR_MESSAGE
-
-        BASE_ERR = (
-            f"Error in permissions section\n  "
-            f"Permission '{metadata.label}' resources are invalid.\n  "
+    def permissions(self, role_name: str) -> List[str]:
+        if role_name in self:
+            return self.respo_model.roles_permissions[role_name]
+        raise exceptions.RespoModelError(
+            "Could not get permissions for role\n"
+            f"Role does not exist in respo model: {role_name}"
         )
 
-        rule: PermissionRule
-        for rule in rules:
-            labels_then_set = set()
-            RULE_ERR = f"Rule with when '{rule.when}' is invalid\n  "
+    def __eq__(self, other: object):
+        if not isinstance(other, ROLESContainer):
+            raise ValueError(f"Cannot comapre to other instance: {other}")
+        return self.respo_model.roles_permissions == other.respo_model.roles_permissions
 
-            if rule.when not in resources_labels:
-                raise exceptions.RespoModelError(
-                    BASE_ERR
-                    + RULE_ERR
-                    + f"Rule 'when' condition '{rule.when}' not found in resources labels\n  "
-                )
-            perm_name = rule.when.split(".")[1]
-            if perm_name == "all":
-                raise exceptions.RespoModelError(
-                    BASE_ERR
-                    + RULE_ERR
-                    + f"Rule 'when' condition '{rule.when}' cant be equal to 'all'\n  "
-                    + "'all' is reserved keyword and will be auto applied\n  "
-                )
-            for label in rule.then:
-                if label.split(".")[1] == "all":
-                    raise exceptions.RespoModelError(
-                        BASE_ERR
-                        + RULE_ERR
-                        + f"Rule 'then' condition '{label}' cant be equal to 'all'\n  "
-                        + "'all' is reserved keyword and will be auto applied\n  "
-                    )
-                if label == rule.when:
-                    raise exceptions.RespoModelError(
-                        BASE_ERR
-                        + RULE_ERR
-                        + f"Rule 'then' condition '{label}' can't be equal to when condition\n  "
-                    )
-                if label in labels_then_set:
-                    raise exceptions.RespoModelError(
-                        BASE_ERR
-                        + RULE_ERR
-                        + f"Found two 'then' conditions with the same label '{label}'\n  "
-                    )
-                labels_then_set.add(label)
-        return rules
-
-    @pydantic.validator("resources")
-    def _add_all_resource(
-        cls, resources: List[PermissionResource]
-    ) -> List[PermissionResource]:
-        if len(resources):
-            metadata_label = resources[0].label.split(".")[0]
-            resources.append(
-                PermissionResource(label=DoubleDotLabel(f"{metadata_label}.all"))
-            )
-        return resources
-
-    @pydantic.validator("rules")
-    def _add_all_rule_if_not_exist(
-        cls, rules: List[PermissionRule], values: Dict
-    ) -> List[PermissionRule]:
-        resources: Optional[List[PermissionResource]] = values.get("resources")
-        assert resources is not None, GENERAL_ERROR_MESSAGE
-
-        if len(resources):
-            metadata_label = resources[0].label.split(".")[0]
-            new_then_list = []
-            for resource in resources:
-                new_then_list.append(resource.label)
-
-            rules.append(
-                PermissionRule(
-                    when=DoubleDotLabel(f"{metadata_label}.all"),
-                    then=new_then_list,
-                )
-            )
-        return rules
+    def __len__(self):
+        return len(self.respo_model.roles_permissions)
 
 
-class OrganizationMetadata(BaseModel):
-    label: SingleLabel
-
-    def label_to_attribute_name(self):
-        return self.label.upper()
-
-
-class OrganizationPermissionGrant(BaseModel):
-    type: Literal["allow", "deny"] = "allow"
-    label: TripleDotLabel
-
-    def label_to_attribute_name(self):
-        return self.label.replace(".", "__").upper()
-
-
-class Organization(BaseModel):
-    metadata: OrganizationMetadata
-    permissions_grants: List[OrganizationPermissionGrant] = pydantic.Field(
-        alias="permissions"
-    )
-
-    class Config:
-        allow_population_by_field_name = True
-
-    def __str__(self) -> str:
-        return self.metadata.label
-
-
-class Role(BaseModel):
+class Role(pydantic.BaseModel):
     name: SingleLabel
-    base_on: SingleLabel
+    include: Optional[List[SingleLabel]] = []
     permissions: List[DoubleDotLabel]
 
 
-class Principle(BaseModel):
+class Principle(pydantic.BaseModel):
     when: DoubleDotLabel
     then: List[DoubleDotLabel]
 
 
-class RespoModel(BaseModel):
+class RespoModel(pydantic.BaseModel):
     """Represents whole resource policies logic, based on pydantic BaseModel.
 
     You should not create it in other ways than command: respo create [OPTIONS] FILENAME
@@ -365,68 +176,26 @@ class RespoModel(BaseModel):
     """
 
     permissions: List[DoubleDotLabel]
-    principles: List[Principle]
+    principles: List[Principle] = []
     roles: List[Role]
-    ROLES: LabelsContainer = LabelsContainer([])
-    PERMS: LabelsContainer = LabelsContainer([])
+    roles_permissions: Dict[str, List[str]] = {}
+    ROLES: ROLESContainer = None  # type: ignore
+    PERMS: PERMSContainer = None  # type: ignore
 
     class Config:
-        validate_all = True
         arbitrary_types_allowed = True
 
     def __init__(self, *args, **data) -> None:
         super().__init__(*args, **data)
-        for organization in self.organizations:
-            for org_permission in organization.permissions_grants:
-                self.PERMS._add_item(str(org_permission.label))
+        self.ROLES = ROLESContainer(self)
+        self.PERMS = PERMSContainer(self)
         for role in self.roles:
-            self.ROLES._add_item(str(role.metadata.full_label))
-
-    @pydantic.validator("permissions")
-    def _check_permissions_are_unique_and_add_all_permissions(
-        cls, permissions: List[DoubleDotLabel]
-    ):
-        permissions_set: Set[DoubleDotLabel] = set(permissions)
-        if not len(permissions) == permissions_set:
-            for perm_name in permissions:
-                try:
-                    permissions_set.remove(perm_name)
-                except KeyError:
-                    raise exceptions.RespoModelError(
-                        "Error in permissions section.\n"
-                        f"Found two permissions with the same label '{perm_name}'\n  "
-                    )
-        perm_collections = set(
-            [PermissionLabel(name).collection for name in permissions]
-        )
-        for collection_name in perm_collections:
-            all_perm = DoubleDotLabel(f"{collection_name}.all")
-            if not all_perm in permissions_set:
-                permissions.append(all_perm)
-        return permissions
-
-    @pydantic.validator("roles")
-    def _check_permissions_are_unique_and_add_all_permissions(
-        cls, permissions: List[DoubleDotLabel]
-    ):
-        permissions_set: Set[DoubleDotLabel] = set(permissions)
-        if not len(permissions) == permissions_set:
-            for perm_name in permissions:
-                try:
-                    permissions_set.remove(perm_name)
-                except KeyError:
-                    raise exceptions.RespoModelError(
-                        "Error in permissions section.\n"
-                        f"Found two permissions with the same label '{perm_name}'\n  "
-                    )
-        perm_collections = set(
-            [PermissionLabel(name).collection for name in permissions]
-        )
-        for collection_name in perm_collections:
-            all_perm = DoubleDotLabel(f"{collection_name}.all")
-            if not all_perm in permissions_set:
-                permissions.append(all_perm)
-        return permissions
+            self.ROLES._add_item(str(role.name))
+            self.roles_permissions[str(role.name)] = []
+            for permission in role.permissions:
+                self.roles_permissions[str(role.name)].append(str(permission))
+        for permission in self.permissions:
+            self.PERMS._add_item(str(permission))
 
     @staticmethod
     def get_respo_model(yml_file: bool = False) -> "RespoModel":
@@ -458,312 +227,155 @@ class RespoModel(BaseModel):
             with open(settings.config.path_bin_file, "rb") as respo_model_file:
                 return pickle.load(respo_model_file)
 
-    @classmethod
-    def _resources_mapping(
-        cls, permissions: List[Permission]
-    ) -> Dict[str, List[PermissionResource]]:
-        result_dict: Dict[str, List[PermissionResource]] = {}
-        for permission in permissions:
-            result_dict[permission.metadata.label] = permission.resources
-        return result_dict
-
-    @classmethod
-    def _rules_mapping(
-        cls, permissions: List[Permission]
-    ) -> Dict[str, List[PermissionRule]]:
-        result_dict: Dict[str, List[PermissionRule]] = {}
-        for permission in permissions:
-            result_dict[permission.metadata.label] = permission.rules
-        return result_dict
-
     @pydantic.validator("permissions")
-    def _permissions_every_metadata_is_unique_and_valid(
-        cls, permissions: List[Organization]
-    ):
-        permission_names: Set[str] = set()
-        for permission in permissions:
-            if permission.metadata.label in permission_names:
-                raise exceptions.RespoModelError(
-                    f"Error in permissions section\n  "
-                    f"Permission '{permission.metadata.label}' metadata is invalid.\n  "
-                    f"Found two permissions with the same label {permission.metadata.label}\n  "
-                )
-            permission_names.add(permission.metadata.label)
+    def _permissions_are_unique_and_add_all(cls, permissions: List[DoubleDotLabel]):
+        permissions_set: Set[DoubleDotLabel] = set(permissions)
+        if not len(permissions) == permissions_set:
+            for perm_name in permissions:
+                try:
+                    permissions_set.remove(perm_name)
+                    pydantic.ValidationError
+                except KeyError:
+                    raise exceptions.RespoModelError(
+                        f"('permissions','{perm_name}')|"
+                        "Error in permissions section.\n  "
+                        f"Found duplicates for permission: {perm_name}\n  "
+                    )
+
+        perm_collections = set(
+            [PermissionLabel(name).collection for name in permissions]
+        )
+        for collection_name in perm_collections:
+            all_perm = DoubleDotLabel(f"{collection_name}.all")
+            if all_perm not in permissions_set:
+                permissions.append(all_perm)
         return permissions
 
-    @pydantic.validator("organizations")
-    def _organization_every_metadata_is_unique_and_valid(
-        cls, organizations: List[Organization]
+    @pydantic.validator("principles")
+    def _principles_are_valid_and_not_duplicate(
+        cls, principles: List[Principle], values: Dict
     ):
-        organization_names: Set[str] = set()
-        for organization in organizations:
-            if organization.metadata.label in organization_names:
+        permissions: Optional[List[DoubleDotLabel]] = values.get("permissions")
+        assert permissions is not None
+
+        principles_set: Set[DoubleDotLabel] = set()
+        for principle in principles:
+            if principle.when not in permissions:
                 raise exceptions.RespoModelError(
-                    f"Error in organizations section\n  "
-                    f"Organization '{organization.metadata.label}' metadata is invalid.\n  "
-                    f"Found two organizations with the same label {organization.metadata.label}\n  "
+                    f"('principles','{principle.when}','when')|"
+                    "Error in Principles section.\n  "
+                    f"Permission 'when' does not exist in permissions section: {principle.when}\n  "
                 )
-            organization_names.add(organization.metadata.label)
-        return organizations
-
-    @pydantic.validator("organizations")
-    def _organization_every_permission_exists_and_can_be_applied(
-        cls, organizations: List[Organization], values: Dict
-    ):
-
-        permissions: Optional[List[Permission]] = values.get("permissions")
-        assert permissions is not None, GENERAL_ERROR_MESSAGE
-
-        label_to_resources = cls._resources_mapping(permissions)
-        for organization in organizations:
-            BASE_ERR = (
-                f"Error in organizations section\n  "
-                f"Organization '{organization.metadata.label}' permissions are invalid.\n  "
-            )
-            for organization_permission in organization.permissions_grants:
-                PERM_ERR = f"Permission with label '{organization_permission.label}' is invalid\n  "
-                triple_label = PermissionLabel(full_label=organization_permission.label)
-                if triple_label.organization != organization.metadata.label:
-                    raise exceptions.RespoModelError(
-                        BASE_ERR
-                        + PERM_ERR
-                        + f"'{triple_label.organization}' must be equal to '{organization.metadata.label}'\n  "
-                    )
-                exists = False
-                if triple_label.metalabel in label_to_resources:
-                    for resource in label_to_resources[triple_label.metalabel]:
-                        if resource.label == triple_label.to_double_label():
-                            exists = True
-                            break
-                if not exists:
-                    raise exceptions.RespoModelError(
-                        BASE_ERR
-                        + PERM_ERR
-                        + f"Permission '{triple_label.to_double_label()}' not found\n  "
-                    )
-        return organizations
-
-    @pydantic.validator("organizations")
-    def _organization_resolve_complex_allow_deny_rules(
-        cls, organizations: List[Organization], values: Dict
-    ):
-        permissions: Optional[List[Permission]] = values.get("permissions")
-        assert permissions is not None, GENERAL_ERROR_MESSAGE
-        label_to_rules = cls._rules_mapping(permissions)
-        while True:
-            organizations_after_resolving: List[Organization] = []
-            for old_organization in organizations:
-                organization = copy.deepcopy(old_organization)
-                for organization_permission in organization.permissions_grants:
-                    triple_label = PermissionLabel(
-                        full_label=organization_permission.label
-                    )
-                    for rule in label_to_rules[triple_label.metalabel]:
-                        if rule.when != triple_label.to_double_label():
-                            continue
-                        for rule_then in rule.then:
-                            new_label = TripleDotLabel(
-                                f"{organization.metadata.label}.{rule_then}"
-                            )
-                            grant = OrganizationPermissionGrant(
-                                type=organization_permission.type,
-                                label=new_label,
-                            )
-                            if grant not in organization.permissions_grants:
-                                organization.permissions_grants.append(grant)
-                organizations_after_resolving.append(organization)
-
-            if organizations == organizations_after_resolving:
-                # no more nested rules will be found
-                break
-            else:
-                # will look up again for nested rules
-                organizations = organizations_after_resolving
-        return organizations
-
-    @pydantic.validator("organizations")
-    def _organization_remove_all_deny_rules(cls, organizations: List[Organization]):
-        new_organizations: List[Organization] = []
-        for organization in organizations:
-            result_permissions: List[OrganizationPermissionGrant] = []
-            allow_set: Set[str] = set()
-            deny_set: Set[str] = set()
-            for organization_permission in organization.permissions_grants:
-                if organization_permission.type == "allow":
-                    allow_set.add(organization_permission.label)
-                else:
-                    deny_set.add(organization_permission.label)
-            new_allow_set = allow_set - deny_set
-            for label in new_allow_set:
-                result_permissions.append(
-                    OrganizationPermissionGrant(
-                        type="allow", label=TripleDotLabel(label)
-                    )
+            if principle.when in principles_set:
+                raise exceptions.RespoModelError(
+                    f"('principles','{principle.when}','when')|"
+                    "Error in Principles section.\n  "
+                    f"Permission 'when' declared multiple times: {principle.when}\n  "
                 )
-            organization.permissions_grants = result_permissions
-            new_organizations.append(organization)
-        return organizations
+            principles_set.add(principle.when)
+
+            then_permission_set: Set[DoubleDotLabel] = set()
+            for then_permission in principle.then:
+                if then_permission not in permissions:
+                    raise exceptions.RespoModelError(
+                        f"('principles','{principle.when}','then','{then_permission}')|"
+                        "Error in principles section.\n  "
+                        f"Error in 'then' section in principle for permission: {principle.when}\n  "
+                        f"Permission does not exist in permissions section: {then_permission}\n  "
+                    )
+                if then_permission in then_permission_set:
+                    raise exceptions.RespoModelError(
+                        f"('principles','{principle.when}','then','{then_permission}')|"
+                        "Error in principles section.\n  "
+                        f"Error in 'then' section in principle for permission: {principle.when}\n  "
+                        f"Permission declared multiple times: {then_permission}\n  "
+                    )
+                then_permission_set.add(then_permission)
+        return principles
 
     @pydantic.validator("roles")
-    def _roles_every_metadata_is_unique_and_valid(cls, roles: List[Role], values: Dict):
-        organizations: Optional[List[Organization]] = values.get("organizations")
-        assert organizations is not None, GENERAL_ERROR_MESSAGE
+    def _roles_are_valid_and_not_duplicated(cls, roles: List[Role], values: Dict):
+        permissions: Optional[List[DoubleDotLabel]] = values.get("permissions")
+        assert permissions is not None
 
-        roles_names: Set[str] = set()
-        organization_names: Set[str] = set()
-
-        for organization in organizations:
-            organization_names.add(organization.metadata.label)
-
+        roles_include_map: Dict[SingleLabel, List[SingleLabel]] = {}
         for role in roles:
-            BASE_ERR = (
-                f"Error in roles section\n  "
-                f"Role '{role.metadata.label}' metadata is invalid.\n  "
-            )
-            if role.metadata.label == "root":
+            if role.name in roles_include_map:
                 raise exceptions.RespoModelError(
-                    BASE_ERR + "'root' is reserved keyword and will be auto applied\n  "
+                    f"('roles','{role.name}')|"
+                    "Error in Roles section.\n  "
+                    f"Role 'name' declared multiple times: {role.name}\n  "
                 )
-            if role.metadata.organization not in organization_names:
-                raise exceptions.RespoModelError(
-                    BASE_ERR
-                    + f"Role's declared organization {role.metadata.organization} is invalid"
-                    + f"'{role.metadata.organization}' not found\n  "
-                )
-            if role.metadata.label in roles_names:
-                raise exceptions.RespoModelError(
-                    BASE_ERR
-                    + f"Found two roles with the same label '{role.metadata.label}'\n  "
-                )
-            roles_names.add(role.metadata.label)
-        return roles
+            roles_include_map[role.name] = role.include  # type: ignore
 
-    @pydantic.validator("roles")
-    def _roles_every_permission_exists_and_can_be_applied(
-        cls, roles: List[Role], values: Dict
-    ):
-        permissions: Optional[List[Permission]] = values.get("permissions")
-        assert permissions is not None, GENERAL_ERROR_MESSAGE
-        label_to_resources = cls._resources_mapping(permissions)
-        for role in roles:
-            BASE_ERR = (
-                f"Error in roles section\n  "
-                f"Role '{role.metadata.label}' permissions are invalid.\n  "
-            )
-            for role_permission in role.permissions_grants:
-                PERM_ERR = (
-                    f"Permission with label '{role_permission.label}' is invalid\n  "
-                )
-                triple_label = PermissionLabel(full_label=role_permission.label)
-                if triple_label.organization != role.metadata.organization:
+            role_permission_set: Set[DoubleDotLabel] = set()
+            for role_permission in role.permissions:
+                if role_permission not in permissions:
                     raise exceptions.RespoModelError(
-                        BASE_ERR
-                        + PERM_ERR
-                        + f"'{triple_label.organization}' must be equal to '{role.metadata.organization}'\n  "
+                        f"('roles','{role.name}','permissions','{role_permission}')|"
+                        "Error in Roles section.\n  "
+                        f"Error in 'permissions' section in role: {role.name}\n  "
+                        f"Permission does not exist in permissions section: {role_permission}\n  "
                     )
-                exists = False
-                if triple_label.metalabel in label_to_resources:
-                    for resource in label_to_resources[triple_label.metalabel]:
-                        if resource.label == triple_label.to_double_label():
-                            exists = True
-                            break
-                if not exists:
+                if role_permission in role_permission_set:
                     raise exceptions.RespoModelError(
-                        BASE_ERR
-                        + PERM_ERR
-                        + f"Permission '{triple_label.to_double_label()}' not found\n  "
+                        f"('roles','{role.name}','permissions','{role_permission}')|"
+                        "Error in Roles section.\n  "
+                        f"Error in 'permissions' section in role: {role.name}\n  "
+                        f"Permission declared multiple times: {role_permission}\n  "
                     )
-        return roles
+                role_permission_set.add(role_permission)
 
-    @pydantic.validator("roles")
-    def _roles_resolve_complex_allow_deny_rules(cls, roles: List[Role], values: Dict):
-        permissions: Optional[List[Permission]] = values.get("permissions")
-        assert permissions is not None, GENERAL_ERROR_MESSAGE
-        label_to_rules = cls._rules_mapping(permissions)
-        while True:
-            roles_after_resolving: List[Role] = []
-            for old_role in roles:
-                role = copy.deepcopy(old_role)
-                for role_permission in role.permissions_grants:
-                    triple_label = PermissionLabel(full_label=role_permission.label)
-                    for rule in label_to_rules[triple_label.metalabel]:
-                        if rule.when != triple_label.to_double_label():
-                            continue
-                        for rule_then in rule.then:
-                            new_label = f"{role.metadata.organization}.{rule_then}"
-                            grant = RolePermissionGrant(
-                                type=role_permission.type,
-                                label=TripleDotLabel(new_label),
-                            )
-                            if grant not in role.permissions_grants:
-                                role.permissions_grants.append(grant)
-                roles_after_resolving.append(role)
-            if roles == roles_after_resolving:
-                # no more nested rules will be found
-                break
-            else:
-                # will look up again for nested rules
-                roles = roles_after_resolving
-        return roles
-
-    @pydantic.validator("roles")
-    def _roles_remove_all_deny_rules(cls, roles: List[Role]):
-        new_roles: List[Role] = []
-        for role in roles:
-            result_permissions: List[RolePermissionGrant] = []
-            allow_set: Set[str] = set()
-            deny_set: Set[str] = set()
-            for role_permission in role.permissions_grants:
-                if role_permission.type == "allow":
-                    allow_set.add(role_permission.label)
-                else:
-                    deny_set.add(role_permission.label)
-            new_allow_set = allow_set - deny_set
-            for label in new_allow_set:
-                result_permissions.append(
-                    RolePermissionGrant(type="allow", label=TripleDotLabel(label))
-                )
-            role.permissions_grants = result_permissions
-            new_roles.append(role)
-        return roles
-
-    @pydantic.validator("roles")
-    def _add_root_role_to_every_organization(cls, roles: List[Role], values: Dict):
-        organizations: Optional[List[Organization]] = values.get("organizations")
-        assert organizations is not None, GENERAL_ERROR_MESSAGE
-        permissions: Optional[List[Permission]] = values.get("permissions")
-        assert permissions is not None, GENERAL_ERROR_MESSAGE
-
-        for organization in organizations:
-            role_metadata = RoleMetadata(
-                organization=organization.metadata.label,
-                label=SingleLabel("root"),
-            )
-            root_role = Role(metadata=role_metadata, permissions=[])
-            for permission in permissions:
-                for resource in permission.resources:
-                    root_role.permissions_grants.append(
-                        RolePermissionGrant(
-                            label=TripleDotLabel(
-                                f"{organization.metadata.label}.{resource.label}"
-                            )
+        for role_name, included_role_names in roles_include_map.items():
+            for included_role_name in included_role_names:
+                if included_role_name not in roles_include_map:
+                    raise exceptions.RespoModelError(
+                        f"('roles','{role_name}','include','{included_role_name}')|"
+                        "Error in Roles section.\n  "
+                        f"Error in 'include' section in role: {role_name}\n  "
+                        f"Included role name is not declared in Role section: {included_role_name}\n  "
+                    )
+                for parent_included_role_name in roles_include_map[included_role_name]:
+                    if parent_included_role_name == role_name:
+                        raise exceptions.RespoModelError(
+                            f"('roles','{role_name}','include','{included_role_name}')|"
+                            "Error in Roles section.\n  "
+                            f"Error in 'include' section in two roles: {role_name},{included_role_name}\n  "
+                            f"Included roles are reffering to each other, remove it from one of them\n  "
                         )
-                    )
-            roles.append(root_role)
         return roles
 
-    @pydantic.validator("roles_labels")
-    def _create_roles_labels_for_fast_checking_permissions(
-        cls, roles_labels: Dict[str, List[str]], values: Dict
-    ) -> Dict[str, List[str]]:
-        roles: Optional[List[Role]] = values.get("roles")
-        assert roles is not None, GENERAL_ERROR_MESSAGE
+    @pydantic.validator("roles")
+    def _add_permissions_to_roles_from_included(cls, roles: List[Role]):
+        for role_to_update in roles:
+            if not role_to_update.include:
+                continue
+            for role in roles:
+                if role.name not in role_to_update.include:
+                    continue
+                for permission in role.permissions:
+                    if permission not in role_to_update.permissions:
+                        role_to_update.permissions.append(permission)
+        return roles
+
+    @pydantic.validator("roles")
+    def _apply_principles_section_rules_to_roles(cls, roles: List[Role], values: Dict):
+        principles: Optional[List[Principle]] = values.get("principles")
+        assert principles is not None
 
         for role in roles:
-            for permission in role.permissions_grants:
-                triple_label = PermissionLabel(permission.label)
-                if triple_label.to_role() in roles_labels:
-                    roles_labels[triple_label.to_role()].append(triple_label.label)
-                else:
-                    roles_labels[triple_label.to_role()] = [triple_label.label]
-        return roles_labels
+            while True:
+                perms_after_resolve: List[DoubleDotLabel] = []
+                for permission in role.permissions:
+                    perms_after_resolve.append(permission)
+                    for principle in principles:
+                        if principle.when != permission:
+                            continue
+                        for perm_to_add in principle.then:
+                            if perm_to_add not in role.permissions:
+                                perms_after_resolve.append(perm_to_add)
+
+                if role.permissions == perms_after_resolve:
+                    break
+                role.permissions = perms_after_resolve
+        return roles
