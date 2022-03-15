@@ -95,14 +95,12 @@ def app():
 
 
 @click.option("--no-json-preview", is_flag=True, type=bool, default=False)
-@click.option("--no-auto-bin", is_flag=True, type=bool, default=False)
 @click.option("--no-python-file", is_flag=True, type=bool, default=False)
 @click.argument("file", type=click.File("r"))
 @app.command()
 def create(
     file: io.TextIOWrapper,
     no_json_preview: bool,
-    no_auto_bin: bool,
     no_python_file: bool,
 ):
     """Parses FILENAME with declared respo resource policies.

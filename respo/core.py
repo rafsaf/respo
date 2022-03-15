@@ -22,15 +22,17 @@ class DoubleDotLabel(pydantic.ConstrainedStr):
 
 
 class PermissionLabel:
-    """Helper class for triple (permission) labels validation
-
-    For TripleDotLabel there is no validation step as it is already validated.
+    """Helper class for double (permission) labels validation.
 
     Examples:
         >>> PermissionLabel("x.y")
         OK
         >>> PermissionLabel("x")
         ValueError
+        >>> PermissionLabel("%^asd")
+        ValueError
+        >>> PermissionLabel("collection_part.label_part").collection
+        "collection_part"
     """
 
     def __init__(self, permission_name: str) -> None:
@@ -48,17 +50,15 @@ class PermissionLabel:
 
 
 class RoleLabel:
-    """Helper class for double (role) labels validation
-
-    For Role there is no validation step as it is already validated.
+    """Helper class for single (role) labels validation.
 
     Examples:
-        >>> RoleLabel("x.y")
+        >>> RoleLabel("role_text")
         OK
-        >>> RoleLabel(respo_model.ROLES.DEFAULT__ROOT)
-        OK
-        >>> RoleLabel("invalid")
+        >>> RoleLabel("double.bad")
         ValueError
+        >>> RoleLabel("valid").role_label
+        "valid"
     """
 
     def __init__(self, role_name: str) -> None:
@@ -73,19 +73,16 @@ class RoleLabel:
 
 
 class LabelsContainer:
-    """Container for respo model attributes
+    """Container for respo model attributes with respo_model in init
 
-    Stores human friendly dict with attrs in self.mapping that can be accessed via attributes.
+    Stores human friendly dict with attrs in __dict__ that can be
+    accessed via attributes.
 
     Examples:
         >>> attrs_container = LabelsContainer()
-        >>> attrs_container._add_item("invalid", {"foo": 5})
-        ValueError raised
-        >>> attrs_container._add_item("MY_KEY", {"foo": 5})
-        >>> attrs_container.mapping["MY_KEY"]
-        {"foo": 5}
-        >>> attrs_container.MY_KEY
-        {"foo": 5}
+        >>> attrs_container._add_item("valid_text")
+        >>> attrs_container.VALID_TEXT
+        "valid_text"
     """
 
     def __init__(self, respo_model: "RespoModel") -> None:
@@ -96,6 +93,8 @@ class LabelsContainer:
 
 
 class PERMSContainer(LabelsContainer):
+    """LabelsContainer variation for PERMS"""
+
     def __iter__(self) -> Iterator[str]:
         return iter(self.respo_model.permissions)
 
@@ -112,6 +111,8 @@ class PERMSContainer(LabelsContainer):
 
 
 class ROLESContainer(LabelsContainer):
+    """LabelsContainer variation for ROLES"""
+
     def __iter__(self) -> Iterator[str]:
         return iter(self.respo_model.roles_permissions)
 
@@ -136,12 +137,16 @@ class ROLESContainer(LabelsContainer):
 
 
 class Role(pydantic.BaseModel):
+    """Represents single role in yml file."""
+
     name: SingleLabel
     include: Optional[List[SingleLabel]] = []
     permissions: List[DoubleDotLabel]
 
 
 class Principle(pydantic.BaseModel):
+    """Represents single principle in yml file."""
+
     when: DoubleDotLabel
     then: List[DoubleDotLabel]
 
@@ -155,24 +160,18 @@ class RespoModel(pydantic.BaseModel):
     Examples:
         >>> respo_model = RespoModel.get_respo_model()
         <respo.core.RespoModel object>
-        >>> respo_model.ROLES.DEFAULT__ROOT
-        <respo.core.Role object>
-        >>> str(respo_model.ROLES.DEFAULT__ROOT)
-        "default.root"
-        >>> respo_model.PERMS.STUDENTS__USERS__CREATE
-        "students.users.create"
-        >>> respo_model.ORGS.MY_ORGANIZATION
-        <respo.core.Organization object>
-        >>> str(respo_model.ORGS.MY_ORGANIZATION)
-        "my_organization.users.create"
-        >>> respo_model.organization_exists("no_such_organization")
-        False
-        >>> respo_model.organization_exists(respo_model.ORGS.DEFAULT)
+        >>> respo_model.ROLES.DEFAULT
+        "default"
+        >>> respo_model.PERMS.USERS__DELTETE
+        "users.delete"
+        >>> "users.delete" in respo_model.PERMS
         True
-        >>> respo_model.role_exists("default.invalid_role")
-        False
-        >>> respo_model.role_exists("text without any sense")
-        False
+        >>> "default" in respo_model.ROLES
+        True
+        >>> for role in respo_model.ROLES:
+        >>>     ...
+        >>> for perm in respo_model.PERMS:
+        >>>     ...
     """
 
     permissions: List[DoubleDotLabel]

@@ -109,15 +109,16 @@ async def test_respo_field_handles_methods(
 async def test_respo_field_empty_none_creating(session: AsyncSession):
 
     new_obj = TheModel(name="Respo")
+    new_obj.respo_field = RespoClient(roles_str="xxx,yy")
     session.add(new_obj)
     await session.commit()
     await session.refresh(new_obj)
-    new_obj.name = ""
 
     stmt = select(TheModel).where(TheModel.name == "Respo")
     result = await session.execute(statement=stmt)
 
     obj: TheModel = result.scalars().one()
+    assert "yy" in obj.respo_field.roles
     assert new_obj.respo_field.add_role("test_role", validate_input=False)
     assert "test_role" in obj.respo_field.roles
 

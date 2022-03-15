@@ -4,26 +4,21 @@ from respo import core, exceptions, settings
 
 
 class RespoClient:
-    """Entity that can join a organization and be given a role.
+    """Entity that can be given a role.
 
-    Implements methods for adding and removing roles and organization and special
+    Implements methods for adding and removing roles and method
     has_permission() for checking them using respo.RespoModel instance.
 
     Args:
-        roles_str: json serialized representation of dict with roles and
-        organizations. At initialization deserialized using ujson.
+        roles_str: string with roles separated by comma
 
     Examples:
-        >>> RespoClient(None).dict()
-        {"organizations": [], "roles": []}
-        >>> RespoClient(
-                '{"organizations":["test_org_x"],"roles":["test_org_x.test_role_y"]}'
-            ).dict()
-        {"organizations": ["test_org_x"], "roles": ["test_org_x.test_role_y"]}
-        >>> str(RespoClient())
-        '{"organizations":[],"roles":[]}'
-        >>> RespoClient("I am invalid json")
-        ValueError raised
+        >>> RespoClient(None).roles
+        []
+        >>> RespoClient("abc,def").roles
+        ["abc", "def"]
+        >>> str(RespoClient("abc,def"))
+        "abc,def"
     """
 
     def __init__(self, roles_str: Optional[str] = "") -> None:
@@ -37,7 +32,7 @@ class RespoClient:
 
     @staticmethod
     def validate_role(role_name: str, respo_model: core.RespoModel) -> core.RoleLabel:
-        """Validates role name for given RespoModel.
+        """Validates role name.
 
         Raises:
             ValueError: role_name is instance of str and doesn't match single
@@ -59,7 +54,6 @@ class RespoClient:
     ) -> bool:
         """Adds role to this client after optional validation.
 
-        Adds organization_name from the role_name if it doesn't exists.
         If validate_input is False, there will be no safe checks. It defaults to
         respo.config.RESPO_CHECK_FORCE and can be changed directly or using
         environment variable RESPO_CHECK_FORCE.
@@ -69,7 +63,7 @@ class RespoClient:
             False: role already exists in the client.
 
         Raises:
-            ValueError: role_name is instance of str and doesn't match double
+            ValueError: role_name is instance of str and doesn't single
             label regex.
             TypeError: respo_model is None when at the same time when
             validate_input is True.
@@ -77,12 +71,12 @@ class RespoClient:
             model (only with validation).
 
         Examples:
-            >>> respo_client.add_role("default.sample_role")
+            >>> respo_client.add_role("sample_role", validate_input=False)
             True
             >>> respo_client.add_role(
-                    respo_model.ROLES.DEFAULT__SAMPLE_ROLE,
+                    respo_model.ROLES.SAMPLE_ROLE,
                     respo_model,
-                    validate_input=False,
+                    validate_input=True,
                 )
             False
         """
@@ -118,7 +112,7 @@ class RespoClient:
             False: role does not exists in the client.
 
         Raises:
-            ValueError: role_name is instance of str and doesn't match double
+            ValueError: role_name is instance of str and doesn't single
             label regex.
             TypeError: respo_model is None when at the same time
             validate_input is True.
@@ -126,12 +120,12 @@ class RespoClient:
             model (only with validation).
 
         Examples:
-            >>> respo_client.remove_role("default.sample_role")
+            >>> respo_client.remove_role("sample_role", validate_input=False)
             True
             >>> respo_client.remove_role(
-                    respo_model.ROLES.DEFAULT__SAMPLE_ROLE,
+                    respo_model.ROLES.SAMPLE_ROLE,
                     respo_model,
-                    validate_input=False,
+                    validate_input=True,
                 )
             False
         """
@@ -155,22 +149,22 @@ class RespoClient:
     ) -> bool:
         """Checks if *this* client does have specific permission.
 
-        Under the hood searches through prepared as pickled file dicts to
+        Under the hood searches through prepared role-permissions dict to
         speed this up (after resolving the complex nested rules logic etc).
-        For very large self._value this can be pretty slow anyway.
+        For very large self.roles this can be pretty slow anyway.
 
         Return:
             True: client has permission.
             False: client doesn't have permission.
 
         Raises:
-            ValueError: permission_name doesn't match triple label regex.
+            ValueError: permission_name doesn't match double label regex.
 
         Examples:
-            >>> respo_client.has_permission("default.users.read", respo_model)
+            >>> respo_client.has_permission("users.read", respo_model)
             True
             >>> respo_client.has_permission(
-                    respo_model.PERMS.DEFAULT__USERS__READ_ALL, respo_model
+                    respo_model.PERMS.USERS__READ_ALL, respo_model
                 )
             True
         """
