@@ -123,8 +123,15 @@ async def test_respo_field_empty_none_creating(session: AsyncSession):
     assert "test_role" in obj.respo_field.roles
 
 
-async def test_respo_field_bind(session: AsyncSession):
+async def test_respo_field_bind_text(session: AsyncSession):
+    new_obj = TheModel(name="Respo")
+    with pytest.raises(ValueError):
+        new_obj.respo_field = ""  # type: ignore
+    with pytest.raises(ValueError):
+        new_obj.respo_field = None  # type: ignore
 
+
+async def test_respo_field_bind_none(session: AsyncSession):
     new_obj = TheModel(name="Respo")
     session.add(new_obj)
     await session.commit()

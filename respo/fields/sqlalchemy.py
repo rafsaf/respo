@@ -13,18 +13,12 @@ class TEXTRespoField(TypeDecorator):
     impl = TEXT
     cache_ok = True
 
-    def process_bind_param(
-        self, value: Optional[client.RespoClient], dialect
-    ) -> Optional[str]:
-        print(value)
-        print(type(value))
-        if value is None:  # pragma: no cover
-            return value
+    def process_bind_param(self, value: "MutableRespoClient", dialect) -> str:
         return str(value)
 
     def process_result_value(
         self, value: Optional[str], dialect
-    ) -> Optional["MutableRespoClient"]:
+    ) -> "MutableRespoClient":
         return MutableRespoClient(roles_str=value)
 
 
