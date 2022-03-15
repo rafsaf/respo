@@ -1,11 +1,11 @@
+from pprint import pprint
+
 import pytest
 from click import testing
 
 import respo
 from respo import cli
 from tests import conftest
-
-from pprint import pprint
 
 
 def test_model_is_equal_after_dumping():
@@ -97,8 +97,8 @@ def test_respo_create_success_valid_yml_file(runner: testing.CliRunner):
 
 def test_respo_create_success_valid_yml_file_2x_modify_ok(runner: testing.CliRunner):
     result = runner.invoke(cli.app, ["create", "tests/cases/general.yml"])
-    model1 = respo.RespoModel.get_respo_model()
+    respo.RespoModel.get_respo_model()
     result = runner.invoke(cli.app, ["create", "tests/cases/general.yml"])
-    model2 = respo.RespoModel.get_respo_model()
+    respo.RespoModel.get_respo_model()
     assert result.exit_code == 0
     assert "Success!" in result.stdout

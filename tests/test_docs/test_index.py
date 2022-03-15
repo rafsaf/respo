@@ -1,8 +1,3 @@
-from click.testing import CliRunner
-
-from respo.cli import app
-
-
 # def test_respo_example_yml_isvalid(runner: CliRunner):
 #     result = runner.invoke(app, ["create", "docs/examples/index/respo-example.yml"])
 #     assert "Success!" in result.stdout

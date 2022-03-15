@@ -1,23 +1,14 @@
-from typing import Any, AsyncGenerator
+from dataclasses import dataclass, field
+from typing import AsyncGenerator
 
 import pytest
 from sqlalchemy import Column, Integer, String, select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import registry
 from sqlalchemy.orm.session import sessionmaker
-from sqlalchemy.orm import registry
-from respo import RespoClient
-from respo.fields.sqlalchemy import ColumnMixRespoField, SQLAlchemyRespoColumn
-from dataclasses import dataclass
-from dataclasses import field
-from typing import List
 
-from sqlalchemy import Column
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy.orm import registry
-from sqlalchemy.orm import relationships
+from respo import RespoClient
+from respo.fields.sqlalchemy import SQLAlchemyRespoColumn
 
 mapper_registry = registry()
 

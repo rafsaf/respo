@@ -1,10 +1,10 @@
-from typing import Optional, TypeVar, TYPE_CHECKING
+from typing import Optional
 
 from sqlalchemy import Column
 from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.types import TEXT, TypeDecorator
 
-from respo import core, settings, client
+from respo import client, core, settings
 
 
 class TEXTRespoField(TypeDecorator):

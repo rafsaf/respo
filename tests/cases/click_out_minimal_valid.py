@@ -3,8 +3,9 @@ Auto generated using respo create command
 Docs: https://rafsaf.github.io/respo/
 """
 
-import respo
 import typing
+
+import respo
 
 
 class RespoModel(respo.RespoModel):
