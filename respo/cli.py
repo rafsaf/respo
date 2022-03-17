@@ -94,7 +94,7 @@ def app():
     pass
 
 
-@click.option("--no-json-preview", is_flag=True, type=bool, default=False)
+@click.option("--no-json-preview", is_flag=True, type=bool, default=True)
 @click.option("--no-python-file", is_flag=True, type=bool, default=False)
 @click.argument("file", type=click.File("r"))
 @app.command()

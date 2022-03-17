@@ -63,10 +63,14 @@ class MutableRespoClient(Mutable, client.RespoClient):
         return res
 
 
+class MutableRespoColumn(Column, MutableRespoClient):
+    pass
+
+
 _SQLAlchemyRespoField = MutableRespoClient.as_mutable(TEXTRespoField)
 
-SQLAlchemyRespoColumn = Column(
+SQLAlchemyRespoColumn: MutableRespoColumn = Column(
     _SQLAlchemyRespoField,
     nullable=False,
     server_default="",
-)
+)  # type: ignore
