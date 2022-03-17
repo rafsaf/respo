@@ -1,4 +1,5 @@
 from pprint import pprint
+from typing import Tuple
 
 import pytest
 from click import testing
@@ -10,12 +11,8 @@ from tests import conftest
 
 def test_model_is_equal_after_dumping():
     model1 = conftest.get_model("tests/cases/general.yml")
-    pprint(model1)
     cli.save_respo_model(model1)
     model2 = respo.RespoModel.get_respo_model()
-    pprint("")
-    pprint("")
-    pprint(model2)
     assert model1 == model2
 
 
@@ -89,8 +86,22 @@ def test_respo_create_fail_when_yaml_sytax_valid_but_invalid_model(
     assert "Could not validate respo model" in result.stdout
 
 
-def test_respo_create_success_valid_yml_file(runner: testing.CliRunner):
-    result = runner.invoke(cli.app, ["create", "tests/cases/general.yml"])
+@pytest.mark.parametrize(
+    "flags",
+    [
+        (),
+        ("--no-json-preview",),
+        ("--no-python-file",),
+        (
+            "--no-python-file",
+            "--no-json-preview",
+        ),
+    ],
+)
+def test_respo_create_success_valid_yml_file(
+    runner: testing.CliRunner, flags: Tuple[str]
+):
+    result = runner.invoke(cli.app, ["create", "tests/cases/general.yml", *flags])
     assert result.exit_code == 0
     assert "Success!" in result.stdout
 
