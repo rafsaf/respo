@@ -70,8 +70,9 @@ def test_role_label(case: Tuple[str, bool]):
         with pytest.raises(ValueError):
             respo.RoleLabel(role_name=case[0])
     else:
-        double_label = respo.RoleLabel(role_name=case[0])
-        assert double_label.role_label == case[0]
+        role_label = respo.RoleLabel(role_name=case[0])
+        assert role_label.role_label == case[0]
+        assert str(role_label) == case[0]
 
 
 permission_label_cases = [
@@ -97,7 +98,42 @@ def test_permission_label(case: Tuple[str, bool]):
         with pytest.raises(ValueError):
             respo.PermissionLabel(permission_name=case[0])
     else:
-        triple_label = respo.PermissionLabel(permission_name=case[0])
-        assert triple_label.collection == case[0].split(".")[0]
-        assert triple_label.label == case[0].split(".")[1]
-        assert triple_label.permission_name == case[0]
+        permission_label = respo.PermissionLabel(permission_name=case[0])
+        assert permission_label.collection == case[0].split(".")[0]
+        assert permission_label.label == case[0].split(".")[1]
+        assert permission_label.permission_name == case[0]
+        assert str(permission_label) == case[0]
+
+
+def test_model_perms(get_general_model: respo.RespoModel):
+    assert get_general_model.PERMS.respo_model == get_general_model
+    for perm in get_general_model.PERMS:
+        assert perm in get_general_model.permissions
+        assert perm in get_general_model.PERMS
+    assert len(get_general_model.PERMS) == len(get_general_model.permissions)
+
+    roles1 = respo.PERMSContainer(get_general_model)
+    assert roles1 == get_general_model.PERMS
+
+    with pytest.raises(ValueError):
+        get_general_model.PERMS == ""
+
+
+def test_model_roles(get_general_model: respo.RespoModel):
+    assert get_general_model.ROLES.respo_model == get_general_model
+    for role in get_general_model.ROLES:
+        assert role in get_general_model.roles_permissions
+        assert role in get_general_model.ROLES
+        assert get_general_model.roles_permissions[
+            role
+        ] == get_general_model.ROLES.permissions(role)
+    assert len(get_general_model.ROLES) == len(get_general_model.roles_permissions)
+
+    perms1 = respo.ROLESContainer(get_general_model)
+    assert perms1 == get_general_model.ROLES
+
+    with pytest.raises(ValueError):
+        get_general_model.ROLES == ""
+
+    with pytest.raises(ValueError):
+        get_general_model.ROLES.permissions("xxx")

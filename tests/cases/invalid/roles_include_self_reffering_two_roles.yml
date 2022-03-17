@@ -8,14 +8,10 @@ principles:
 
 roles:
   - name: role
-    include: [role2]
-    permissions:
-      - user.read_all
-  - name: role2
     include: [role1]
     permissions:
       - user.read_all
-  - name: role3
-    include: []
+  - name: role1
+    include: [role]
     permissions:
-      - user.read_all
+      - user.read

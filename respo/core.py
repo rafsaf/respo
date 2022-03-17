@@ -140,7 +140,7 @@ class Role(pydantic.BaseModel):
     """Represents single role in yml file."""
 
     name: SingleLabel
-    include: Optional[List[SingleLabel]] = []
+    include: Optional[List[SingleLabel]] = None
     permissions: List[DoubleDotLabel]
 
 
@@ -305,7 +305,10 @@ class RespoModel(pydantic.BaseModel):
                     "Error in Roles section.\n  "
                     f"Role 'name' declared multiple times: {role.name}\n  "
                 )
-            roles_include_map[role.name] = role.include  # type: ignore
+            if role.include is None:
+                roles_include_map[role.name] = []
+            else:
+                roles_include_map[role.name] = role.include
 
             role_permission_set: Set[DoubleDotLabel] = set()
             for role_permission in role.permissions:
