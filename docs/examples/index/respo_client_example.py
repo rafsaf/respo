@@ -39,8 +39,9 @@ async def main():
         await session.refresh(new_obj)
 
         new_obj.respo_field.add_role(respo_model.ROLES.ADMIN, respo_model)
+
         assert new_obj.respo_field.has_permission(
-            respo_model.PERMS.USER__READ_ALL, respo_model
+            respo_model.PERMS.USER__READ_BASIC, respo_model
         )
 
 

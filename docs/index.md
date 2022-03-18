@@ -1,4 +1,4 @@
-# Respo
+# Introduction
 
 _respo_ states for resource policy and is tiny, user friendly tool for building RBAC systems based on static `yml` file, mainly with FastAPI framework in mind. In most cases – for even large set of roles – single file would be enough to provide restricting system access.
 
@@ -68,21 +68,24 @@ To interact with stateless, readonly respo_model created above, respo provides a
 {!./examples/index/respo_client_example.py!}
 ```
 
-From this point its only matter of short implementation to have something in this manner which is the goal. Single endpoint must have single permission for it, and thanks to respo compilation step, every "stronger" permissions and roles would include "weaker" so **we don't need to have ifology**.
+From this point its only matter of short implementation to have something in this manner which is the goal. Single endpoint must have single permission for it, and thanks to respo compilation step, every "stronger" permissions and roles would include "weaker" so **we don't need to have the ifology**.
 
 ```python
 from .dependencies import user_have_permission
 
 ...
 
+
+@router.get("/users/read_all/")
 @user_have_permission("users.read_all")
-router.get("/users/read_all/")
 def users_read_all(user = Depends(get_user)):
     return user
 
 ```
 
 Note, thanks to smart types in RespoField for SQLAlchemy and auto generated typed file `respo_model` we have powerful autocompletions:
+
+![autocompletion-respo-client](./images/000_autocompletion_respo_client.jpg)
 
 ![autocompletion-respo-client](./images/001_autocompletion_respo_client.jpg)
 
