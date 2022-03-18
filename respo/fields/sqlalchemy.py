@@ -1,4 +1,5 @@
 from typing import Optional
+from typing_extensions import Self
 
 from sqlalchemy import Column
 from sqlalchemy.ext.mutable import Mutable
@@ -69,8 +70,11 @@ class MutableRespoColumn(Column, MutableRespoClient):
 
 _SQLAlchemyRespoField = MutableRespoClient.as_mutable(TEXTRespoField)
 
-SQLAlchemyRespoColumn: MutableRespoColumn = Column(
-    _SQLAlchemyRespoField,
-    nullable=False,
-    server_default="",
-)  # type: ignore
+
+class SQLAlchemyRespoColumn(Column, MutableRespoClient):
+    def __new__(cls: type[Self]) -> Self:
+        return Column(
+            _SQLAlchemyRespoField,
+            nullable=False,
+            server_default="",
+        )  # type: ignore

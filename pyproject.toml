@@ -60,15 +60,16 @@ pytest = "^7.0.1"
 pytest-asyncio = "^0.18.2"
 pytest-django = "^4.5.2"
 requests = "^2.27.1"
+sqlalchemy2-stubs = "^0.0.2-alpha.20"
 toml = "^0.10.2"
 types-toml = "^0.10.4"
 types-ujson = "^4.2.1"
 uvicorn = "^0.17.5"
-sqlalchemy2-stubs = "^0.0.2-alpha.20"
 
 [tool.coverage.run]
 omit = [
   "**__init__.py**",
+  "docs/examples/index/respo_model.py",
 ]
 source = [
   "respo",
