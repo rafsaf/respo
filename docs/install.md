@@ -1,20 +1,23 @@
 # Install
 
-Installation is as simple as:
+For development purposes you'd better install **all** CLI and fields dependencies.
 
+```bash
+pip install respo[all]
 ```
+
+Minimalistic module can be installed (Note you won't be able to use CLI commands, but this will be good for production usage where respo CLI commands are useles):
+
+```bash
 pip install respo
 ```
 
-You can also customize some default settings using environment variables
+And there are also some other options:
 
-```py
-RESPO_BINARY_FILE_NAME=".respo_cache/__auto__respo_model.bin"
-# Name of file where pickled model will be saved
+```bash
+pip install respo[cli]   # with modules for only CLI usage
 
-RESPO_DEFAULT_EXPORT_FILE="__auto__respo_model"
-# default name of exported model as a field after exporting
+pip install respo[sqlalchemy]   # with modules for sqlalchemy field usage
 
-RESPO_CHECK_FORCE=false
-# if True, no validation of "Client" will happen when using respo.check
+pip install respo[django]   # with modules for django field usage
 ```
