@@ -1,0 +1,20 @@
+roles:
+  - name: default
+    permissions:
+      - user.read_all
+      - book.list
+
+  - name: admin
+    include: [default]
+    permissions:
+      - user.read_all_better
+
+  - name: pro_user
+    include: [default]
+    permissions:
+      - book.sell
+
+  - name: superadmin
+    include: [admin, pro_user]
+    permissions:
+      - user.update
