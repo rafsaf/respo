@@ -1,11 +1,14 @@
+import asyncio
 from typing import Any
-from .respo_model import RespoModel
+
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm.session import sessionmaker
-import asyncio
+
 from respo.fields.sqlalchemy import SQLAlchemyRespoColumn
+
+from .respo_model import RespoModel
 
 Base: Any = declarative_base()
 

@@ -19,7 +19,7 @@ license = "MIT"
 name = "respo"
 readme = "README.md"
 repository = "https://github.com/rafsaf/respo"
-version = "0.2.0"
+version = "1.0.0"
 
 [tool.poetry.dependencies]
 pydantic = "^1.7.0"

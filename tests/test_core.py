@@ -116,7 +116,7 @@ def test_model_perms(get_general_model: respo.RespoModel):
     assert roles1 == get_general_model.PERMS
 
     with pytest.raises(ValueError):
-        get_general_model.PERMS == ""
+        get_general_model.PERMS == ""  # type: ignore
 
 
 def test_model_roles(get_general_model: respo.RespoModel):
@@ -133,7 +133,7 @@ def test_model_roles(get_general_model: respo.RespoModel):
     assert perms1 == get_general_model.ROLES
 
     with pytest.raises(ValueError):
-        get_general_model.ROLES == ""
+        get_general_model.ROLES == ""  # type: ignore
 
     with pytest.raises(ValueError):
         get_general_model.ROLES.permissions("xxx")

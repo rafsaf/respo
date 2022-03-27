@@ -1,9 +1,9 @@
 from typing import Optional
-from typing_extensions import Self
 
 from sqlalchemy import Column
 from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.types import TEXT, TypeDecorator
+from typing_extensions import Self
 
 from respo import client, core, settings
 
@@ -72,7 +72,7 @@ _SQLAlchemyRespoField = MutableRespoClient.as_mutable(TEXTRespoField)
 
 
 class SQLAlchemyRespoColumn(Column, MutableRespoClient):
-    def __new__(cls: type[Self]) -> Self:
+    def __new__(cls) -> Self:
         return Column(
             _SQLAlchemyRespoField,
             nullable=False,
