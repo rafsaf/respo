@@ -1,7 +1,6 @@
 name: Test
 
 on:
-  push:
   pull_request:
 
 jobs:
@@ -34,18 +33,16 @@ jobs:
           poetry install --no-interaction --no-root
       - name: Lint with flake8
         run: |
-          source .venv/bin/activate 
           # stop the build if there are Python syntax errors or undefined names
-          flake8 respo tests --count --exit-zero --statistics
+          poetry run flake8 respo tests docs --count --exit-zero --statistics
       - name: Test
         run: |
-          source .venv/bin/activate
-          coverage run -m pytest tests
-          coverage xml
-          coverage report --show-missing
+          poetry run coverage run -m pytest
+          poetry run coverage xml
+          poetry run coverage report --show-missing
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           flags: unittests
           file: coverage.xml
-          fail_ci_if_error: true
+          fail_ci_if_error: false
