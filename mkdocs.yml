@@ -19,3 +19,10 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+
+nav:
+  - Overview: index.md
+  - install.md
+  - Usage:
+      - usage/declaring_roles_and_permissions.md
+      - usage/respo_create_cli.md

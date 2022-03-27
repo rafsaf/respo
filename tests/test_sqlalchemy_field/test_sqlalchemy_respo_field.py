@@ -34,7 +34,7 @@ async def test_db_setup():
 
     async_engine = create_async_engine("sqlite+aiosqlite:///", pool_pre_ping=True)
     async_session = sessionmaker(
-        async_engine, expire_on_commit=False, class_=AsyncSession
+        async_engine, expire_on_commit=False, class_=AsyncSession  # type: ignore
     )
     async with async_engine.begin() as conn:
         await conn.run_sync(mapper_registry.metadata.drop_all)
