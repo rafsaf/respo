@@ -28,7 +28,7 @@ async def main():
         "sqlite+aiosqlite:///db.sqlite3", pool_pre_ping=True
     )
     async_session = sessionmaker(
-        async_engine, expire_on_commit=False, class_=AsyncSession
+        async_engine, expire_on_commit=False, class_=AsyncSession  # type: ignore
     )
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
