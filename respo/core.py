@@ -98,6 +98,9 @@ class PERMSContainer(LabelsContainer):
     def __iter__(self) -> Iterator[str]:
         return iter(self.respo_model.permissions)
 
+    def __str__(self) -> str:
+        return str(self.respo_model.permissions)
+
     def __contains__(self, key: str) -> bool:
         return key in self.respo_model.permissions
 
@@ -115,6 +118,9 @@ class ROLESContainer(LabelsContainer):
 
     def __iter__(self) -> Iterator[str]:
         return iter(self.respo_model.roles_permissions)
+
+    def __str__(self) -> str:
+        return str(self.respo_model.roles_permissions)
 
     def __contains__(self, key: str) -> bool:
         return key in self.respo_model.roles_permissions
@@ -248,6 +254,8 @@ class RespoModel(pydantic.BaseModel):
             all_perm = DoubleDotLabel(f"{collection_name}.all")
             if all_perm not in permissions_set:
                 permissions.append(all_perm)
+
+        permissions.sort()
         return permissions
 
     @pydantic.validator("principles")
@@ -380,4 +388,16 @@ class RespoModel(pydantic.BaseModel):
                 if role.permissions == perms_after_resolve:
                     break
                 role.permissions = perms_after_resolve
+        return roles
+
+    @pydantic.validator("roles")
+    def _valid_order_of_roles(cls, roles: List[Role], values: Dict):
+        def sort_role_alphabeticaly(role: Role):
+            return role.name
+
+        roles.sort(key=sort_role_alphabeticaly)
+
+        for role in roles:
+            role.permissions.sort()
+
         return roles

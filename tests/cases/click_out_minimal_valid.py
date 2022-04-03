@@ -11,11 +11,14 @@ import respo
 class RespoModel(respo.RespoModel):
     if typing.TYPE_CHECKING:
 
-        class ROLES:
+        class _ROLES(respo.ROLESContainer):
             pass
 
-        class PERMS:
+        class _PERMS(respo.PERMSContainer):
             pass
+
+        PERMS: _PERMS
+        ROLES: _ROLES
 
         @staticmethod
         def get_respo_model() -> "RespoModel":

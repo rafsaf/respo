@@ -112,8 +112,12 @@ def test_model_perms(get_general_model: respo.RespoModel):
         assert perm in get_general_model.PERMS
     assert len(get_general_model.PERMS) == len(get_general_model.permissions)
 
-    roles1 = respo.PERMSContainer(get_general_model)
-    assert roles1 == get_general_model.PERMS
+    perms = respo.PERMSContainer(get_general_model)
+    assert perms == get_general_model.PERMS
+    assert str(perms) == (
+        "['book.all', 'book.buy', 'book.list', 'book.read', 'book.sell', "
+        "'user.all', 'user.read_all', 'user.read_all_better', 'user.read_basic', 'user.update']"
+    )
 
     with pytest.raises(ValueError):
         get_general_model.PERMS == ""  # type: ignore
@@ -129,8 +133,14 @@ def test_model_roles(get_general_model: respo.RespoModel):
         ] == get_general_model.ROLES.permissions(role)
     assert len(get_general_model.ROLES) == len(get_general_model.roles_permissions)
 
-    perms1 = respo.ROLESContainer(get_general_model)
-    assert perms1 == get_general_model.ROLES
+    roles = respo.ROLESContainer(get_general_model)
+    assert roles == get_general_model.ROLES
+    assert str(roles) == (
+        "{'admin': ['book.list', 'book.read', 'user.read_all', 'user.read_all_better', 'user.read_basic'], "
+        "'default': ['book.list', 'book.read', 'user.read_all', 'user.read_basic'], "
+        "'pro_user': ['book.list', 'book.read', 'book.sell', 'user.read_all', 'user.read_basic'], "
+        "'superadmin': ['book.list', 'book.read', 'book.sell', 'user.read_all', 'user.read_all_better', 'user.read_basic', 'user.update']}"
+    )
 
     with pytest.raises(ValueError):
         get_general_model.ROLES == ""  # type: ignore

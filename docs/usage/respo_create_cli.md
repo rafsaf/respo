@@ -19,6 +19,8 @@ Ok, we already declared resource policies in `yml` file. There are few steps bef
 
     To get option preview, use `respo --help` and `respo create --help`
 
+    You can also change default folder paths of generated files below, using environment variables.
+
 Every part will be covered in another section, now let's use respo create command.
 
 ```bash
@@ -32,45 +34,26 @@ INFO: Processed in 0.0239s. Bin file size: 0.0013 mb.
 INFO: Success!
 ```
 
+Your folder structure after success should look like:
+
+```bash
+.
+├── respo_model.yml
+├── respo_model.py # new Python file
+|
+├── .respo_cache # read-only, processed model files
+│   ├── __auto__respo_model.bin
+│   └── __auto__respo_model.yml
+
+```
+
 Pickled and yml formats of already resolved input file were saved by default to `.respo_cache` folder. It should not be included `.gitignore`. It allows better performence when reading policy, no need to validate and resolve input yml file every time on app startup.
 
 But there is also another file, `respo_model.py` with following content:
 
 ```python
-"""
-Auto generated using respo create command
-Docs: https://rafsaf.github.io/respo/
-"""
+{!./examples/usage/respo_model.py!}
 
-import typing
-
-import respo
-
-
-class RespoModel(respo.RespoModel):
-    if typing.TYPE_CHECKING:
-
-        class ROLES:
-            ADMIN: str
-            DEFAULT: str
-            PRO_USER: str
-            SUPERADMIN: str
-
-        class PERMS:
-            BOOK__ALL: str
-            BOOK__BUY: str
-            BOOK__LIST: str
-            BOOK__READ: str
-            BOOK__SELL: str
-            USER__ALL: str
-            USER__READ_ALL: str
-            USER__READ_ALL_BETTER: str
-            USER__READ_BASIC: str
-            USER__UPDATE: str
-
-        @staticmethod
-        def get_respo_model() -> "RespoModel":
-            return respo.RespoModel.get_respo_model()  # type: ignore
 
 ```
 

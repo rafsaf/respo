@@ -59,9 +59,13 @@ def generate_respo_model_file(respo_model: core.RespoModel) -> None:
     output_text_lst.append('"""\nAuto generated using respo create command\n')
     output_text_lst.append('Docs: https://rafsaf.github.io/respo/\n"""\n\n')
 
-    roles_definition = class_definition(respo_model.ROLES, "ROLES")
+    roles_definition = class_definition(
+        respo_model.ROLES, "_ROLES(respo.ROLESContainer)"
+    )
 
-    perms_definition = class_definition(respo_model.PERMS, "PERMS")
+    perms_definition = class_definition(
+        respo_model.PERMS, "_PERMS(respo.PERMSContainer)"
+    )
     output_text_lst.append("import typing\n\n")
     output_text_lst.append("import respo\n\n\n")
 
@@ -69,6 +73,8 @@ def generate_respo_model_file(respo_model: core.RespoModel) -> None:
     output_text_lst.append("    if typing.TYPE_CHECKING:\n\n")
     output_text_lst.append(roles_definition)
     output_text_lst.append(perms_definition)
+    output_text_lst.append("        PERMS: _PERMS\n")
+    output_text_lst.append("        ROLES: _ROLES\n\n")
     output_text_lst.append("        @staticmethod\n")
     output_text_lst.append('        def get_respo_model() -> "RespoModel":\n')
     output_text_lst.append(

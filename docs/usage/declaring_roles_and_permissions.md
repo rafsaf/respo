@@ -11,17 +11,17 @@ For this tutorial, we will work on file `respo_model.yml` that will be used in n
 ## Content of respo_model.yml
 
 ```yml
-{!./examples/user_guide/index/general_perms.yml!}
+{!./examples/usage/general_perms.yml!}
 
-{!./examples/user_guide/index/general_principles.yml!}
+{!./examples/usage/general_principles.yml!}
 
-{!./examples/user_guide/index/general_roles.yml!}
+{!./examples/usage/general_roles.yml!}
 ```
 
 ## Permissions
 
 ```yml
-{!./examples/user_guide/index/general_perms.yml!}
+{!./examples/usage/general_perms.yml!}
 ```
 
 !!! note
@@ -35,7 +35,7 @@ Every API endpoint _CAN_ require one or more permissions, ideally the name of en
 ## Principles
 
 ```yml
-{!./examples/user_guide/index/general_principles.yml!}
+{!./examples/usage/general_principles.yml!}
 ```
 
 !!! note
@@ -60,7 +60,7 @@ Someone with a permission to read every information: `read.read_all` (whatever i
 ## Roles
 
 ```yml
-{!./examples/user_guide/index/general_roles.yml!}
+{!./examples/usage/general_roles.yml!}
 ```
 
 !!! note

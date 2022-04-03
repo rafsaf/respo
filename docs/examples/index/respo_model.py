@@ -11,14 +11,17 @@ import respo
 class RespoModel(respo.RespoModel):
     if typing.TYPE_CHECKING:
 
-        class ROLES:
+        class _ROLES(respo.ROLESContainer):
             ADMIN: str
             DEFAULT: str
 
-        class PERMS:
+        class _PERMS(respo.PERMSContainer):
             USER__ALL: str
             USER__READ_ALL: str
             USER__READ_BASIC: str
+
+        PERMS: _PERMS
+        ROLES: _ROLES
 
         @staticmethod
         def get_respo_model() -> "RespoModel":
