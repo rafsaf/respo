@@ -69,6 +69,7 @@ uvicorn = "^0.17.5"
 omit = [
   "**__init__.py**",
   "docs/examples/index/respo_model.py",
+  "docs/examples/usage/respo_model.py",
 ]
 source = [
   "respo",
