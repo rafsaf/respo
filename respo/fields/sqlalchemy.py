@@ -1,9 +1,7 @@
 from typing import Optional
 
-from sqlalchemy import Column
 from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.types import TEXT, TypeDecorator
-from typing_extensions import Self
 
 from respo import client, core, settings
 
@@ -20,7 +18,9 @@ class TEXTRespoField(TypeDecorator):
     def process_result_value(
         self, value: Optional[str], dialect
     ) -> "MutableRespoClient":
-        return MutableRespoClient(roles_str=value)
+        if value is None:
+            value = ""
+        return MutableRespoClient(roles=value)
 
 
 class MutableRespoClient(Mutable, client.RespoClient):
@@ -64,17 +64,4 @@ class MutableRespoClient(Mutable, client.RespoClient):
         return res
 
 
-class MutableRespoColumn(Column, MutableRespoClient):
-    pass
-
-
-_SQLAlchemyRespoField = MutableRespoClient.as_mutable(TEXTRespoField)
-
-
-class SQLAlchemyRespoColumn(Column, MutableRespoClient):
-    def __new__(cls) -> Self:
-        return Column(
-            _SQLAlchemyRespoField,
-            nullable=False,
-            server_default="",
-        )  # type: ignore
+SQLAlchemyRespoField = MutableRespoClient.as_mutable(TEXTRespoField)

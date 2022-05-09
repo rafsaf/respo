@@ -22,15 +22,15 @@ def get_role_label(request, get_general_model: respo.RespoModel):
 
 
 def test_create_respo_client_init():
-    client = respo.RespoClient(roles_str=None)
+    client = respo.RespoClient(roles="")
     assert client.roles == []
     assert str(client) == ""
 
-    client = respo.RespoClient(roles_str="")
+    client = respo.RespoClient(roles="")
     assert client.roles == []
     assert str(client) == ""
 
-    client = respo.RespoClient(roles_str="xxx,yyy,123_123")
+    client = respo.RespoClient(roles="xxx,yyy,123_123")
     assert client.roles == ["xxx", "yyy", "123_123"]
     assert str(client) == "xxx,yyy,123_123"
 

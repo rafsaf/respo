@@ -4,5 +4,6 @@ principles:
 
   - when: user.read_all
     then: [user.read_basic]
+
   - when: user.read_all_better
     then: [user.read_all]

@@ -32,6 +32,8 @@ class DjangoRespoField(TextField, RespoClient):
     """
 
     def from_db_value(self, value: Optional[str], expression, connection):
+        if value is None:
+            value = ""
         return RespoClient(value)
 
     def to_python(self, value):  # pragma: no cover

@@ -1,24 +1,35 @@
 import asyncio
-from typing import Any
+from dataclasses import dataclass, field
 
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy.orm import registry
 
-from respo.fields.sqlalchemy import SQLAlchemyRespoColumn
+from respo import RespoClient
+from respo.fields.sqlalchemy import SQLAlchemyRespoField
 
 from .respo_model import RespoModel
 
-Base: Any = declarative_base()
+Base = registry()
 
 
-class TheModel(Base):
-    __tablename__ = "my_model"
+@Base.mapped
+@dataclass
+class ExampleModel:
+    __tablename__ = "example_model"
+    __sa_dataclass_metadata_key__ = "sa"
 
-    id = Column(Integer, primary_key=True)
-    respo_field = SQLAlchemyRespoColumn()
-    name = Column(String(128), nullable=False, server_default="Ursula")
+    id: int = field(init=False, metadata={"sa": Column(Integer, primary_key=True)})
+    respo_field: RespoClient = field(
+        default=RespoClient(),
+        metadata={
+            "sa": Column(SQLAlchemyRespoField, nullable=False, server_default="")
+        },
+    )
+    name: str = field(
+        default="Ursula",
+        metadata={"sa": Column(String(128), nullable=False, server_default="Ursula")},
+    )
 
 
 async def main():
@@ -27,25 +38,21 @@ async def main():
     async_engine = create_async_engine(
         "sqlite+aiosqlite:///db.sqlite3", pool_pre_ping=True
     )
-    async_session = sessionmaker(
-        async_engine, expire_on_commit=False, class_=AsyncSession  # type: ignore
-    )
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
-    async with async_session() as session:
-        new_obj = TheModel(name="Respo")
+        async with AsyncSession(bind=conn) as session:
+            new_obj = ExampleModel(name="Respo")
+            new_obj.respo_field.add_role(respo_model.ROLES.ADMIN, respo_model)
 
-        session.add(new_obj)
-        await session.commit()  # respo_field is stored as string!
-        await session.refresh(new_obj)
+            session.add(new_obj)
+            await session.commit()  # respo_field is stored as a string!
+            await session.refresh(new_obj)
 
-        new_obj.respo_field.add_role(respo_model.ROLES.ADMIN, respo_model)
-
-        assert new_obj.respo_field.has_permission(
-            respo_model.PERMS.USER__READ_BASIC, respo_model
-        )
+            assert new_obj.respo_field.has_permission(
+                respo_model.PERMS.USER__READ_BASIC, respo_model
+            )
 
 
 asyncio.run(main())

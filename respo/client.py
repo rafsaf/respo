@@ -10,7 +10,7 @@ class RespoClient:
     has_permission() for checking them using respo.RespoModel instance.
 
     Args:
-        roles_str: string with roles separated by comma
+        roles: string with roles separated by comma
 
     Examples:
         >>> RespoClient(None).roles
@@ -21,11 +21,11 @@ class RespoClient:
         "abc,def"
     """
 
-    def __init__(self, roles_str: Optional[str] = "") -> None:
-        if not roles_str:
+    def __init__(self, roles: str = "") -> None:
+        if not roles:
             self.roles: List[str] = []
         else:
-            self.roles: List[str] = roles_str.split(",")
+            self.roles: List[str] = roles.split(",")
 
     def __str__(self) -> str:
         return ",".join(self.roles)

@@ -8,20 +8,23 @@ from sqlalchemy.orm import registry
 from sqlalchemy.orm.session import sessionmaker
 
 from respo import RespoClient
-from respo.fields.sqlalchemy import SQLAlchemyRespoColumn
+from respo.fields.sqlalchemy import SQLAlchemyRespoField
 
 mapper_registry = registry()
 
 
 @mapper_registry.mapped
 @dataclass
-class TheModel:
-    __tablename__ = "themodel"
+class ExampleModel:
+    __tablename__ = "example_model"
     __sa_dataclass_metadata_key__ = "sa"
 
     id: int = field(init=False, metadata={"sa": Column(Integer, primary_key=True)})
     respo_test_field: RespoClient = field(
-        default=RespoClient(), metadata={"sa": SQLAlchemyRespoColumn()}
+        default=RespoClient(),
+        metadata={
+            "sa": Column(SQLAlchemyRespoField, nullable=False, server_default="")
+        },
     )
     name: str = field(
         default="Ursula",
@@ -51,7 +54,7 @@ async def session(test_db_setup) -> AsyncGenerator[AsyncSession, None]:
 
 async def test_respo_field_simple_create_and_change(session: AsyncSession):
     respo_client = RespoClient()
-    new_obj = TheModel(respo_test_field=respo_client)
+    new_obj = ExampleModel(respo_test_field=respo_client)
     session.add(new_obj)
     await session.commit()
     await session.refresh(new_obj)
@@ -75,7 +78,7 @@ async def test_respo_field_handles_methods(
     session: AsyncSession, respo_client: RespoClient
 ):
 
-    new_obj = TheModel(respo_test_field=respo_client, name="Respo")
+    new_obj = ExampleModel(respo_test_field=respo_client, name="Respo")
     assert new_obj.respo_test_field.add_role("test_role", validate_input=False)
     assert not new_obj.respo_test_field.add_role("test_role", validate_input=False)
 
@@ -83,10 +86,10 @@ async def test_respo_field_handles_methods(
     await session.commit()
     await session.refresh(new_obj)
 
-    stmt = select(TheModel).where(TheModel.name == "Respo")
+    stmt = select(ExampleModel).where(ExampleModel.name == "Respo")
     result = await session.execute(statement=stmt)
 
-    obj: TheModel = result.scalars().one()
+    obj: ExampleModel = result.scalars().one()
     assert "test_role" in obj.respo_test_field.roles
 
     assert obj.respo_test_field.remove_role("test_role", validate_input=False)
@@ -99,23 +102,23 @@ async def test_respo_field_handles_methods(
 
 async def test_respo_field_empty_none_creating(session: AsyncSession):
 
-    new_obj = TheModel(name="Respo")
-    new_obj.respo_test_field = RespoClient(roles_str="xxx,yy")
+    new_obj = ExampleModel(name="Respo")
+    new_obj.respo_test_field = RespoClient(roles="xxx,yy")
     session.add(new_obj)
     await session.commit()
     await session.refresh(new_obj)
 
-    stmt = select(TheModel).where(TheModel.name == "Respo")
+    stmt = select(ExampleModel).where(ExampleModel.name == "Respo")
     result = await session.execute(statement=stmt)
 
-    obj: TheModel = result.scalars().one()
+    obj: ExampleModel = result.scalars().one()
     assert "yy" in obj.respo_test_field.roles
     assert new_obj.respo_test_field.add_role("test_role", validate_input=False)
     assert "test_role" in obj.respo_test_field.roles
 
 
 async def test_respo_field_bind_text(session: AsyncSession):
-    new_obj = TheModel(name="Respo")
+    new_obj = ExampleModel(name="Respo")
     with pytest.raises(ValueError):
         new_obj.respo_test_field = ""  # type: ignore
     with pytest.raises(ValueError):
@@ -123,13 +126,13 @@ async def test_respo_field_bind_text(session: AsyncSession):
 
 
 async def test_respo_field_bind_none(session: AsyncSession):
-    new_obj = TheModel(name="Respo")
+    new_obj = ExampleModel(name="Respo")
     session.add(new_obj)
     await session.commit()
     await session.refresh(new_obj)
 
-    stmt = select(TheModel).where(TheModel.name == "Respo")
+    stmt = select(ExampleModel).where(ExampleModel.name == "Respo")
     result = await session.execute(statement=stmt)
 
-    obj: TheModel = result.scalars().one()
+    obj: ExampleModel = result.scalars().one()
     obj.respo_test_field = RespoClient()
