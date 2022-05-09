@@ -3,31 +3,15 @@
 ## Load generated model in Python code
 
 In previous section, we created `.respo_cache` folder and `respo_model.py` file for better autocompletion.
-We assume your folder structure of your app look like that:
 
-```bash
-.
-├── respo_model.yml
-├── respo_model.py
-|
-├── .respo_cache
-│   ├── __auto__respo_model.bin
-│   └── __auto__respo_model.yml
-|
-├── main.py
-|
-...
-
-```
-
-`main.py` is a standard name for file with FastAPI app logic.
-
-To load your respo model in the app and pass it around, use following code:
+To load your respo model in the app and pass it around, you can now use following code, typically in `main.py` file or `settings.py`, `config.py`:
 
 ```python
-{!./examples/usage/main.py!}
+{!./examples/usage/main_roles.py!}
 
 ```
+
+We will be using it in next sections.
 
 <br>
 <br>

@@ -21,7 +21,7 @@ class ExampleModel:
 
     id: int = field(init=False, metadata={"sa": Column(Integer, primary_key=True)})
     respo_field: RespoClient = field(
-        default=RespoClient(),
+        default_factory=RespoClient,
         metadata={
             "sa": Column(SQLAlchemyRespoField, nullable=False, server_default="")
         },

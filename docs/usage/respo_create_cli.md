@@ -28,7 +28,6 @@ $ respo create respo_model.yml
 
 INFO: Validating respo model from respo_model.yml...
 INFO: Saved binary file to .respo_cache/__auto__respo_model.bin
-INFO: Saved yml file to .respo_cache/__auto__respo_model.yml
 INFO: Saved python file to respo_model.py
 INFO: Processed in 0.0239s. Bin file size: 0.0013 mb.
 INFO: Success!
@@ -43,11 +42,10 @@ Your folder structure after success should look like:
 |
 ├── .respo_cache # read-only, processed model files
 │   ├── __auto__respo_model.bin
-│   └── __auto__respo_model.yml
 
 ```
 
-Pickled and yml formats of already resolved input file were saved by default to `.respo_cache` folder. It should not be included `.gitignore`. It allows better performence when reading policy, no need to validate and resolve input yml file every time on app startup.
+Pickled, resolved input file was saved by default to `.respo_cache` folder. It should not be included in `.gitignore`. It allows better performence when reading policy, no need to validate and resolve input yml file every time on app startup and prevents developer mistake.
 
 But there is also another file, `respo_model.py` with following content:
 
@@ -57,7 +55,7 @@ But there is also another file, `respo_model.py` with following content:
 
 ```
 
-This auto-generated file provides best autocompletion support possible in your Python code, note whole logic is wrapped in `typing.TYPE_CHECKING`, it will be understood by your IDE but generates no additional overhead on the runtime.
+This auto-generated file provides best autocompletion support possible in your Python code, note whole logic is wrapped in `typing.TYPE_CHECKING`, it will be understood by your IDE, but generates no additional overhead on the runtime.
 
 <br>
 <br>
