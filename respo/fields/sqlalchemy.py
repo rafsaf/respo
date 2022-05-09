@@ -18,7 +18,7 @@ class TEXTRespoField(TypeDecorator):
     def process_result_value(
         self, value: Optional[str], dialect
     ) -> "MutableRespoClient":
-        if value is None:
+        if value is None:  # pragma: no cover
             value = ""
         return MutableRespoClient(roles=value)
 

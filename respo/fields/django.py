@@ -32,7 +32,7 @@ class DjangoRespoField(TextField, RespoClient):
     """
 
     def from_db_value(self, value: Optional[str], expression, connection):
-        if value is None:
+        if value is None:  # pragma: no cover
             value = ""
         return RespoClient(value)
 

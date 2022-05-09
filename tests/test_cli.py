@@ -89,12 +89,7 @@ def test_respo_create_fail_when_yaml_sytax_valid_but_invalid_model(
     "flags",
     [
         (),
-        ("--no-json-preview",),
         ("--no-python-file",),
-        (
-            "--no-python-file",
-            "--no-json-preview",
-        ),
     ],
 )
 def test_respo_create_success_valid_yml_file(

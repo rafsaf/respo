@@ -12,9 +12,9 @@ Features:
 
 - **No issues** with mutlithreading and multiprocessing – you just pass around already prepared, compiled respo_model (from file) in your app that is **readonly**.
 
-- Generates your roles, permissions offline and compile it to pickle file for superfast access in app.
+- Generates your roles, permissions offline and compile it to pickle file for superfast access in an app.
 
-- Detailed documentation and very detailed error messages in CLI command.
+- Detailed documentation and error messages in CLI command.
 
 - 100% autocompletion and typing support with optional code generation for even better typing support.
 

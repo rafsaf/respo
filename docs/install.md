@@ -15,11 +15,11 @@ pip install respo
 And there are also some other options:
 
 ```bash
-pip install respo[cli]   # with modules for only CLI usage
+pip install respo[cli]   # with PyYAML and click
 
-pip install respo[sqlalchemy]   # with modules for sqlalchemy field usage
+pip install respo[sqlalchemy]   # with sqlalchemy
 
-pip install respo[django]   # with modules for django field usage
+pip install respo[django]   # with django
 ```
 
 <br>

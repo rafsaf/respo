@@ -203,34 +203,21 @@ class RespoModel(pydantic.BaseModel):
             self.PERMS._add_item(str(permission))
 
     @staticmethod
-    def get_respo_model(yml_file: bool = False) -> "RespoModel":
+    def get_respo_model() -> "RespoModel":
         """Loads respo model from already generated pickle or yml file.
 
         Paths to be used can be specified using environment variables or changed in respo.confg.
 
-        Args:
-            yml_file: when True, yml file will be used instead of deafult pickled one.
-
         Raises:
-            RespoModelError: Choosed file (yml or pickle) does not exist.
+            RespoModelError: pickle file does not exist.
         """
-        if yml_file:
-            if not settings.config.path_yml_file.exists():
-                raise exceptions.RespoModelError(
-                    f"Respo yml file does not exist in {settings.config.path_yml_file}."
-                    " Use command: respo create [OPTIONS] FILENAME"
-                )
-            with open(settings.config.path_yml_file, "rb") as respo_model_file:
-                return yaml.load(respo_model_file, yaml.Loader)
-
-        else:
-            if not settings.config.path_bin_file.exists():
-                raise exceptions.RespoModelError(
-                    f"Respo bin file does not exist in {settings.config.path_bin_file}."
-                    " Use command: respo create [OPTIONS] FILENAME"
-                )
-            with open(settings.config.path_bin_file, "rb") as respo_model_file:
-                return pickle.load(respo_model_file)
+        if not settings.config.path_bin_file.exists():
+            raise exceptions.RespoModelError(
+                f"Respo bin file does not exist in {settings.config.path_bin_file}."
+                " Use command: respo create [OPTIONS] FILENAME"
+            )
+        with open(settings.config.path_bin_file, "rb") as respo_model_file:
+            return pickle.load(respo_model_file)
 
     @pydantic.validator("permissions")
     def _permissions_are_unique_and_add_all(cls, permissions: List[DoubleDotLabel]):

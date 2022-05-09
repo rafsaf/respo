@@ -20,15 +20,12 @@ def get_model(name: str) -> respo.RespoModel:
     return respo.RespoModel.parse_obj(data)
 
 
-@pytest.fixture(params=[True, False])
-def get_general_model(request):
+@pytest.fixture
+def get_general_model():
     model1 = get_model("tests/cases/general.yml")
 
     cli.save_respo_model(model1)
-    res = respo.RespoModel.get_respo_model(yml_file=request.param)
-    from sys import getsizeof
-
-    print(getsizeof(res))
+    res = respo.RespoModel.get_respo_model()
     return res
 
 

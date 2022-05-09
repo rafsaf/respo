@@ -13,9 +13,7 @@ from tests import conftest
 def test_respo_model_get_respo_model_throw_errors():
     respo.config.RESPO_AUTO_FOLDER_NAME = "/12309-8)A(S*D)_A(S*D)_(A*DS/asdasdasd"
     with pytest.raises(respo.RespoModelError):
-        respo.RespoModel.get_respo_model(yml_file=False)
-    with pytest.raises(respo.RespoModelError):
-        respo.RespoModel.get_respo_model(yml_file=True)
+        respo.RespoModel.get_respo_model()
 
 
 valid_files = [file for file in os.scandir("./tests/cases/valid")]

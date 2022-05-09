@@ -17,8 +17,8 @@ from respo import core, settings
 def save_respo_model(model: core.RespoModel) -> None:
     """Dumps respo model into bin and yml format files.
 
-    Pickle and yml files are generated and saved to paths specified
-    in settings. This behaviour may be overwritten using environment variables.
+    Pickle file is generated and saved to path specified
+    in settings. Path may be overwritten using environment variables.
     """
     pathlib.Path(settings.config.RESPO_AUTO_FOLDER_NAME).mkdir(
         parents=True, exist_ok=True
@@ -27,16 +27,13 @@ def save_respo_model(model: core.RespoModel) -> None:
     with open(settings.config.path_bin_file, "wb") as file:
         pickle.dump(model, file)
 
-    with open(settings.config.path_yml_file, mode="w") as file:
-        yaml.dump(model, file)
-
 
 def generate_respo_model_file(respo_model: core.RespoModel) -> None:
     """Generates python file with class RespoModel.
 
     Generated file contains class definition that inheritates from
-    RespoModel, but with additional typing annotations. It is written
-    to config.RESPO_FILE_NAME_RESPO_MODEL.
+    RespoModel, but with additional typing annotations. It is saved
+    in config.RESPO_FILE_NAME_RESPO_MODEL.
     """
 
     def class_definition(
@@ -100,13 +97,11 @@ def app():
     pass
 
 
-@click.option("--no-json-preview", is_flag=True, type=bool, default=True)
 @click.option("--no-python-file", is_flag=True, type=bool, default=False)
 @click.argument("file", type=click.File("r"))
 @app.command()
 def create(
     file: io.TextIOWrapper,
-    no_json_preview: bool,
     no_python_file: bool,
 ):
     """Parses FILENAME with declared respo resource policies.
@@ -149,12 +144,8 @@ def create(
     save_respo_model(respo_model)
     if not no_python_file:
         generate_respo_model_file(respo_model=respo_model)
-    if not no_json_preview:
-        with open(settings.config.path_json_file, "w") as file:
-            json.dump(respo_model.roles_permissions, file, indent=4)
 
     click.echo(good(f"Saved binary file to {settings.config.path_bin_file}"))
-    click.echo(good(f"Saved yml file to {settings.config.path_yml_file}"))
     click.echo(good(f"Saved python file to {settings.config.path_python_file}"))
 
     process_time = round(time.time() - start_time, 4)
