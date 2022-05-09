@@ -3,7 +3,6 @@ import re
 from typing import Dict, Iterator, List, Optional, Set
 
 import pydantic
-import yaml
 
 from respo import exceptions, settings
 
