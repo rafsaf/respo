@@ -27,3 +27,4 @@ nav:
       - usage/declaring_roles_and_permissions.md
       - usage/respo_create_cli.md
       - usage/get_respo_model.md
+      - usage/use_respo_model_in_fastapi.md

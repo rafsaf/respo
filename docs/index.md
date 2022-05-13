@@ -33,8 +33,7 @@ from .dependencies import user_have_permission
 
 
 @router.get("/users/read_all/")
-@user_have_permission("users.read_all")
-def users_read_all(user = Depends(get_user)):
+def users_read_all(user = Depends(user_have_permission("users.read_all"))):
     return user
 
 ```
