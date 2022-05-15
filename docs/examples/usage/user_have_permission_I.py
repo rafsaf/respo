@@ -2,8 +2,8 @@
 
 import random
 
-from fastapi import Depends, FastAPI, HTTPException
-
+from fastapi import Depends, FastAPI, HTTPException, Query
+from pydantic import Field
 from respo import RespoClient
 
 from .respo_model import RespoModel
@@ -39,7 +39,7 @@ def user_have_permission(permission):
 
 
 @app.get("/")
-def fetch_all_users(
+def get_all_users(
     user=Depends(user_have_permission(RESPO_MODEL.PERMS.USER__READ_ALL)),
 ):
     return fake_users

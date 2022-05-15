@@ -1,11 +1,11 @@
-# FastAPI dependency user_have_permission
+# FastAPI dependency user_have_permission I
 
 ## Declare user_have_permission dependency for validating permissions
 
 In this topic we will use fake database and very modest example of user_have_permission dependency for FastAPI, the next ones covers SQLAlchemy integration and more realistic flows.
 
 ```python
-{!./examples/usage/respo_model_in_fastapi.py!}
+{!./examples/usage/user_have_permission_I.py!}
 
 ```
 
@@ -51,3 +51,7 @@ and sometimes 403:
 ```
 
 In next section we will get through using real database and SQLAlchemy ORM.
+
+<br>
+<br>
+<br>
