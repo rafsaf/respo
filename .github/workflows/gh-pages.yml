@@ -38,7 +38,7 @@ jobs:
           source .venv/bin/activate
           mkdocs build
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@4.1.5
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
           branch: gh-pages
           folder: site
