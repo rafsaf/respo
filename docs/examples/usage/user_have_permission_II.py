@@ -20,9 +20,7 @@ from sqlalchemy.sql import func
 RESPO_MODEL = RespoModel.get_respo_model()
 
 
-async_engine = create_async_engine(
-    "sqlite+aiosqlite:////tmp/user_have_perms.db", pool_pre_ping=True
-)
+async_engine = create_async_engine("sqlite+aiosqlite:///", pool_pre_ping=True)
 async_session = sessionmaker(
     async_engine, expire_on_commit=False, class_=AsyncSession  # type: ignore
 )

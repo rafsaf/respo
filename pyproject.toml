@@ -54,6 +54,7 @@ isort = "^5.10.1"
 markdown-include = "^0.6.0"
 mkdocs = "^1.2.3"
 mkdocs-material = "^8.2.5"
+mkdocstrings = {extras = ["python"], version = "^0.18.1"}
 mypy = "^0.931"
 pymdown-extensions = "^9.2"
 pytest = "^7.0.1"
@@ -65,13 +66,13 @@ toml = "^0.10.2"
 types-toml = "^0.10.4"
 types-ujson = "^4.2.1"
 uvicorn = "^0.17.5"
-mkdocstrings = {extras = ["python"], version = "^0.18.1"}
 
 [tool.coverage.run]
 omit = [
   "**__init__.py**",
   "docs/examples/index/respo_model.py",
   "docs/examples/usage/respo_model.py",
+  "docs/examples/usage/user_have_permission_II.py",
 ]
 source = [
   "respo",
