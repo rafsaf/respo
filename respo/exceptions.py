@@ -1,6 +1,6 @@
 class RespoModelError(ValueError):
-    pass
+    """Respo general error raised when validating yml input"""
 
 
 class RespoClientError(ValueError):
-    pass
+    """Respo client class error"""

@@ -43,17 +43,3 @@ def get_user(
     user=Depends(user_have_permission(RESPO_MODEL.PERMS.USER__READ_ALL)),
 ):
     return {"name": user["name"]}
-
-
-@app.get("/buy-book")
-def buy_books(
-    user=Depends(user_have_permission(RESPO_MODEL.PERMS.BOOK__BUY)),
-):
-    return None
-
-
-@app.get("/sell-book")
-def sell_books(
-    user=Depends(user_have_permission(RESPO_MODEL.PERMS.BOOK__SELL)),
-):
-    return None

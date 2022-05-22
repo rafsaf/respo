@@ -28,8 +28,15 @@ nav:
       - usage/respo_create_cli.md
       - usage/get_respo_model.md
       - usage/user_have_permission.md
+      - usage/environment_variables.md
   - Reference:
       - reference/core.md
+      - reference/cli.md
+      - reference/client.md
+      - reference/fields.django.md
+      - reference/fields.sqlalchemy.md
+      - reference/exceptions.md
+      - reference/settings.md
 
 plugins:
   - mkdocstrings:
@@ -37,6 +44,7 @@ plugins:
       handlers:
         python:
           rendering:
-            show_source: false
+            show_source: true
+            show_root_heading: true
       watch:
         - respo
