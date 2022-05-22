@@ -24,7 +24,7 @@ _Note, every piece of code in the docs is a tested python/yml file, feel free to
 
 ## Usage in FastAPI
 
-The goal is to use simple and reusable decorator `@user_have_permission("some permission")` that will verify just having `User` database instance if user have access to resoruce. Single endpoint must have single permission for it, and thanks to respo compilation step, every "stronger" permissions and roles would include "weaker" so **we don't need to have the if statements everywhere around application**.
+The goal is to use simple and reusable dependency factory `user_have_permission("some permission")` that will verify just having `User` database instance if user have access to resoruce. Single endpoint must have single permission for it, and thanks to respo compilation step, every "stronger" permissions and roles would include "weaker" so **we don't need to have the if statements everywhere around application**.
 
 ```python
 from .dependencies import user_have_permission
