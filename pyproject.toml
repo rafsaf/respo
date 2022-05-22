@@ -65,6 +65,7 @@ toml = "^0.10.2"
 types-toml = "^0.10.4"
 types-ujson = "^4.2.1"
 uvicorn = "^0.17.5"
+mkdocstrings = {extras = ["python"], version = "^0.18.1"}
 
 [tool.coverage.run]
 omit = [

@@ -30,7 +30,7 @@ For this tutorial, we will work on file `respo_model.yml` that will be used in n
 
 First we need to define **unique** permissions for resources. This could be anything, but suggested convention is "user.read" or "book.list" etc. where first part is named _collection_ or _group_ (many permissions can share the same _collection_) and the second is specific name in this _collection_. The more self-describing names, the better.
 
-Every API endpoint _CAN_ require one or more permissions, ideally the name of endpoint should be similar to required permission (if only one permission will be required).
+Every API endpoint _SHOULD_ require exactly one permission (or _zero_, of course), ideally the name of endpoint should be similar to required permission.
 
 ## Principles
 

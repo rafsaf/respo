@@ -27,5 +27,16 @@ nav:
       - usage/declaring_roles_and_permissions.md
       - usage/respo_create_cli.md
       - usage/get_respo_model.md
-      - usage/user_have_permission_I.md
-      - usage/user_have_permission_II.md
+      - usage/user_have_permission.md
+  - Reference:
+      - reference/core.md
+
+plugins:
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          rendering:
+            show_source: false
+      watch:
+        - respo
