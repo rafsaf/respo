@@ -1,0 +1,10 @@
+permissions:
+  - user.read_basic
+  - user.read_all
+  - user.read_all_better
+  - user.update
+
+  - book.list
+  - book.read
+  - book.sell
+  - book.buy

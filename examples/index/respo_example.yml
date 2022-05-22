@@ -1,0 +1,19 @@
+# paste this file to "respo-example.yml"
+
+permissions:
+  - user.read_basic
+  - user.read_all
+
+principles:
+  - when: user.read_all
+    then: [user.read_basic]
+
+roles:
+  - name: default
+    permissions:
+      - user.read_basic
+
+  - name: admin
+    include: [default]
+    permissions:
+      - user.read_all

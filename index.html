@@ -8,9 +8,8 @@
       
       
       
-      
       <link rel="icon" href="images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.6">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.15">
     
     
       
@@ -18,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.802231af.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.c382b1dc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.3f5d1f46.min.css">
+        <link rel="stylesheet" href="assets/stylesheets/palette.cc9b2e1e.min.css">
         
           
           
@@ -33,16 +32,18 @@
     
       
         
+        
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
     
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
     
+    <script>__md_scope=new URL(".",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
-
 
     
     
@@ -57,7 +58,6 @@
     <body dir="ltr" data-md-color-scheme="" data-md-color-primary="light-blue" data-md-color-accent="">
   
     
-    <script>function __prefix(e){return new URL(".",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -65,7 +65,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#overview" class="md-skip">
+        <a href="#introduction" class="md-skip">
           Skip to content
         </a>
       
@@ -74,16 +74,19 @@
       
     </div>
     
-      <header class="md-header" data-md-component="header">
+    
+      
+
+<header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="." title="respo" class="md-header__button md-logo" aria-label="respo" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 11 13 7.5l1.4-1.4 2.1 2.1L20.7 4l1.4 1.4-5.6 5.6M11 7H2v2h9V7m10 6.4L19.6 12 17 14.6 14.4 12 13 13.4l2.6 2.6-2.6 2.6 1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6M11 15H2v2h9v-2z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 11 13 7.5l1.4-1.4 2.1 2.1L20.7 4l1.4 1.4-5.6 5.6M11 7H2v2h9V7m10 6.4L19.6 12 17 14.6 14.4 12 13 13.4l2.6 2.6-2.6 2.6 1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6M11 15H2v2h9v-2Z"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -104,47 +107,12 @@
     
     
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
-      </label>
-      
-<div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="Search">
-        
-        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
-        </button>
-      </nav>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
-            Initializing search
-          </div>
-          <ol class="md-search-result__list"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-    
     
       <div class="md-header__source">
-        
-<a href="https://github.com/rafsaf/respo/" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/rafsaf/respo" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
     rafsaf/respo
@@ -153,11 +121,14 @@
       </div>
     
   </nav>
+  
 </header>
     
     <div class="md-container" data-md-component="container">
       
       
+        
+          
         
       
       <main class="md-main" data-md-component="main">
@@ -176,18 +147,17 @@
     <a href="." title="respo" class="md-nav__button md-logo" aria-label="respo" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 11 13 7.5l1.4-1.4 2.1 2.1L20.7 4l1.4 1.4-5.6 5.6M11 7H2v2h9V7m10 6.4L19.6 12 17 14.6 14.4 12 13 13.4l2.6 2.6-2.6 2.6 1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6M11 15H2v2h9v-2z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 11 13 7.5l1.4-1.4 2.1 2.1L20.7 4l1.4 1.4-5.6 5.6M11 7H2v2h9V7m10 6.4L19.6 12 17 14.6 14.4 12 13 13.4l2.6 2.6-2.6 2.6 1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6M11 15H2v2h9v-2Z"/></svg>
 
     </a>
     respo
   </label>
   
     <div class="md-nav__source">
-      
-<a href="https://github.com/rafsaf/respo/" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/rafsaf/respo" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
     rafsaf/respo
@@ -211,8 +181,6 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
-        
-      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           Overview
@@ -224,11 +192,10 @@
       </a>
       
         
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
-  
-    
   
   
     <label class="md-nav__title" for="__toc">
@@ -238,22 +205,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-yml-file-with-defined-permissions-organizations-and-roles" class="md-nav__link">
-    1. YML file with defined permissions, organizations and roles
+  <a href="#introduction" class="md-nav__link">
+    Introduction
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-parse-yml-file-using-respo-cli-interface" class="md-nav__link">
-    2. Parse YML file using respo CLI interface
+  <a href="#usage-in-fastapi" class="md-nav__link">
+    Usage in FastAPI
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-using-created-respo-model-in-dummy-fastapi-app" class="md-nav__link">
-    3. Using created respo model in dummy FastAPI app
+  <a href="#declaring-yml-file-with-permissions-roles" class="md-nav__link">
+    Declaring YML file with permissions, roles.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parsing-yml-file-to-readonly-pickle-using-respo-cli-interface" class="md-nav__link">
+    Parsing YML file to readonly pickle using respo CLI interface.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-in-fastapi-and-sqlalchemy" class="md-nav__link">
+    Usage in FastAPI and SQLAlchemy.
   </a>
   
 </li>
@@ -274,7 +255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="Install/" class="md-nav__link">
+      <a href="install/" class="md-nav__link">
         Install
       </a>
     </li>
@@ -294,31 +275,240 @@
       
         <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
       
-      <label class="md-nav__link" for="__nav_3">
-        User Guide
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="User Guide" data-md-level="1">
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Usage
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Usage" data-md-level="1">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          User Guide
+          Usage
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
             
+              
   
   
   
     <li class="md-nav__item">
-      <a href="User_Guide/" class="md-nav__link">
-        User Guide
+      <a href="usage/declaring_roles_and_permissions/" class="md-nav__link">
+        Declaring roles and permissions
       </a>
     </li>
   
 
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="usage/respo_create_cli/" class="md-nav__link">
+        Respo create CLI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="usage/get_respo_model/" class="md-nav__link">
+        Get respo model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="usage/user_have_permission/" class="md-nav__link">
+        FastAPI + SQLAlchemy dependency user_have_permission
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="usage/environment_variables/" class="md-nav__link">
+        Configuration - environment variables
+      </a>
+    </li>
+  
+
+            
           
         </ul>
       </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/core/" class="md-nav__link">
+        Core
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/cli/" class="md-nav__link">
+        Cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/client/" class="md-nav__link">
+        Client
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/fields.django/" class="md-nav__link">
+        Fields.django
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/fields.sqlalchemy/" class="md-nav__link">
+        Fields.sqlalchemy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/exceptions/" class="md-nav__link">
+        Exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="reference/settings/" class="md-nav__link">
+        Settings
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="changelog/" class="md-nav__link">
+        Changelog
+      </a>
     </li>
   
 
@@ -335,11 +525,10 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
-  
-    
   
   
     <label class="md-nav__title" for="__toc">
@@ -349,22 +538,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-yml-file-with-defined-permissions-organizations-and-roles" class="md-nav__link">
-    1. YML file with defined permissions, organizations and roles
+  <a href="#introduction" class="md-nav__link">
+    Introduction
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-parse-yml-file-using-respo-cli-interface" class="md-nav__link">
-    2. Parse YML file using respo CLI interface
+  <a href="#usage-in-fastapi" class="md-nav__link">
+    Usage in FastAPI
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-using-created-respo-model-in-dummy-fastapi-app" class="md-nav__link">
-    3. Using created respo model in dummy FastAPI app
+  <a href="#declaring-yml-file-with-permissions-roles" class="md-nav__link">
+    Declaring YML file with permissions, roles.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parsing-yml-file-to-readonly-pickle-using-respo-cli-interface" class="md-nav__link">
+    Parsing YML file to readonly pickle using respo CLI interface.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-in-fastapi-and-sqlalchemy" class="md-nav__link">
+    Usage in FastAPI and SQLAlchemy.
   </a>
   
 </li>
@@ -381,16 +584,145 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/rafsaf/respo/edit/master/docs/index.md" title="Edit this page" class="md-content__button md-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
-                  </a>
-                
-                
-                <h1 id="overview">Overview</h1>
-<p><em>respo</em> states for <strong>Resource Policy</strong> and is tiny, user friendly tool for building RBAC systems based on single <code>yml</code> file, mainly with FastAPI framework in mind. In most cases – for even large set of roles and organizations – single file would be enough to provide restricting system access.</p>
-<p>Note, every piece of code in the docs is a tested python/yml file, feel free to use it.</p>
-<h2 id="1-yml-file-with-defined-permissions-organizations-and-roles">1. YML file with defined permissions, organizations and roles</h2>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+  <a href="https://github.com/rafsaf/respo/edit/master/docs/index.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+  <h1>Overview</h1>
+
+<h2 id="introduction">Introduction</h2>
+<p><em>respo</em> states for resource policy and is tiny, user friendly tool for building RBAC systems based on static <code>yml</code> file, mainly with FastAPI framework in mind. In most cases – for even large set of roles – single file would be enough to provide restricting system access.</p>
+<p>Features:</p>
+<ul>
+<li>
+<p>It provides custom fields for <strong>SQLAlchemy</strong> and <strong>Django</strong> to store users roles in database.</p>
+</li>
+<li>
+<p>Implements R. Sandhu Role-based access control <a href="https://profsandhu.com/articles/advcom/adv_comp_rbac.pdf">text</a>.</p>
+</li>
+<li>
+<p>Dead simple, fast and can be trusted – 100% coverage.</p>
+</li>
+<li>
+<p><strong>No issues</strong> with mutlithreading and multiprocessing – you just pass around already prepared, compiled respo_model (from file) in your app that is <strong>readonly</strong>.</p>
+</li>
+<li>
+<p>Generates your roles, permissions offline and compile it to pickle file for superfast access in an app.</p>
+</li>
+<li>
+<p>Detailed documentation and error messages in CLI command.</p>
+</li>
+<li>
+<p>100% autocompletion and typing support with optional code generation for even better typing support.</p>
+</li>
+</ul>
+<hr />
+<p><em>Note, every piece of code in the docs is a tested python/yml file, feel free to use it.</em></p>
+<h2 id="usage-in-fastapi">Usage in FastAPI</h2>
+<p>The goal is to use simple and reusable dependency factory <code>user_have_permission("some permission")</code> that will verify just having <code>User</code> database instance if user have access to resoruce. Single endpoint must have single permission for it, and thanks to respo compilation step, every "stronger" permissions and roles would include "weaker" so <strong>we don't need to have the if statements everywhere around application</strong>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">from</span> <span class="nn">.dependencies</span> <span class="kn">import</span> <span class="n">user_have_permission</span>
+
+<span class="o">...</span>
+
+
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/users/read_all/&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">users_read_all</span><span class="p">(</span><span class="n">user</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">user_have_permission</span><span class="p">(</span><span class="s2">&quot;users.read_all&quot;</span><span class="p">))):</span>
+    <span class="k">return</span> <span class="n">user</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="declaring-yml-file-with-permissions-roles">Declaring YML file with permissions, roles.</h2>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code># paste this file to &quot;respo-example.yml&quot;
+
+permissions:
+  - user.read_basic
+  - user.read_all
+
+principles:
+  - when: user.read_all
+    then: [user.read_basic]
+
+roles:
+  - name: default
+    permissions:
+      - user.read_basic
+
+  - name: admin
+    include: [default]
+    permissions:
+      - user.read_all
+</code></pre></div></td></tr></table></div>
+<p>There are 3 sections:</p>
+<ul>
+<li><strong>permissions</strong>, list of double labels <code>"{collection}.{label}"</code>, they represent single permission that user can be given.</li>
+<li><strong>principles</strong>, list of principles where one can declare rules for permissions to contain others. For example, we want to some one that (through some role) have "more powerful" permission <code>user.read_all</code> to also have access to resources that require <code>user.read_basic</code> permission.</li>
+<li><strong>roles</strong>, list of roles objects, note that they have unique <code>name</code>, set of <code>permissions</code> and optional list <code>include</code> of other roles, so we can give admin role the same set of rules as default user (and add more powerful ones).</li>
+</ul>
+<h2 id="parsing-yml-file-to-readonly-pickle-using-respo-cli-interface">Parsing YML file to readonly pickle using respo CLI interface.</h2>
+<p>Thanks to <a href="https://click.palletsprojects.com/">Click</a>, <em>respo</em> has powerful cli interface.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="gp">$ </span>respo --help  <span class="c1"># prints all available commands</span>
+
+<span class="gp">$ </span>respo create respo-example.yml  <span class="c1"># create model from file</span>
+
+<span class="gp">#</span><span class="c1">## Result ###</span>
+<span class="gp">$ </span>INFO: Validating respo model from respo-example.yml...
+<span class="gp">$ </span>INFO: Saved binary file to .respo_cache/__auto__respo_model.bin
+<span class="gp">$ </span>INFO: Saved yml file to .respo_cache/__auto__respo_model.yml
+<span class="gp">$ </span>INFO: Saved python file to respo_model.py
+<span class="gp">$ </span>INFO: Processed <span class="k">in</span> <span class="m">0</span>.0058s. Bin file size: <span class="m">0</span>.0007 mb.
+<span class="gp">$ </span>INFO: Success!
+</code></pre></div></td></tr></table></div>
+<p>That powerful command create serveral of things:</p>
+<ul>
+<li>
+<p><code>.respo_cache/__auto__respo_model.bin</code> file (pickle format of model).</p>
+</li>
+<li>
+<p><code>.respo_cache/__auto__respo_model.yml</code> file (yml format of model).</p>
+</li>
+<li>
+<p><code>respo_model.py</code> file (python file of model for better autocompletion).</p>
+</li>
+</ul>
+<p>(<em>Refer to User Guide for more information about first two of them.</em>)</p>
+<p><strong>respo_model.py</strong></p>
+<p>Autogenerated file with class based on respo.RespoModel with bonus autocompletion.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
 <span class="normal"> 4</span>
@@ -417,72 +749,38 @@
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
-<span class="normal">28</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="c1"># respo-example.yml</span>
-<span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Just an example file</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Auto generated using respo create command</span>
+<span class="sd">Docs: https://rafsaf.github.io/respo/</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
-<span class="nt">permissions</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">metadata</span><span class="p">:</span>
-      <span class="nt">label</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">user</span>
-    <span class="nt">resources</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">label</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">user.read_basic</span>
-      <span class="p p-Indicator">-</span> <span class="nt">label</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">user.read_all</span>
-      <span class="p p-Indicator">-</span> <span class="nt">label</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">user.create</span>
-    <span class="nt">rules</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">when</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">user.read_all</span>
-        <span class="nt">then</span><span class="p">:</span>
-          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user.read_basic</span>
+<span class="kn">import</span> <span class="nn">typing</span>
 
-<span class="nt">organizations</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">metadata</span><span class="p">:</span>
-      <span class="nt">label</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-    <span class="nt">permissions</span><span class="p">:</span> <span class="p p-Indicator">[]</span>
+<span class="kn">import</span> <span class="nn">respo</span>
 
-<span class="nt">roles</span><span class="p">:</span>
-  <span class="p p-Indicator">-</span> <span class="nt">metadata</span><span class="p">:</span>
-      <span class="nt">label</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
-      <span class="nt">organization</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
-    <span class="nt">permissions</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">label</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default.user.create</span>
-      <span class="p p-Indicator">-</span> <span class="nt">label</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">default.user.read_all</span>
-</code></pre></div>
-</td></tr></table>
-<p>Note, this is very minimal showcase file, without (optional) <strong>names</strong> and <strong>descriptions</strong> fields for every object so it takes less space.</p>
-<p>There are 4 sections:</p>
-<ul>
-<li><strong>metadata</strong>, it will be automatically populated with things like <code>last_modify</code> datetime and <code>created_at</code> fields</li>
-<li><strong>permissions</strong>, list of <code>permission "groups"</code> (only one – "user" above), where you specify all possible permission names in <strong>resources</strong> and custom rules (nested as you like) so stronger labels will force weaker</li>
-<li><strong>organizations</strong>, list of predefined names and optionally – ensured permissions by default. You may choose to split such as "superadmins", "admins", "normal users", but also "company A", "company B" etc.</li>
-<li><strong>roles</strong>, they belong strictly to one of organizations, with set of permissions. Not allowing one-to-many role to organization helps to avoid mistakes.</li>
-</ul>
-<h2 id="2-parse-yml-file-using-respo-cli-interface">2. Parse YML file using respo CLI interface</h2>
-<p>Thanks to <a href="https://typer.tiangolo.com/">Typer</a>, <em>respo</em> has powerful cli interface based on python annotations.</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>respo --help  <span class="c1"># prints all available commands</span>
 
-respo create respo-example.yml  <span class="c1"># create model from file</span>
+<span class="k">class</span> <span class="nc">RespoModel</span><span class="p">(</span><span class="n">respo</span><span class="o">.</span><span class="n">RespoModel</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">typing</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
 
-<span class="c1"># Result</span>
-INFO: Start looking <span class="k">for</span> file <span class="s1">&#39;respo-example.yml&#39;</span>
-INFO: Validating the content...
-INFO: YML syntax validated <span class="k">in</span> <span class="m">0</span>.004s...
-INFO: Respo model validated <span class="k">in</span> <span class="m">0</span>.002s...
-INFO: Saving as binary file to .respo_cache/__auto__respo_model.bin
-INFO: Success!
-</code></pre></div>
-</td></tr></table>
-<p>And thats it, yml file got validated and pickled by default to <code>.respo_cache/__auto__respo_model.bin</code> file.</p>
-<h2 id="3-using-created-respo-model-in-dummy-fastapi-app">3. Using created respo model in dummy FastAPI app</h2>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+        <span class="k">class</span> <span class="nc">_ROLES</span><span class="p">(</span><span class="n">respo</span><span class="o">.</span><span class="n">ROLESContainer</span><span class="p">):</span>
+            <span class="n">ADMIN</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="n">DEFAULT</span><span class="p">:</span> <span class="nb">str</span>
+
+        <span class="k">class</span> <span class="nc">_PERMS</span><span class="p">(</span><span class="n">respo</span><span class="o">.</span><span class="n">PERMSContainer</span><span class="p">):</span>
+            <span class="n">USER__ALL</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="n">USER__READ_ALL</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="n">USER__READ_BASIC</span><span class="p">:</span> <span class="nb">str</span>
+
+        <span class="n">PERMS</span><span class="p">:</span> <span class="n">_PERMS</span>
+        <span class="n">ROLES</span><span class="p">:</span> <span class="n">_ROLES</span>
+
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span> <span class="nf">get_respo_model</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s2">&quot;RespoModel&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">respo</span><span class="o">.</span><span class="n">RespoModel</span><span class="o">.</span><span class="n">get_respo_model</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="usage-in-fastapi-and-sqlalchemy">Usage in FastAPI and SQLAlchemy.</h2>
+<p>To interact with stateless, readonly respo_model created above, respo provides abstraction called <code>RespoClient</code> that can be stored in database as a custom respo <code>SQLAlchemyRespoField</code> field, be given or removed a role that can also check using respo_model instance its permissions.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
 <span class="normal"> 4</span>
@@ -523,65 +821,88 @@ INFO: Success!
 <span class="normal">39</span>
 <span class="normal">40</span>
 <span class="normal">41</span>
-<span class="normal">42</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="c1"># main.py - example FastAPI app using respo</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 
-<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.asyncio</span> <span class="kn">import</span> <span class="n">AsyncSession</span><span class="p">,</span> <span class="n">create_async_engine</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">registry</span>
 
-<span class="kn">from</span> <span class="nn">respo</span> <span class="kn">import</span> <span class="n">create_respo_client</span><span class="p">,</span> <span class="n">get_respo_model</span><span class="p">,</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">respo</span> <span class="kn">import</span> <span class="n">RespoClient</span>
+<span class="kn">from</span> <span class="nn">respo.fields.sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemyRespoField</span>
 
-<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
-<span class="n">respo</span> <span class="o">=</span> <span class="n">get_respo_model</span><span class="p">()</span>
+<span class="kn">from</span> <span class="nn">.respo_model</span> <span class="kn">import</span> <span class="n">RespoModel</span>
 
-<span class="c1"># You would probably use database, this is just a simple User &quot;table&quot;</span>
-<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">organizations</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">roles</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">respo_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Client</span><span class="p">:</span>
-        <span class="c1"># [&quot;foo1&quot;, &quot;foo2&quot;] or &quot;foo1 foo2&quot; syntax supported</span>
-        <span class="k">return</span> <span class="n">create_respo_client</span><span class="p">(</span>
-            <span class="n">roles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">roles</span><span class="p">,</span>
-            <span class="n">organizations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">organizations</span><span class="p">,</span>
-        <span class="p">)</span>
-
-
-<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/</span><span class="si">{organization}</span><span class="s2">/user_read_all&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">user_read_all</span><span class="p">(</span><span class="n">organization</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">roles</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">respo</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">organization</span><span class="si">}</span><span class="s2">.user.read_all&quot;</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">respo_client</span><span class="p">()):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Granted!&quot;</span><span class="p">}</span>
-
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Denied!&quot;</span><span class="p">}</span>
+<span class="n">Base</span> <span class="o">=</span> <span class="n">registry</span><span class="p">()</span>
 
 
-<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/</span><span class="si">{organization}</span><span class="s2">/user_read_basic&quot;</span><span class="p">)</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">user_read_basic</span><span class="p">(</span><span class="n">organization</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">roles</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+<span class="nd">@Base</span><span class="o">.</span><span class="n">mapped</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ExampleModel</span><span class="p">:</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;example_model&quot;</span>
+    <span class="n">__sa_dataclass_metadata_key__</span> <span class="o">=</span> <span class="s2">&quot;sa&quot;</span>
 
-    <span class="k">if</span> <span class="n">respo</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">organization</span><span class="si">}</span><span class="s2">.user.read_basic&quot;</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">respo_client</span><span class="p">()):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Granted!&quot;</span><span class="p">}</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)})</span>
+    <span class="n">respo_field</span><span class="p">:</span> <span class="n">RespoClient</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="n">RespoClient</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">SQLAlchemyRespoField</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">server_default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Ursula&quot;</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">server_default</span><span class="o">=</span><span class="s2">&quot;Ursula&quot;</span><span class="p">)},</span>
+    <span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Denied!&quot;</span><span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
-<p>Insights:</p>
-<ul>
-<li>Every endpoint has exactly and only exactly <strong>ONE UNIQUE PERMISSION</strong></li>
-<li>Nested rules are resolved (note, no <code>user.read_basic</code> directly in foo role declaration from above, it was resolved by respo) so no need for complex if statements anywhere, any permission inheritance is done during build time using <code>respo create some_file</code></li>
-<li>Every endpoint must have <code>organization</code> in path, so that different organizations are totally independent</li>
-</ul>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">respo_model</span> <span class="o">=</span> <span class="n">RespoModel</span><span class="o">.</span><span class="n">get_respo_model</span><span class="p">()</span>  <span class="c1"># loads respo model from pickled file</span>
+
+    <span class="n">async_engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span>
+        <span class="s2">&quot;sqlite+aiosqlite:///db.sqlite3&quot;</span><span class="p">,</span> <span class="n">pool_pre_ping</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">async_engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">run_sync</span><span class="p">(</span><span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">drop_all</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">run_sync</span><span class="p">(</span><span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">)</span>
+
+        <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncSession</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">conn</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">new_obj</span> <span class="o">=</span> <span class="n">ExampleModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Respo&quot;</span><span class="p">)</span>
+            <span class="n">new_obj</span><span class="o">.</span><span class="n">respo_field</span><span class="o">.</span><span class="n">add_role</span><span class="p">(</span><span class="n">respo_model</span><span class="o">.</span><span class="n">ROLES</span><span class="o">.</span><span class="n">ADMIN</span><span class="p">,</span> <span class="n">respo_model</span><span class="p">)</span>
+
+            <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_obj</span><span class="p">)</span>
+            <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c1"># respo_field is stored as a string!</span>
+            <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">new_obj</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="n">new_obj</span><span class="o">.</span><span class="n">respo_field</span><span class="o">.</span><span class="n">has_permission</span><span class="p">(</span>
+                <span class="n">respo_model</span><span class="o">.</span><span class="n">PERMS</span><span class="o">.</span><span class="n">USER__READ_BASIC</span><span class="p">,</span> <span class="n">respo_model</span>
+            <span class="p">)</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div></td></tr></table></div>
+<p>Note, thanks to smart types in RespoField for SQLAlchemy and auto generated typed file <code>respo_model</code> we have powerful autocompletions:</p>
+<p><img alt="autocompletion-respo-client" src="images/000_autocompletion_respo_client.jpg" /></p>
+<p><img alt="autocompletion-respo-client" src="images/001_autocompletion_respo_client.jpg" /></p>
+<p><img alt="autocompletion-respo-client" src="images/002_autocompletion_respo_client.jpg" /></p>
 <p><br>
 <br>
-<br>
 <br></p>
-                
-              
-              
-                
-
 
               
             </article>
@@ -590,14 +911,13 @@ INFO: Success!
         
       </main>
       
-        
-<footer class="md-footer">
+        <footer class="md-footer">
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
       
         
-        <a href="Install/" class="md-footer__link md-footer__link--next" aria-label="Next: Install" rel="next">
+        <a href="install/" class="md-footer__link md-footer__link--next" aria-label="Next: Install" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
@@ -607,7 +927,7 @@ INFO: Success!
             </div>
           </div>
           <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
           </div>
         </a>
       
@@ -615,14 +935,15 @@ INFO: Success!
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
-      <div class="md-footer-copyright">
-        
-        Made with
-        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-          Material for MkDocs
-        </a>
-        
-      </div>
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
       
     </div>
   </div>
@@ -632,10 +953,10 @@ INFO: Success!
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "assets/javascripts/workers/search.409db549.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.756773cc.min.js"></script>
+      <script src="assets/javascripts/bundle.a6c66575.min.js"></script>
       
     
   </body>

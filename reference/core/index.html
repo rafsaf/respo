@@ -1,0 +1,2026 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.15">
+    
+    
+      
+        <title>Core - respo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.c382b1dc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cc9b2e1e.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#02a6f2">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="light-blue" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#respo.core" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="respo" class="md-header__button md-logo" aria-label="respo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 11 13 7.5l1.4-1.4 2.1 2.1L20.7 4l1.4 1.4-5.6 5.6M11 7H2v2h9V7m10 6.4L19.6 12 17 14.6 14.4 12 13 13.4l2.6 2.6-2.6 2.6 1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6M11 15H2v2h9v-2Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            respo
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Core
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/rafsaf/respo" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    rafsaf/respo
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="respo" class="md-nav__button md-logo" aria-label="respo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 11 13 7.5l1.4-1.4 2.1 2.1L20.7 4l1.4 1.4-5.6 5.6M11 7H2v2h9V7m10 6.4L19.6 12 17 14.6 14.4 12 13 13.4l2.6 2.6-2.6 2.6 1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6M11 15H2v2h9v-2Z"/></svg>
+
+    </a>
+    respo
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/rafsaf/respo" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    rafsaf/respo
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../install/" class="md-nav__link">
+        Install
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Usage
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Usage" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Usage
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/declaring_roles_and_permissions/" class="md-nav__link">
+        Declaring roles and permissions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/respo_create_cli/" class="md-nav__link">
+        Respo create CLI
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/get_respo_model/" class="md-nav__link">
+        Get respo model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/user_have_permission/" class="md-nav__link">
+        FastAPI + SQLAlchemy dependency user_have_permission
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/environment_variables/" class="md-nav__link">
+        Configuration - environment variables
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Core
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Core
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#respo.core" class="md-nav__link">
+    core
+  </a>
+  
+    <nav class="md-nav" aria-label="core">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.LabelsContainer" class="md-nav__link">
+    LabelsContainer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.PERMSContainer" class="md-nav__link">
+    PERMSContainer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.PermissionLabel" class="md-nav__link">
+    PermissionLabel
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.Principle" class="md-nav__link">
+    Principle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.ROLESContainer" class="md-nav__link">
+    ROLESContainer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.RespoModel" class="md-nav__link">
+    RespoModel
+  </a>
+  
+    <nav class="md-nav" aria-label="RespoModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.RespoModel.get_respo_model" class="md-nav__link">
+    get_respo_model()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.Role" class="md-nav__link">
+    Role
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.RoleLabel" class="md-nav__link">
+    RoleLabel
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        Cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client/" class="md-nav__link">
+        Client
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fields.django/" class="md-nav__link">
+        Fields.django
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fields.sqlalchemy/" class="md-nav__link">
+        Fields.sqlalchemy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exceptions/" class="md-nav__link">
+        Exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../settings/" class="md-nav__link">
+        Settings
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        Changelog
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#respo.core" class="md-nav__link">
+    core
+  </a>
+  
+    <nav class="md-nav" aria-label="core">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.LabelsContainer" class="md-nav__link">
+    LabelsContainer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.PERMSContainer" class="md-nav__link">
+    PERMSContainer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.PermissionLabel" class="md-nav__link">
+    PermissionLabel
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.Principle" class="md-nav__link">
+    Principle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.ROLESContainer" class="md-nav__link">
+    ROLESContainer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.RespoModel" class="md-nav__link">
+    RespoModel
+  </a>
+  
+    <nav class="md-nav" aria-label="RespoModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.RespoModel.get_respo_model" class="md-nav__link">
+    get_respo_model()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.Role" class="md-nav__link">
+    Role
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#respo.core.RoleLabel" class="md-nav__link">
+    RoleLabel
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+  <a href="https://github.com/rafsaf/respo/edit/master/docs/reference/core.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+  <h1>Core</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+<h2 id="respo.core" class="doc doc-heading">
+        <code>respo.core</code>
+
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="respo.core.LabelsContainer" class="doc doc-heading">
+          <code>LabelsContainer</code>
+
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+      <p>Container for respo model attributes with respo_model in init</p>
+<p>Stores human friendly dict with attrs in <strong>dict</strong> that can be
+accessed via attributes.</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">attrs_container</span> <span class="o">=</span> <span class="n">LabelsContainer</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attrs_container</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="s2">&quot;valid_text&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attrs_container</span><span class="o">.</span><span class="n">VALID_TEXT</span>
+<span class="go">&quot;valid_text&quot;</span>
+</code></pre></div>
+
+
+          <details class="quote">
+            <summary>Source code in <code>respo/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">LabelsContainer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Container for respo model attributes with respo_model in init</span>
+
+<span class="sd">    Stores human friendly dict with attrs in __dict__ that can be</span>
+<span class="sd">    accessed via attributes.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; attrs_container = LabelsContainer()</span>
+<span class="sd">        &gt;&gt;&gt; attrs_container._add_item(&quot;valid_text&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; attrs_container.VALID_TEXT</span>
+<span class="sd">        &quot;valid_text&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">respo_model</span><span class="p">:</span> <span class="s2">&quot;RespoModel&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="p">:</span> <span class="n">RespoModel</span> <span class="o">=</span> <span class="n">respo_model</span>
+
+    <span class="k">def</span> <span class="nf">_add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">label</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="respo.core.PERMSContainer" class="doc doc-heading">
+          <code>PERMSContainer</code>
+
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+        <p class="doc doc-class-bases">
+          Bases: <code><a class="autorefs autorefs-internal" title="respo.core.LabelsContainer" href="#respo.core.LabelsContainer">LabelsContainer</a></code></p>
+
+
+      <p>LabelsContainer variation for PERMS</p>
+
+
+          <details class="quote">
+            <summary>Source code in <code>respo/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PERMSContainer</span><span class="p">(</span><span class="n">LabelsContainer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;LabelsContainer variation for PERMS&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">permissions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">permissions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">permissions</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">permissions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">PERMSContainer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot comapre to other instance: </span><span class="si">{</span><span class="n">other</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">permissions</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">permissions</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="respo.core.PermissionLabel" class="doc doc-heading">
+          <code>PermissionLabel</code>
+
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+      <p>Helper class for double (permission) labels validation.</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">PermissionLabel</span><span class="p">(</span><span class="s2">&quot;x.y&quot;</span><span class="p">)</span>
+<span class="go">OK</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PermissionLabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="go">ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PermissionLabel</span><span class="p">(</span><span class="s2">&quot;%^asd&quot;</span><span class="p">)</span>
+<span class="go">ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PermissionLabel</span><span class="p">(</span><span class="s2">&quot;collection_part.label_part&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">collection</span>
+<span class="go">&quot;collection_part&quot;</span>
+</code></pre></div>
+
+
+          <details class="quote">
+            <summary>Source code in <code>respo/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PermissionLabel</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Helper class for double (permission) labels validation.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; PermissionLabel(&quot;x.y&quot;)</span>
+<span class="sd">        OK</span>
+<span class="sd">        &gt;&gt;&gt; PermissionLabel(&quot;x&quot;)</span>
+<span class="sd">        ValueError</span>
+<span class="sd">        &gt;&gt;&gt; PermissionLabel(&quot;%^asd&quot;)</span>
+<span class="sd">        ValueError</span>
+<span class="sd">        &gt;&gt;&gt; PermissionLabel(&quot;collection_part.label_part&quot;).collection</span>
+<span class="sd">        &quot;collection_part&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permission_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">DOUBLE_LABEL_REGEX</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">permission_name</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Permission does not match </span><span class="si">{</span><span class="n">DOUBLE_LABEL_REGEX</span><span class="si">}</span><span class="s2"> regex: </span><span class="si">{</span><span class="n">permission_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">permission_name_split</span> <span class="o">=</span> <span class="n">permission_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="n">permission_name_split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">permission_name_split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">permission_name</span> <span class="o">=</span> <span class="n">permission_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">permission_name</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="respo.core.Principle" class="doc doc-heading">
+          <code>Principle</code>
+
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+        <p class="doc doc-class-bases">
+          Bases: <code>pydantic.<span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Represents single principle in yml file.</p>
+
+
+          <details class="quote">
+            <summary>Source code in <code>respo/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Principle</span><span class="p">(</span><span class="n">pydantic</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents single principle in yml file.&quot;&quot;&quot;</span>
+
+    <span class="n">when</span><span class="p">:</span> <span class="n">DoubleDotLabel</span>
+    <span class="n">then</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="respo.core.ROLESContainer" class="doc doc-heading">
+          <code>ROLESContainer</code>
+
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+        <p class="doc doc-class-bases">
+          Bases: <code><a class="autorefs autorefs-internal" title="respo.core.LabelsContainer" href="#respo.core.LabelsContainer">LabelsContainer</a></code></p>
+
+
+      <p>LabelsContainer variation for ROLES</p>
+
+
+          <details class="quote">
+            <summary>Source code in <code>respo/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ROLESContainer</span><span class="p">(</span><span class="n">LabelsContainer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;LabelsContainer variation for ROLES&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">roles_permissions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">roles_permissions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">roles_permissions</span>
+
+    <span class="k">def</span> <span class="nf">permissions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">role_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">roles_permissions</span><span class="p">[</span><span class="n">role_name</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+            <span class="s2">&quot;Could not get permissions for role</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Role does not exist in respo model: </span><span class="si">{</span><span class="n">role_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ROLESContainer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot comapre to other instance: </span><span class="si">{</span><span class="n">other</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">roles_permissions</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">roles_permissions</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">respo_model</span><span class="o">.</span><span class="n">roles_permissions</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="respo.core.RespoModel" class="doc doc-heading">
+          <code>RespoModel</code>
+
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+        <p class="doc doc-class-bases">
+          Bases: <code>pydantic.<span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Represents whole resource policies logic, based on pydantic BaseModel.</p>
+<p>You should not create it in other ways than command: respo create [OPTIONS] FILENAME
+and access it in different way than RespoModel.get_repo_model()</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">respo_model</span> <span class="o">=</span> <span class="n">RespoModel</span><span class="o">.</span><span class="n">get_respo_model</span><span class="p">()</span>
+<span class="go">&lt;respo.core.RespoModel object&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">respo_model</span><span class="o">.</span><span class="n">ROLES</span><span class="o">.</span><span class="n">DEFAULT</span>
+<span class="go">&quot;default&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">respo_model</span><span class="o">.</span><span class="n">PERMS</span><span class="o">.</span><span class="n">USERS__DELTETE</span>
+<span class="go">&quot;users.delete&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;users.delete&quot;</span> <span class="ow">in</span> <span class="n">respo_model</span><span class="o">.</span><span class="n">PERMS</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;default&quot;</span> <span class="ow">in</span> <span class="n">respo_model</span><span class="o">.</span><span class="n">ROLES</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">respo_model</span><span class="o">.</span><span class="n">ROLES</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">perm</span> <span class="ow">in</span> <span class="n">respo_model</span><span class="o">.</span><span class="n">PERMS</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="o">...</span>
+</code></pre></div>
+
+
+          <details class="quote">
+            <summary>Source code in <code>respo/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RespoModel</span><span class="p">(</span><span class="n">pydantic</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents whole resource policies logic, based on pydantic BaseModel.</span>
+
+<span class="sd">    You should not create it in other ways than command: respo create [OPTIONS] FILENAME</span>
+<span class="sd">    and access it in different way than RespoModel.get_repo_model()</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; respo_model = RespoModel.get_respo_model()</span>
+<span class="sd">        &lt;respo.core.RespoModel object&gt;</span>
+<span class="sd">        &gt;&gt;&gt; respo_model.ROLES.DEFAULT</span>
+<span class="sd">        &quot;default&quot;</span>
+<span class="sd">        &gt;&gt;&gt; respo_model.PERMS.USERS__DELTETE</span>
+<span class="sd">        &quot;users.delete&quot;</span>
+<span class="sd">        &gt;&gt;&gt; &quot;users.delete&quot; in respo_model.PERMS</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; &quot;default&quot; in respo_model.ROLES</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; for role in respo_model.ROLES:</span>
+<span class="sd">        &gt;&gt;&gt;     ...</span>
+<span class="sd">        &gt;&gt;&gt; for perm in respo_model.PERMS:</span>
+<span class="sd">        &gt;&gt;&gt;     ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">permissions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]</span>
+    <span class="n">principles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Principle</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">roles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">]</span>
+    <span class="n">roles_permissions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ROLES</span><span class="p">:</span> <span class="n">ROLESContainer</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">PERMS</span><span class="p">:</span> <span class="n">PERMSContainer</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROLES</span> <span class="o">=</span> <span class="n">ROLESContainer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PERMS</span> <span class="o">=</span> <span class="n">PERMSContainer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">roles</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ROLES</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">roles_permissions</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">permission</span> <span class="ow">in</span> <span class="n">role</span><span class="o">.</span><span class="n">permissions</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">roles_permissions</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">permission</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">permission</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">permissions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PERMS</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">permission</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_respo_model</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s2">&quot;RespoModel&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Loads respo model from already generated pickle or yml file.</span>
+
+<span class="sd">        Paths to be used can be specified using environment variables or changed in respo.confg.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RespoModelError: pickle file does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">settings</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">path_bin_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Respo bin file does not exist in </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">path_bin_file</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="s2">&quot; Use command: respo create [OPTIONS] FILENAME&quot;</span>
+            <span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">path_bin_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">respo_model_file</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">respo_model_file</span><span class="p">)</span>
+
+    <span class="nd">@pydantic</span><span class="o">.</span><span class="n">validator</span><span class="p">(</span><span class="s2">&quot;permissions&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_permissions_are_unique_and_add_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">permissions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]):</span>
+        <span class="n">permissions_set</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">permissions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">permissions</span><span class="p">)</span> <span class="o">==</span> <span class="n">permissions_set</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">perm_name</span> <span class="ow">in</span> <span class="n">permissions</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">permissions_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">perm_name</span><span class="p">)</span>
+                    <span class="n">pydantic</span><span class="o">.</span><span class="n">ValidationError</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;(&#39;permissions&#39;,&#39;</span><span class="si">{</span><span class="n">perm_name</span><span class="si">}</span><span class="s2">&#39;)|&quot;</span>
+                        <span class="s2">&quot;Error in permissions section.</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Found duplicates for permission: </span><span class="si">{</span><span class="n">perm_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                    <span class="p">)</span>
+
+        <span class="n">perm_collections</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">PermissionLabel</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">collection</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">permissions</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">collection_name</span> <span class="ow">in</span> <span class="n">perm_collections</span><span class="p">:</span>
+            <span class="n">all_perm</span> <span class="o">=</span> <span class="n">DoubleDotLabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">collection_name</span><span class="si">}</span><span class="s2">.all&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">all_perm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">permissions_set</span><span class="p">:</span>
+                <span class="n">permissions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_perm</span><span class="p">)</span>
+
+        <span class="n">permissions</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">permissions</span>
+
+    <span class="nd">@pydantic</span><span class="o">.</span><span class="n">validator</span><span class="p">(</span><span class="s2">&quot;principles&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_principles_are_valid_and_not_duplicate</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">principles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Principle</span><span class="p">],</span> <span class="n">values</span><span class="p">:</span> <span class="n">Dict</span>
+    <span class="p">):</span>
+        <span class="n">permissions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]]</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;permissions&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">permissions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="n">principles_set</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">principle</span> <span class="ow">in</span> <span class="n">principles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">principle</span><span class="o">.</span><span class="n">when</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">permissions</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;(&#39;principles&#39;,&#39;</span><span class="si">{</span><span class="n">principle</span><span class="o">.</span><span class="n">when</span><span class="si">}</span><span class="s2">&#39;,&#39;when&#39;)|&quot;</span>
+                    <span class="s2">&quot;Error in Principles section.</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Permission &#39;when&#39; does not exist in permissions section: </span><span class="si">{</span><span class="n">principle</span><span class="o">.</span><span class="n">when</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">principle</span><span class="o">.</span><span class="n">when</span> <span class="ow">in</span> <span class="n">principles_set</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;(&#39;principles&#39;,&#39;</span><span class="si">{</span><span class="n">principle</span><span class="o">.</span><span class="n">when</span><span class="si">}</span><span class="s2">&#39;,&#39;when&#39;)|&quot;</span>
+                    <span class="s2">&quot;Error in Principles section.</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Permission &#39;when&#39; declared multiple times: </span><span class="si">{</span><span class="n">principle</span><span class="o">.</span><span class="n">when</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                <span class="p">)</span>
+            <span class="n">principles_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">principle</span><span class="o">.</span><span class="n">when</span><span class="p">)</span>
+
+            <span class="n">then_permission_set</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">then_permission</span> <span class="ow">in</span> <span class="n">principle</span><span class="o">.</span><span class="n">then</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">then_permission</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">permissions</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;(&#39;principles&#39;,&#39;</span><span class="si">{</span><span class="n">principle</span><span class="o">.</span><span class="n">when</span><span class="si">}</span><span class="s2">&#39;,&#39;then&#39;,&#39;</span><span class="si">{</span><span class="n">then_permission</span><span class="si">}</span><span class="s2">&#39;)|&quot;</span>
+                        <span class="s2">&quot;Error in principles section.</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Error in &#39;then&#39; section in principle for permission: </span><span class="si">{</span><span class="n">principle</span><span class="o">.</span><span class="n">when</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Permission does not exist in permissions section: </span><span class="si">{</span><span class="n">then_permission</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">then_permission</span> <span class="ow">in</span> <span class="n">then_permission_set</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;(&#39;principles&#39;,&#39;</span><span class="si">{</span><span class="n">principle</span><span class="o">.</span><span class="n">when</span><span class="si">}</span><span class="s2">&#39;,&#39;then&#39;,&#39;</span><span class="si">{</span><span class="n">then_permission</span><span class="si">}</span><span class="s2">&#39;)|&quot;</span>
+                        <span class="s2">&quot;Error in principles section.</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Error in &#39;then&#39; section in principle for permission: </span><span class="si">{</span><span class="n">principle</span><span class="o">.</span><span class="n">when</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Permission declared multiple times: </span><span class="si">{</span><span class="n">then_permission</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                    <span class="p">)</span>
+                <span class="n">then_permission_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">then_permission</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">principles</span>
+
+    <span class="nd">@pydantic</span><span class="o">.</span><span class="n">validator</span><span class="p">(</span><span class="s2">&quot;roles&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_roles_are_valid_and_not_duplicated</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">roles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">],</span> <span class="n">values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="n">permissions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]]</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;permissions&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">permissions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="n">roles_include_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">SingleLabel</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">SingleLabel</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">roles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">role</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">roles_include_map</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;(&#39;roles&#39;,&#39;</span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;)|&quot;</span>
+                    <span class="s2">&quot;Error in Roles section.</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Role &#39;name&#39; declared multiple times: </span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">role</span><span class="o">.</span><span class="n">include</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">roles_include_map</span><span class="p">[</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">roles_include_map</span><span class="p">[</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">role</span><span class="o">.</span><span class="n">include</span>
+
+            <span class="n">role_permission_set</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">role_permission</span> <span class="ow">in</span> <span class="n">role</span><span class="o">.</span><span class="n">permissions</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">role_permission</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">permissions</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;(&#39;roles&#39;,&#39;</span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;,&#39;permissions&#39;,&#39;</span><span class="si">{</span><span class="n">role_permission</span><span class="si">}</span><span class="s2">&#39;)|&quot;</span>
+                        <span class="s2">&quot;Error in Roles section.</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Error in &#39;permissions&#39; section in role: </span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Permission does not exist in permissions section: </span><span class="si">{</span><span class="n">role_permission</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">role_permission</span> <span class="ow">in</span> <span class="n">role_permission_set</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;(&#39;roles&#39;,&#39;</span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;,&#39;permissions&#39;,&#39;</span><span class="si">{</span><span class="n">role_permission</span><span class="si">}</span><span class="s2">&#39;)|&quot;</span>
+                        <span class="s2">&quot;Error in Roles section.</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Error in &#39;permissions&#39; section in role: </span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Permission declared multiple times: </span><span class="si">{</span><span class="n">role_permission</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                    <span class="p">)</span>
+                <span class="n">role_permission_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">role_permission</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">role_name</span><span class="p">,</span> <span class="n">included_role_names</span> <span class="ow">in</span> <span class="n">roles_include_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">included_role_name</span> <span class="ow">in</span> <span class="n">included_role_names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">included_role_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">roles_include_map</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;(&#39;roles&#39;,&#39;</span><span class="si">{</span><span class="n">role_name</span><span class="si">}</span><span class="s2">&#39;,&#39;include&#39;,&#39;</span><span class="si">{</span><span class="n">included_role_name</span><span class="si">}</span><span class="s2">&#39;)|&quot;</span>
+                        <span class="s2">&quot;Error in Roles section.</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Error in &#39;include&#39; section in role: </span><span class="si">{</span><span class="n">role_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Included role name is not declared in Role section: </span><span class="si">{</span><span class="n">included_role_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                    <span class="p">)</span>
+                <span class="k">for</span> <span class="n">parent_included_role_name</span> <span class="ow">in</span> <span class="n">roles_include_map</span><span class="p">[</span><span class="n">included_role_name</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">parent_included_role_name</span> <span class="o">==</span> <span class="n">role_name</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;(&#39;roles&#39;,&#39;</span><span class="si">{</span><span class="n">role_name</span><span class="si">}</span><span class="s2">&#39;,&#39;include&#39;,&#39;</span><span class="si">{</span><span class="n">included_role_name</span><span class="si">}</span><span class="s2">&#39;)|&quot;</span>
+                            <span class="s2">&quot;Error in Roles section.</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Error in &#39;include&#39; section in two roles: </span><span class="si">{</span><span class="n">role_name</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">included_role_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Included roles are reffering to each other, remove it from one of them</span><span class="se">\n</span><span class="s2">  &quot;</span>
+                        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">roles</span>
+
+    <span class="nd">@pydantic</span><span class="o">.</span><span class="n">validator</span><span class="p">(</span><span class="s2">&quot;roles&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_add_permissions_to_roles_from_included</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">roles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">role_to_update</span> <span class="ow">in</span> <span class="n">roles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">role_to_update</span><span class="o">.</span><span class="n">include</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">roles</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">role</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">role_to_update</span><span class="o">.</span><span class="n">include</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">for</span> <span class="n">permission</span> <span class="ow">in</span> <span class="n">role</span><span class="o">.</span><span class="n">permissions</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">permission</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">role_to_update</span><span class="o">.</span><span class="n">permissions</span><span class="p">:</span>
+                        <span class="n">role_to_update</span><span class="o">.</span><span class="n">permissions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">permission</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">roles</span>
+
+    <span class="nd">@pydantic</span><span class="o">.</span><span class="n">validator</span><span class="p">(</span><span class="s2">&quot;roles&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_apply_principles_section_rules_to_roles</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">roles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">],</span> <span class="n">values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="n">principles</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Principle</span><span class="p">]]</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;principles&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">principles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">roles</span><span class="p">:</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">perms_after_resolve</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">permission</span> <span class="ow">in</span> <span class="n">role</span><span class="o">.</span><span class="n">permissions</span><span class="p">:</span>
+                    <span class="n">perms_after_resolve</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">permission</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">principle</span> <span class="ow">in</span> <span class="n">principles</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">principle</span><span class="o">.</span><span class="n">when</span> <span class="o">!=</span> <span class="n">permission</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="k">for</span> <span class="n">perm_to_add</span> <span class="ow">in</span> <span class="n">principle</span><span class="o">.</span><span class="n">then</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">perm_to_add</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">role</span><span class="o">.</span><span class="n">permissions</span><span class="p">:</span>
+                                <span class="n">perms_after_resolve</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">perm_to_add</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">role</span><span class="o">.</span><span class="n">permissions</span> <span class="o">==</span> <span class="n">perms_after_resolve</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">role</span><span class="o">.</span><span class="n">permissions</span> <span class="o">=</span> <span class="n">perms_after_resolve</span>
+        <span class="k">return</span> <span class="n">roles</span>
+
+    <span class="nd">@pydantic</span><span class="o">.</span><span class="n">validator</span><span class="p">(</span><span class="s2">&quot;roles&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_valid_order_of_roles</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">roles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Role</span><span class="p">],</span> <span class="n">values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">sort_role_alphabeticaly</span><span class="p">(</span><span class="n">role</span><span class="p">:</span> <span class="n">Role</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">role</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">roles</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">sort_role_alphabeticaly</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">roles</span><span class="p">:</span>
+            <span class="n">role</span><span class="o">.</span><span class="n">permissions</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">roles</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h4 id="respo.core.RespoModel.get_respo_model" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_respo_model</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h4>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Loads respo model from already generated pickle or yml file.</p>
+<p>Paths to be used can be specified using environment variables or changed in respo.confg.</p>
+
+  <p><strong>Raises:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="respo.exceptions.RespoModelError" href="../exceptions/#respo.exceptions.RespoModelError">RespoModelError</a></code>
+          </td>
+          <td><p>pickle file does not exist.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+        <details class="quote">
+          <summary>Source code in <code>respo/core.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">get_respo_model</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s2">&quot;RespoModel&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Loads respo model from already generated pickle or yml file.</span>
+
+<span class="sd">    Paths to be used can be specified using environment variables or changed in respo.confg.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RespoModelError: pickle file does not exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">settings</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">path_bin_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RespoModelError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Respo bin file does not exist in </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">path_bin_file</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="s2">&quot; Use command: respo create [OPTIONS] FILENAME&quot;</span>
+        <span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">path_bin_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">respo_model_file</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">respo_model_file</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="respo.core.Role" class="doc doc-heading">
+          <code>Role</code>
+
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+        <p class="doc doc-class-bases">
+          Bases: <code>pydantic.<span title="pydantic.BaseModel">BaseModel</span></code></p>
+
+
+      <p>Represents single role in yml file.</p>
+
+
+          <details class="quote">
+            <summary>Source code in <code>respo/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Role</span><span class="p">(</span><span class="n">pydantic</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents single role in yml file.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">SingleLabel</span>
+    <span class="n">include</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">SingleLabel</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">permissions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DoubleDotLabel</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="respo.core.RoleLabel" class="doc doc-heading">
+          <code>RoleLabel</code>
+
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+      <p>Helper class for single (role) labels validation.</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">RoleLabel</span><span class="p">(</span><span class="s2">&quot;role_text&quot;</span><span class="p">)</span>
+<span class="go">OK</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RoleLabel</span><span class="p">(</span><span class="s2">&quot;double.bad&quot;</span><span class="p">)</span>
+<span class="go">ValueError</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RoleLabel</span><span class="p">(</span><span class="s2">&quot;valid&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">role_label</span>
+<span class="go">&quot;valid&quot;</span>
+</code></pre></div>
+
+
+          <details class="quote">
+            <summary>Source code in <code>respo/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RoleLabel</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Helper class for single (role) labels validation.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; RoleLabel(&quot;role_text&quot;)</span>
+<span class="sd">        OK</span>
+<span class="sd">        &gt;&gt;&gt; RoleLabel(&quot;double.bad&quot;)</span>
+<span class="sd">        ValueError</span>
+<span class="sd">        &gt;&gt;&gt; RoleLabel(&quot;valid&quot;).role_label</span>
+<span class="sd">        &quot;valid&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">SINGLE_LABEL_REGEX</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">role_name</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Role does not match </span><span class="si">{</span><span class="n">SINGLE_LABEL_REGEX</span><span class="si">}</span><span class="s2"> regex: </span><span class="si">{</span><span class="n">role_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">role_label</span> <span class="o">=</span> <span class="n">role_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">role_label</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../../usage/environment_variables/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Configuration - environment variables" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Configuration - environment variables
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../cli/" class="md-footer__link md-footer__link--next" aria-label="Next: Cli" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Cli
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a6c66575.min.js"></script>
+      
+    
+  </body>
+</html>
