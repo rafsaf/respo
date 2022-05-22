@@ -1,19 +1,17 @@
-from respo.bin import get_respo_model, save_respo_model
-from respo.client import Client, create_respo_client
-from respo.config import Config, config
-from respo.helpers import DoubleLabel, RespoException, TripleLabel
-from respo.respo_model import (
-    MetadataSection,
-    Organization,
-    OrganizationMetadata,
-    OrganizationPermissionGrant,
-    Permission,
-    PermissionMetadata,
-    PermissionResource,
-    PermissionRule,
+"""File based RBAC in Python made easy."""
+
+from respo.client import RespoClient
+from respo.core import (
+    LabelsContainer,
+    PermissionLabel,
+    PERMSContainer,
     RespoModel,
     Role,
-    RoleMetadata,
-    RolePermissionGrant,
+    RoleLabel,
+    ROLESContainer,
 )
-from respo.typer import app, create, export
+from respo.exceptions import RespoClientError, RespoModelError
+from respo.settings import config
+from respo.version import VERSION
+
+__version__ = VERSION

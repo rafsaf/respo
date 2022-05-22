@@ -1,7 +1,6 @@
 name: Test
 
 on:
-  push:
   pull_request:
 
 jobs:
@@ -9,7 +8,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: ["3.8", "3.9", "3.10"]
     steps:
       - uses: actions/checkout@v2
 
@@ -27,25 +26,23 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml') }}
       - name: Install dependencies and actiavte virtualenv
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
           poetry install --no-interaction --no-root
       - name: Lint with flake8
         run: |
-          source .venv/bin/activate 
           # stop the build if there are Python syntax errors or undefined names
-          flake8 respo tests --count --exit-zero --statistics
+          poetry run flake8 respo tests docs --count --exit-zero --statistics
       - name: Test
         run: |
-          source .venv/bin/activate
-          coverage run -m pytest tests
-          coverage xml
-          coverage report --show-missing
+          poetry run coverage run -m pytest
+          poetry run coverage xml
+          poetry run coverage report --show-missing
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           flags: unittests
           file: coverage.xml
-          fail_ci_if_error: true
+          fail_ci_if_error: false

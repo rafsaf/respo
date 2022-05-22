@@ -1,104 +1,40 @@
-metadata:
-  name: Resource Policy for my app
-organizations:
-  - metadata:
-      label: default
-    permissions:
-      - label: default.user.read_all_better
-  - metadata:
-      label: default_deny
-    permissions:
-      - label: default_deny.user.read_all_better
-        type: Deny
-  - metadata:
-      label: book123
-    permissions:
-      - label: book123.user.read_basic
-      - label: book123.book.list
-      - label: book123.book.buy_all
-  - metadata:
-      label: test_o
-    permissions:
-      - label: test_o.test.a
 permissions:
-  - metadata:
-      description: P1
-      label: user
-      name: user
-    resources:
-      - label: user.read_basic
-      - label: user.read_all
-      - label: user.read_all_better
-      - label: user.update
-      - label: user.delete
-    rules:
-      - when: user.read_all
-        then:
-          - user.read_basic
+  - user.read_basic
+  - user.read_all
+  - user.read_all_better
+  - user.update
 
-      - when: user.read_all_better
-        then:
-          - user.read_all
-  - metadata:
-      label: book
-    resources:
-      - label: book.list
-      - label: book.read
-      - label: book.sell
-      - label: book.buy
-      - label: book.buy_all
-    rules:
-      - when: book.buy_all
-        then:
-          - book.buy
-      - when: book.list
-        then:
-          - book.read
-  - metadata:
-      label: test
-    resources:
-      - label: test.a
-      - label: test.b
-      - label: test.c
-      - label: test.d
-      - label: test.e
-      - label: test.f
-    rules:
-      - when: test.a
-        then: [test.b]
-      - when: test.b
-        then: [test.c]
-      - when: test.c
-        then: [test.d]
-      - when: test.d
-        then: [test.e]
-      - when: test.e
-        then: [test.f]
+  - book.list
+  - book.read
+  - book.sell
+  - book.buy
+
+principles:
+  - when: book.list
+    then: [book.read]
+
+  - when: user.read_all
+    then: [user.read_basic]
+  - when: user.read_all_better
+    then: [user.read_all]
+
 roles:
-  - metadata:
-      label: superuser
-      organization: default
+  - name: default
     permissions:
-      - label: default.user.read_all
-      - label: default.user.delete
-        type: Deny
-  - metadata:
-      label: superuser_book
-      organization: book123
+      - user.read_all
+      - book.list
+
+  - name: admin
+    include: [default]
     permissions:
-      - label: book123.user.all
-  - metadata:
-      label: client
-      organization: book123
-    permissions: []
-  - metadata:
-      label: admin_role
-      organization: book123
+      - user.read_all_better
+
+  - name: pro_user
+    include: [default]
     permissions:
-      - label: book123.user.read_all
-      - label: book123.book.sell
-  - metadata:
-      label: test_role
-      organization: default
+      - book.sell
+
+  - name: superadmin
+    include: [admin, pro_user]
     permissions:
-      - label: default.test.a
+      - user.update

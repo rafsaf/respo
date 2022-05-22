@@ -1,0 +1,12 @@
+permissions:
+  - user.read
+  - user.read_all
+
+principles:
+  - when: user.read_all
+    then: [user.read]
+
+roles:
+  - name: role
+    permissions:
+      - user.read_all_not_in_perms
