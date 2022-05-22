@@ -37,6 +37,7 @@ nav:
       - reference/fields.sqlalchemy.md
       - reference/exceptions.md
       - reference/settings.md
+  - changelog.md
 
 plugins:
   - mkdocstrings:
