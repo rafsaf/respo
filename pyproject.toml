@@ -22,13 +22,13 @@ repository = "https://github.com/rafsaf/respo"
 version = "1.0.0"
 
 [tool.poetry.dependencies]
-pydantic = "^1.7.0"
+pydantic = ">=1.7.0"
 python = "^3.8"
 
 PyYAML = {version = ">=5.0", optional = true}
-SQLAlchemy = {version = ">=1.3", optional = true}
+SQLAlchemy = {version = ">=1.4.3", optional = true}
 click = {version = ">=6.0.0", optional = true}
-django = {version = ">=3.0", optional = true}
+django = {version = ">=3.1", optional = true}
 
 [tool.poetry.extras]
 all = ["django", "PyYAML", "SQLAlchemy", "click"]
@@ -38,7 +38,6 @@ sqlalchemy = ["SQLAlchemy"]
 
 [tool.poetry.dev-dependencies]
 PyYAML = ">=5.0"
-SQLAlchemy = ">=1.4"
 aiosqlite = "^0.17.0"
 autoflake = "^1.4"
 black = "^22.1.0"
@@ -49,6 +48,7 @@ django = ">=3.0"
 django-stubs = "^1.9.0"
 fastapi = "^0.75.0"
 flake8 = "^3.9"
+httpx = "^0.22.0"
 isort = "^5.10.1"
 markdown-include = "^0.6.0"
 mkdocs = "^1.2.3"
@@ -83,6 +83,8 @@ profile = "black"
 DJANGO_SETTINGS_MODULE = "tests.test_django_field.respo_field_test.settings"
 addopts = "-v"
 asyncio_mode = "auto"
+filterwarnings = []
+markers = ["pytest.mark.asyncio"]
 minversion = "6.0"
 
 [tool.poetry.scripts]

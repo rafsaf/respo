@@ -2,8 +2,8 @@
 
 import random
 
-from fastapi import Depends, FastAPI, HTTPException, Query
-from pydantic import Field
+from fastapi import Depends, FastAPI, HTTPException
+
 from respo import RespoClient
 
 from .respo_model import RespoModel
