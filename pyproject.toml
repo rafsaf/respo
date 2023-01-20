@@ -54,7 +54,7 @@ isort = "^5.10.1"
 markdown-include = "^0.6.0"
 mkdocs = "^1.2.3"
 mkdocs-material = "^8.2.5"
-mkdocstrings = {extras = ["python"], version = "^0.18.1"}
+mkdocstrings = {extras = ["python"], version = "^0.20.0"}
 mypy = "^0.960"
 pymdown-extensions = "^9.2"
 pytest = "^7.0.1"
